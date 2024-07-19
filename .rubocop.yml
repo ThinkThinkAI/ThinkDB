@@ -1,0 +1,7 @@
+Metrics/BlockLength:
+  ExcludedMethods:
+    - call
+  Exclude:
+    - 'spec/**/*.rb'
+  Style/Documentation:
+    Enabled: false

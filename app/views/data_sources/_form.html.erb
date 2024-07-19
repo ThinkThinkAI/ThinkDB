@@ -1,0 +1,48 @@
+<div class="card">
+  <div class="card-body">
+    <%= form_with(model: @data_source, local: true, class: 'needs-validation') do |form| %>
+      <% if @data_source.errors.any? %>
+        <div id="error_explanation" class="alert alert-danger">
+          <h2><%= pluralize(@data_source.errors.count, "error") %> prohibited this data_source from being saved:</h2>
+          <ul>
+            <% @data_source.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+      <div class="mb-3">
+        <%= form.label :name, class: 'form-label' %>
+        <%= form.text_field :name, class: 'form-control' %>
+      </div>
+      <div class="mb-3">
+        <%= form.hidden_field :adapter, value: 'postgresql' %>
+      </div>
+      <div class="mb-3">
+        <%= form.label :host, class: 'form-label' %>
+        <%= form.text_field :host, class: 'form-control' %>
+      </div>
+      <div class="mb-3">
+        <%= form.label :port, class: 'form-label' %>
+        <%= form.number_field :port, class: 'form-control' %>
+      </div>
+      <div class="mb-3">
+        <%= form.label :database, class: 'form-label' %>
+        <%= form.text_field :database, class: 'form-control' %>
+      </div>
+      <div class="mb-3">
+        <%= form.label :username, class: 'form-label' %>
+        <%= form.text_field :username, class: 'form-control' %>
+      </div>
+      <div class="mb-3">
+        <%= form.label :password, class: 'form-label' %>
+        <%= form.password_field :password, class: 'form-control' %>
+      </div>
+      <div class="actions d-flex">
+        <%= link_to "Cancel", @data_source, class: 'btn btn-warning' %>
+        <%= form.submit "Submit", class: 'btn btn-primary ms-auto' %>
+      </div>
+    <% end %>
+  </div>
+</div>
+<br>
