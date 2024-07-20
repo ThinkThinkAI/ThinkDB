@@ -8,8 +8,6 @@ gem 'rails', '~> 7.1.3', '>= 7.1.3.4'
 
 gem 'sprockets-rails'
 
-gem 'sqlite3', '~> 1.4'
-
 gem 'puma', '>= 5.0'
 
 gem 'importmap-rails'
@@ -33,6 +31,7 @@ gem 'omniauth-rails_csrf_protection'
 
 gem 'mysql2'
 gem 'pg'
+gem 'sqlite3', '~> 1.4'
 
 gem 'rubocop'
 gem 'ruby-lsp-rails'
