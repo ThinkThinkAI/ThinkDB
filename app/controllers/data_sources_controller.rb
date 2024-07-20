@@ -21,10 +21,19 @@ class DataSourcesController < ApplicationController
 
   def create
     @data_source = current_user.data_sources.build(data_source_params)
+
     respond_to do |format|
       if @data_source.save
+        format.turbo_stream
         format.html { redirect_to data_sources_url, notice: 'DataSource was successfully created.' }
       else
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.replace('new_tier',
+                                                    partial: 'data_sources/form',
+                                                    locals: { data_source: @data_source }),
+                 status: :unprocessable_entity
+        end
+
         format.html { render :new, status: :unprocessable_entity }
       end
     end
@@ -46,7 +55,8 @@ class DataSourcesController < ApplicationController
     @data_source.destroy
 
     respond_to do |format|
-      format.html { redirect_to data_sources_url, notice: 'Data source was successfully destroyed.' }
+      format.turbo_stream { render turbo_stream: turbo_stream.remove(@data_source) }
+      format.html { redirect_to data_sources_path, notice: 'Data source was successfully destroyed.' }
     end
   end
 

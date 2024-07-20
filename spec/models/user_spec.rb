@@ -49,6 +49,58 @@ RSpec.describe User, type: :model do
     end
   end
 
+  describe '#settings_incomplete?' do
+    let(:user) { create(:user) }
+
+    context 'when all settings are present' do
+      before do
+        user.ai_url = 'http://example.com'
+        user.ai_model = 'example_model'
+        user.ai_api_key = 'example_key'
+      end
+
+      it 'returns false' do
+        expect(user.settings_incomplete?).to be false
+      end
+    end
+
+    context 'when ai_url is blank' do
+      before do
+        user.ai_url = ''
+        user.ai_model = 'example_model'
+        user.ai_api_key = 'example_key'
+      end
+
+      it 'returns true' do
+        expect(user.settings_incomplete?).to be true
+      end
+    end
+
+    context 'when ai_model is blank' do
+      before do
+        user.ai_url = 'http://example.com'
+        user.ai_model = ''
+        user.ai_api_key = 'example_key'
+      end
+
+      it 'returns true' do
+        expect(user.settings_incomplete?).to be true
+      end
+    end
+
+    context 'when ai_api_key is blank' do
+      before do
+        user.ai_url = 'http://example.com'
+        user.ai_model = 'example_model'
+        user.ai_api_key = ''
+      end
+
+      it 'returns true' do
+        expect(user.settings_incomplete?).to be true
+      end
+    end
+  end
+
   describe '.from_omniauth' do
     let(:auth) do
       OmniAuth::AuthHash.new(

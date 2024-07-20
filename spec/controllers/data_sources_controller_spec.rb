@@ -31,6 +31,13 @@ RSpec.describe DataSourcesController, type: :controller do
     end
   end
 
+  describe 'GET #show' do
+    it 'redirects to the index path' do
+      get :show, params: { id: data_source.id }
+      expect(response).to redirect_to(data_sources_path)
+    end
+  end
+
   describe 'PATCH #update' do
     context 'with valid attributes' do
       let(:new_attributes) { { name: 'New DataSource Name' } }
@@ -103,20 +110,24 @@ RSpec.describe DataSourcesController, type: :controller do
     end
 
     context 'with invalid attributes' do
-      let(:invalid_attributes) { attributes_for(:data_source, adapter: '') }
+      let(:invalid_attributes) { { name: '', adapter: '' } }
 
       it 'does not create a new data source' do
         expect do
           post :create, params: { data_source: invalid_attributes }
         end.not_to change(DataSource, :count)
       end
-    end
-  end
 
-  describe 'GET #show' do
-    it 'redirects to the data sources index' do
-      get :show, params: { id: data_source.id }
-      expect(response).to redirect_to(data_sources_path)
+      it 'renders the form partial for turbo stream' do
+        post :create, params: { data_source: invalid_attributes }, format: :turbo_stream
+        expect(response).to render_template(partial: '_form')
+      end
+
+      it 'renders turbo stream with errors' do
+        post :create, params: { data_source: invalid_attributes }, format: :turbo_stream
+        expect(response.content_type).to eq('text/vnd.turbo-stream.html; charset=utf-8')
+        expect(response.body).to include('turbo-stream')
+      end
     end
   end
 end

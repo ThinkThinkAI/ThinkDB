@@ -1,4 +1,7 @@
 <h1 >Data Sources</h1>
 <br>
-<%= render @data_sources %>
-<center><a href="<%= new_data_source_path %>" class="btn btn-primary ">New Data Source</a></center>
+<div id="data_sources">
+  <%= render @data_sources %>
+</div>
+<br>
+<%= render 'new_data_source' %>

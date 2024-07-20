@@ -19,4 +19,8 @@ class User < ApplicationRecord
       user.image = auth.info.image
     end
   end
+
+  def settings_incomplete?
+    ai_url.blank? || ai_model.blank? || ai_api_key.blank?
+  end
 end

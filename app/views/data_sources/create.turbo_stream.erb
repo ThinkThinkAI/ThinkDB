@@ -1,0 +1,4 @@
+<%= turbo_stream.append "data_sources", @data_source %>
+<%= turbo_stream.replace 'new_tier' do %>
+  <%= render 'new_data_source' %>
+<% end %>
