@@ -31,6 +31,8 @@ gem 'omniauth-github'
 gem 'dotenv-rails'
 gem 'omniauth-rails_csrf_protection'
 
+gem 'pg'
+
 gem 'rubocop'
 gem 'ruby-lsp-rails'
 
