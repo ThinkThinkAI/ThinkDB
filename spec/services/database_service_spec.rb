@@ -21,11 +21,11 @@ RSpec.describe DatabaseService, type: :service do
   end
 
   describe '#get_schemas' do
-    it 'delegates get_schemas to the adapter' do
+    it 'delegates schemas to the adapter' do
       service = DatabaseService.build(data_source)
-      allow(mock_adapter).to receive(:get_schemas).and_return('[]')
-      schemas_json = service.get_schemas
-      expect(mock_adapter).to have_received(:get_schemas)
+      allow(mock_adapter).to receive(:schemas).and_return('[]')
+      schemas_json = service.schemas
+      expect(mock_adapter).to have_received(:schemas)
       expect(schemas_json).to eq('[]')
     end
   end

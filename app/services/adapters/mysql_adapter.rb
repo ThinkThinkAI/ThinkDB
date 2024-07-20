@@ -18,7 +18,7 @@ class MysqlAdapter
     @client = Mysql2::Client.new(connection_params)
   end
 
-  def get_schemas
+  def schemas
     result = @client.query('SELECT table_name, column_name, data_type FROM information_schema.columns')
 
     schemas = result.each_with_object({}) do |row, acc|

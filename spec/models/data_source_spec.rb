@@ -10,7 +10,7 @@ RSpec.describe DataSource, type: :model do
 
   describe 'Validations' do
     it { should validate_presence_of(:adapter) }
-    it { should validate_inclusion_of(:adapter).in_array(%w[postgresql mysql2 sqlite3]) }
+    it { should validate_inclusion_of(:adapter).in_array(%w[postgresql mysql sqlite]) }
     it { should validate_numericality_of(:port).only_integer }
   end
 

@@ -12,7 +12,7 @@ class SqliteAdapter
     @connection = SQLite3::Database.new(@db_file)
   end
 
-  def get_schemas
+  def schemas
     query = <<-SQL
       SELECT
         m.name AS table_name,

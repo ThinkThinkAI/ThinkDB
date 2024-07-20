@@ -27,7 +27,7 @@ RSpec.describe SqliteAdapter, type: :model do
     end
 
     it 'retrieves schemas from the database' do
-      schemas = adapter.get_schemas
+      schemas = adapter.schemas
 
       expected_schemas = {
         'users' => [
