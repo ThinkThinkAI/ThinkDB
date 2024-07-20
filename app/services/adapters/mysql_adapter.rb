@@ -1,24 +1,25 @@
 # frozen_string_literal: true
 
-require 'pg'
+require 'mysql2'
+require 'json'
 
-# PostgresAdapter provides methods to interact with a PostgreSQL database.
+# MysqlAdapter provides methods to interact with a MySQL database.
 # It connects to the database using provided connection parameters and
 # can retrieve schema information and execute queries.
-class PostgresAdapter
+class MysqlAdapter
   def initialize(data_source)
     connection_params = {
-      dbname: data_source.database,
-      user: data_source.username,
+      database: data_source.database,
+      username: data_source.username,
       password: data_source.password,
       host: data_source.host,
       port: data_source.port
     }
-    @connection = PG.connect(connection_params)
+    @client = Mysql2::Client.new(connection_params)
   end
 
   def get_schemas
-    result = @connection.exec('SELECT table_name, column_name, data_type FROM information_schema.columns')
+    result = @client.query('SELECT table_name, column_name, data_type FROM information_schema.columns')
 
     schemas = result.each_with_object({}) do |row, acc|
       table_name = row['table_name']
@@ -33,7 +34,7 @@ class PostgresAdapter
   end
 
   def run_query(query)
-    result = @connection.exec(query)
-    result.values
+    result = @client.query(query)
+    result.to_a
   end
 end
