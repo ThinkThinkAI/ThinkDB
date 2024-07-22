@@ -11,7 +11,7 @@ class DataSource < ApplicationRecord
   belongs_to :user
 
   validates :adapter, presence: true, inclusion: { in: %w[postgresql mysql sqlite] }
-  validates :port, numericality: { only_integer: true }
+  validates :port, numericality: { only_integer: true }, allow_blank: true
 
   def encrypt_password
     self.password = encrypt(password) if password.present?

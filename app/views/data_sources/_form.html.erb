@@ -16,27 +16,30 @@
         <%= form.text_field :name, class: 'form-control', autocomplete: 'off' %>
       </div>
       <div class="mb-3">
-        <%= form.hidden_field :adapter, value: 'postgresql', autocomplete: 'off' %>
+        <%= form.label :type, 'Type', class: 'form-label' %>
+        <%= form.select :adapter, options_for_select([['PostgreSQL', 'postgresql'], ['MySQL', 'mysql'], ['SQLite', 'sqlite']], @data_source.adapter), { prompt: 'Select Type' }, { class: 'form-select', id: 'data_source_type' } %>
       </div>
-      <div class="mb-3">
-        <%= form.label :host, class: 'form-label' %>
-        <%= form.text_field :host, class: 'form-control', autocomplete: 'off' %>
-      </div>
-      <div class="mb-3">
-        <%= form.label :port, class: 'form-label' %>
-        <%= form.number_field :port, class: 'form-control', autocomplete: 'off' %>
-      </div>
-      <div class="mb-3">
-        <%= form.label :database, class: 'form-label' %>
-        <%= form.text_field :database, class: 'form-control', autocomplete: 'off' %>
-      </div>
-      <div class="mb-3">
-        <%= form.label :username, class: 'form-label' %>
-        <%= form.text_field :username, class: 'form-control', autocomplete: 'off' %>
-      </div>
-      <div class="mb-3">
-        <%= form.label :password, class: 'form-label' %>
-        <%= form.password_field :password, class: 'form-control', autocomplete: 'off' %>
+      <div id="fields">
+        <div class="mb-3">
+          <%= form.label :host, class: 'form-label' %>
+          <%= form.text_field :host, class: 'form-control', autocomplete: 'off' %>
+        </div>
+        <div class="mb-3">
+          <%= form.label :port, class: 'form-label' %>
+          <%= form.number_field :port, class: 'form-control', autocomplete: 'off' %>
+        </div>
+        <div class="mb-3">
+          <%= form.label :database, class: 'form-label', id: 'database_label' %>
+          <%= form.text_field :database, class: 'form-control', autocomplete: 'off', id: 'database_field' %>
+        </div>
+        <div class="mb-3">
+          <%= form.label :username, class: 'form-label' %>
+          <%= form.text_field :username, class: 'form-control', autocomplete: 'off' %>
+        </div>
+        <div class="mb-3">
+          <%= form.label :password, class: 'form-label' %>
+          <%= form.password_field :password, class: 'form-control', autocomplete: 'off' %>
+        </div>
       </div>
       <div class="actions d-flex">
         <%= link_to "Cancel", @data_source, class: 'btn btn-warning' %>
@@ -46,3 +49,35 @@
   </div>
 </div>
 <br>
+<script>
+  function setupForm() {
+    console.log("setupForm");
+  const typeSelect = document.getElementById("data_source_type");
+  const fields = document.getElementById("fields");
+  const hostField = fields.querySelector("[name='data_source[host]']").closest(".mb-3");
+  const portField = fields.querySelector("[name='data_source[port]']").closest(".mb-3");
+  const usernameField = fields.querySelector("[name='data_source[username]']").closest(".mb-3");
+  const passwordField = fields.querySelector("[name='data_source[password]']").closest(".mb-3");
+  const databaseLabel = document.getElementById("database_label");
+  const databaseField = document.getElementById("database_field");
+  function toggleFields() {
+  if (typeSelect.value === "sqlite") {
+  hostField.style.display = "none";
+  portField.style.display = "none";
+  usernameField.style.display = "none";
+  passwordField.style.display = "none";
+  databaseLabel.textContent = "File Path";
+  } else {
+  hostField.style.display = "";
+  portField.style.display = "";
+  usernameField.style.display = "";
+  passwordField.style.display = "";
+  databaseLabel.textContent = "Database";
+  }
+  }
+  typeSelect.addEventListener("change", toggleFields);
+  // Initial setup based on current type selection
+  toggleFields();
+  }
+   document.addEventListener("turbo:load", setupForm());
+</script>

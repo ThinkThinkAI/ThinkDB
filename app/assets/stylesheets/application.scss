@@ -16,3 +16,9 @@
  
 @import "bootstrap";
 @import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css");
+
+.scrollable-content {
+  height: calc(100vh); /* Adjust based on your header height or any top-fixed elements */
+  overflow-y: auto;
+  overflow-x: hidden;
+}
