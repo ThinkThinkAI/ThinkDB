@@ -1,0 +1,31 @@
+<div class="container-fluid">
+  <div class="row flex-nowrap">
+    <div class=" w-100  bg-dark">
+      <div class="d-flex flex-column   min-vh-100">
+        <div class="flex-column mb-sm-auto mb-0   w-100">
+          <nav class="navbar navbar-expand-lg w-100 ">
+            <div class="container-fluid p-0">
+              <%= form_with(url: queries_path, method: :get, local: true, class: 'd-flex w-100', role: 'search') do %>
+                <%= text_field_tag :query, params[:query], class: 'form-control me-2 flex-grow-1', placeholder: 'Enter your query here', aria: { label: 'Query' } %>
+                <%= submit_tag 'Query', class: 'btn btn-outline-success' %>
+              <% end %>
+            </div>
+          </nav>
+        </div>
+        <nav class="navbar navbar-expand-lg w-100 mb-0">
+          <div class="container-fluid p-0 ">
+            <div class="me-2 flex-grow-1 d-flex w-100">  
+            </div>
+
+            <%= form_with(url: queries_path, method: :get, local: true, class: '', role: 'search') do %>
+              <%= submit_tag '<<', class: 'btn btn-outline-success' %>
+            <% end %>&nbsp;
+            <%= form_with(url: queries_path, method: :get, local: true, class: '', role: 'search') do %>
+              <%= submit_tag '>>', class: 'btn btn-outline-success' %>
+            <% end %>
+          </div>
+        </nav>
+      </div>
+    </div>
+  </div>
+</div>

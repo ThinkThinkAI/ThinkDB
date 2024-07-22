@@ -1,0 +1,27 @@
+<%= form_with(model: query) do |form| %>
+  <% if query.errors.any? %>
+    <div style="color: red">
+      <h2><%= pluralize(query.errors.count, "error") %> prohibited this query from being saved:</h2>
+
+      <ul>
+        <% query.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= form.label :query, style: "display: block" %>
+    <%= form.text_field :query %>
+  </div>
+
+  <div>
+    <%= form.label :data_source_id, style: "display: block" %>
+    <%= form.text_field :data_source_id %>
+  </div>
+
+  <div>
+    <%= form.submit %>
+  </div>
+<% end %>
