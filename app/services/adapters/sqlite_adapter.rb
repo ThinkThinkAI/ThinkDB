@@ -39,7 +39,8 @@ class SqliteAdapter
     schemas.to_json
   end
 
-  def run_query(query)
-    @connection.execute(query)
+  def run_query(query, limit = 10, offset = 0)
+    paginated_query = "#{query} LIMIT #{limit} OFFSET #{offset}"
+    @connection.execute(paginated_query)
   end
 end

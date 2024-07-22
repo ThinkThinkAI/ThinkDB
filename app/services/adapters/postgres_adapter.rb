@@ -32,8 +32,9 @@ class PostgresAdapter
     schemas.to_json
   end
 
-  def run_query(query)
-    result = @connection.exec(query)
+  def run_query(query, limit = 10, offset = 0)
+    paginated_query = "#{query} LIMIT #{limit} OFFSET #{offset}"
+    result = @connection.exec(paginated_query)
     result.values
   end
 end

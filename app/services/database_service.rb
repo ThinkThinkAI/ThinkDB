@@ -27,7 +27,8 @@ class DatabaseService
     @adapter.schemas
   end
 
-  def run_query(query)
-    @adapter.run_query(query)
+  def run_query(query, results_per_page: 10, page: 1)
+    offset = (page - 1) * results_per_page
+    @adapter.run_query(query, results_per_page, offset)
   end
 end

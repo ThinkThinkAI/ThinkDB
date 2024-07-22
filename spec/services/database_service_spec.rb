@@ -20,7 +20,7 @@ RSpec.describe DatabaseService, type: :service do
     end
   end
 
-  describe '#get_schemas' do
+  describe '#schemas' do
     it 'delegates schemas to the adapter' do
       service = DatabaseService.build(data_source)
       allow(mock_adapter).to receive(:schemas).and_return('[]')
@@ -31,12 +31,18 @@ RSpec.describe DatabaseService, type: :service do
   end
 
   describe '#run_query' do
-    it 'delegates run_query to the adapter' do
+    it 'delegates run_query to the adapter with pagination parameters' do
       service = DatabaseService.build(data_source)
       query = 'SELECT 1'
-      allow(mock_adapter).to receive(:run_query).with(query).and_return([{ '?column?' => '1' }])
-      query_result = service.run_query(query)
-      expect(mock_adapter).to have_received(:run_query).with(query)
+
+      results_per_page = 10
+      page = 1
+      offset = (page - 1) * results_per_page
+
+      allow(mock_adapter).to receive(:run_query).with(query, results_per_page, offset).and_return([{ '?column?' => '1' }])
+      query_result = service.run_query(query, results_per_page: results_per_page, page: page)
+
+      expect(mock_adapter).to have_received(:run_query).with(query, results_per_page, offset)
       expect(query_result).to eq([{ '?column?' => '1' }])
     end
   end

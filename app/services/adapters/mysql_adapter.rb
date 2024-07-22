@@ -33,8 +33,9 @@ class MysqlAdapter
     schemas.to_json
   end
 
-  def run_query(query)
-    result = @client.query(query)
+  def run_query(query, limit = 10, offset = 0)
+    paginated_query = "#{query} LIMIT #{limit} OFFSET #{offset}"
+    result = @client.query(paginated_query)
     result.to_a
   end
 end
