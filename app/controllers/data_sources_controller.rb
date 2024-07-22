@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-# app/controllers/data_sources_controller.rb
-
 # Controller to manage DataSource objects for users. Allows creating, updating,
 # and deleting DataSource records associated with the current user.
 class DataSourcesController < ApplicationController
