@@ -38,4 +38,9 @@ class MysqlAdapter
     result = @client.query(paginated_query)
     result.to_a
   end
+
+  def run_raw_query(query)
+    result = @client.query(query)
+    result.to_a
+  end
 end

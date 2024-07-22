@@ -37,4 +37,9 @@ class PostgresAdapter
     result = @connection.exec(paginated_query)
     result.values
   end
+
+  def run_raw_query(query)
+    result = @connection.exec(query)
+    result.values
+  end
 end

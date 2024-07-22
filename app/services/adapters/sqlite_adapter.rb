@@ -43,4 +43,8 @@ class SqliteAdapter
     paginated_query = "#{query} LIMIT #{limit} OFFSET #{offset}"
     @connection.execute(paginated_query)
   end
+
+  def run_raw_query(query)
+    @connection.execute(paginated_query)
+  end
 end

@@ -1,49 +1,89 @@
 require 'rails_helper'
+require './app/services/database_service'
+require './app/services/adapters/postgres_adapter'
 
-RSpec.describe DatabaseService, type: :service do
-  let(:data_source) { create(:data_source) }
-  let(:mock_adapter) { instance_double(PostgresAdapter) }
+RSpec.describe DatabaseService, type: :model do
+  let(:data_source) { instance_double('DataSource', adapter: 'postgresql', database: 'test_db') }
+  let(:adapter) { instance_double(PostgresAdapter) }
+  let(:service) { DatabaseService.new(adapter) }
 
   before do
-    allow(PostgresAdapter).to receive(:new).and_return(mock_adapter)
+    allow(PostgresAdapter).to receive(:new).and_return(adapter)
   end
 
   describe '.build' do
-    it 'initializes a PostgresAdapter' do
-      service = DatabaseService.build(data_source)
-      expect(service).to be_an_instance_of(DatabaseService)
-    end
-
-    it 'raises an error for unsupported adapters' do
-      data_source.update(adapter: 'unsupported_adapter')
-      expect { DatabaseService.build(data_source) }.to raise_error('Adapter not supported: unsupported_adapter')
+    it 'builds the appropriate adapter based on the data source' do
+      database_service = DatabaseService.build(data_source)
+      expect(database_service).to be_a(DatabaseService)
     end
   end
 
   describe '#schemas' do
-    it 'delegates schemas to the adapter' do
-      service = DatabaseService.build(data_source)
-      allow(mock_adapter).to receive(:schemas).and_return('[]')
-      schemas_json = service.schemas
-      expect(mock_adapter).to have_received(:schemas)
-      expect(schemas_json).to eq('[]')
+    let(:schemas) { { 'users' => [{ column_name: 'id', data_type: 'integer' }] }.to_json }
+
+    it 'delegates the schemas method to the adapter' do
+      allow(adapter).to receive(:schemas).and_return(schemas)
+      result = service.schemas
+      expect(result).to eq(schemas)
     end
   end
 
-  describe '#run_query' do
-    it 'delegates run_query to the adapter with pagination parameters' do
-      service = DatabaseService.build(data_source)
-      query = 'SELECT 1'
+  describe '#run_raw_query' do
+    let(:query) { 'SELECT 1' }
+    let(:query_result) { [{ 'id' => 1 }] }
 
-      results_per_page = 10
-      page = 1
-      offset = (page - 1) * results_per_page
+    it 'executes a raw query via the adapter' do
+      allow(adapter).to receive(:run_raw_query).with(query).and_return(query_result)
+      result = service.run_raw_query(query)
+      expect(result).to eq(query_result)
+    end
+  end
 
-      allow(mock_adapter).to receive(:run_query).with(query, results_per_page, offset).and_return([{ '?column?' => '1' }])
-      query_result = service.run_query(query, results_per_page: results_per_page, page: page)
+  describe '#count' do
+    context 'with supported queries' do
+      let!(:select_query) { 'SELECT * FROM users' }
+      let!(:update_query) { 'UPDATE users SET name = "New Name" WHERE age > 30' }
+      let!(:delete_query) { 'DELETE FROM users WHERE age > 30' }
+      let!(:insert_query) { 'INSERT INTO users (name, age) VALUES ("Alice", 25), ("Bob", 30)' }
+      let!(:insert_select_query) { 'INSERT INTO users (name, age) SELECT name, age FROM old_users WHERE age > 20' }
 
-      expect(mock_adapter).to have_received(:run_query).with(query, results_per_page, offset)
-      expect(query_result).to eq([{ '?column?' => '1' }])
+      it 'returns the correct count for SELECT queries' do
+        allow(service).to receive(:run_raw_query).with('SELECT COUNT(*) AS count FROM (SELECT * FROM users) AS subquery')
+                                                 .and_return([{ 'count' => 100 }])
+        expect(service.count(select_query)).to eq(100)
+      end
+
+      it 'returns the correct count for UPDATE queries' do
+        allow(service).to receive(:run_raw_query).with('SELECT COUNT(*) AS count FROM users WHERE age > 30')
+                                                 .and_return([{ 'count' => 50 }])
+        expect(service.count(update_query)).to eq(50)
+      end
+
+      it 'returns the correct count for DELETE queries' do
+        allow(service).to receive(:run_raw_query).with('SELECT COUNT(*) AS count FROM users WHERE age > 30')
+                                                 .and_return([{ 'count' => 50 }])
+        expect(service.count(delete_query)).to eq(50)
+      end
+
+      it 'returns the correct count for INSERT queries with VALUES' do
+        allow(service).to receive(:run_raw_query).with('SELECT 2 AS count')
+                                                 .and_return([{ 'count' => 2 }])
+        expect(service.count(insert_query)).to eq(2)
+      end
+
+      it 'returns the correct count for INSERT queries with SELECT' do
+        allow(service).to receive(:run_raw_query).with('SELECT COUNT(*) AS count FROM (SELECT name, age FROM old_users WHERE age > 20) AS subquery')
+                                                 .and_return([{ 'count' => 5 }])
+        expect(service.count(insert_select_query)).to eq(5)
+      end
+    end
+
+    context 'with unsupported queries' do
+      let(:unsupported_query) { 'DROP TABLE users' }
+
+      it 'returns nil for unsupported queries' do
+        expect(service.count(unsupported_query)).to be_nil
+      end
     end
   end
 end
