@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_07_22_025320) do
+ActiveRecord::Schema[7.1].define(version: 2024_07_22_203655) do
   create_table "data_sources", force: :cascade do |t|
     t.string "adapter", null: false
     t.string "host"
@@ -27,7 +27,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_22_025320) do
   end
 
   create_table "queries", force: :cascade do |t|
-    t.string "query"
+    t.string "sql"
     t.integer "data_source_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
