@@ -3,11 +3,15 @@
     <div class="card-header d-flex justify-content-between align-items-center">
       <span><%= data_source.name %></span>
       <div class="ml-auto">
-        <% if data_source.connected? %>
-          <%= link_to 'disconnect', connect_data_source_path(data_source), method: :patch, class: 'btn btn-danger btn-sm' %>
-        <% else %>
-          <%= link_to 'connect', connect_data_source_path(data_source), method: :patch, class: 'btn btn-primary btn-sm' %>
-        <% end %>
+        <% title = data_source.connected? ? 'disconnect' : 'connect' %>
+        <% btn = data_source.connected? ? 'btn-danger' : 'btn-primary' %>
+        <span data-controller='connection'>
+          <%= link_to title, '/', remote: true, id: "connection-#{data_source.id}" ,class: "btn #{btn} btn-sm", 
+            data: {
+              action: 'connection#connected',
+              'connection-url-param': connect_data_source_url(data_source),
+              'connection-id-param': "#connection-#{data_source.id}" 
+            }  %></span>
         <a href="<%= edit_data_source_path(data_source) %>" class="btn btn-primary btn-sm">edit</a>
         <%= link_to "delete", data_source_path(data_source), data: { turbo_method: "delete", turbo_confirm: 'Are you sure?' }, class: 'btn btn-danger btn-sm' %>
       </div>

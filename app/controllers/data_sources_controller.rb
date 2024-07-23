@@ -60,7 +60,13 @@ class DataSourcesController < ApplicationController
 
   def connect
     @data_source.update(connected: !@data_source.connected)
-    redirect_to data_sources_path, notice: 'DataSource connection status was successfully updated.'
+    respond_to do |format|
+      format.html { redirect_to data_sources_path, notice: 'DataSource connection status was successfully updated.' }
+      format.json do
+        render json: { data_source: @data_source, message: 'DataSource connection status was successfully updated.' },
+               status: :ok
+      end
+    end
   end
 
   private
