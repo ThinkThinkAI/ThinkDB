@@ -1,7 +1,3 @@
-require 'rails_helper'
-require './app/services/database_service'
-require './app/services/adapters/postgres_adapter'
-
 RSpec.describe DatabaseService, type: :model do
   let(:data_source) { instance_double('DataSource', adapter: 'postgresql', database: 'test_db') }
   let(:adapter) { instance_double(PostgresAdapter) }
@@ -84,6 +80,23 @@ RSpec.describe DatabaseService, type: :model do
       it 'returns nil for unsupported queries' do
         expect(service.count(unsupported_query)).to be_nil
       end
+    end
+  end
+
+  describe '#run_query' do
+    let(:query) { 'SELECT * FROM users' }
+    let(:query_result) { [{ 'id' => 1, 'name' => 'Alice' }] }
+    let(:results_per_page) { 10 }
+    let(:page) { 1 }
+
+    before do
+      allow(adapter).to receive(:run_query).with(query, results_per_page,
+                                                 (page - 1) * results_per_page).and_return(query_result)
+    end
+
+    it 'executes a paginated query via the adapter' do
+      result = service.run_query(query, results_per_page:, page:)
+      expect(result).to eq(query_result)
     end
   end
 end

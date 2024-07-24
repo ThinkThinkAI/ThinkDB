@@ -25,4 +25,8 @@ $enable-gradients: true;
   overflow-x: hidden;
 }
 
+.scrollable {
+  overflow-y: auto;
+  overflow-x: auto;
+}
 

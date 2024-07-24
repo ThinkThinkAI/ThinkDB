@@ -59,12 +59,25 @@ class DataSourcesController < ApplicationController
   end
 
   def connect
-    @data_source.update(connected: !@data_source.connected)
+    updated_status = !@data_source.connected
+
+    database_service = DatabaseService.build(@data_source) if updated_status
+
+    database_service&.build_tables
+
+    @data_source.update!(connected: updated_status)
+    message = 'DataSource connection status was successfully updated.'
+
     respond_to do |format|
-      format.html { redirect_to data_sources_path, notice: 'DataSource connection status was successfully updated.' }
+      format.html { redirect_to data_sources_path, notice: message }
+      format.json { render json: { data_source: @data_source, message: }, status: :ok }
+    end
+  rescue StandardError => e
+    puts e.inspect
+    respond_to do |format|
+      format.html { redirect_to data_sources_path, alert: "Failed to update DataSource connection: #{e.message}" }
       format.json do
-        render json: { data_source: @data_source, message: 'DataSource connection status was successfully updated.' },
-               status: :ok
+        render json: { message: e.message }, status: :unprocessable_entity
       end
     end
   end

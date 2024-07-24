@@ -12,8 +12,6 @@ export default class extends Controller {
 
   async fetchData(url, id) {
     try {
-      console.log(id);
-
       const response = await fetch(url, {
         method: "GET",
         headers: {
@@ -22,20 +20,26 @@ export default class extends Controller {
         },
       });
 
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
+      console.log(response);
 
       const data = await response.json();
       console.log(data);
 
-      if (data.data_source.connected) {
-        window.location.href = "/query";
-      } else {
-        const element = document.querySelector(id);
+      if (response.ok) {
+        if (data.data_source.connected) {
+          window.location.href = "/query";
+        } else {
+          const element = document.querySelector(id);
 
-        element.className = "btn btn-primary btn-sm";
-        element.textContent = "connect";
+          element.className = "btn btn-primary btn-sm";
+          element.textContent = "connect";
+        }
+      } else {
+        const element = document.querySelector("#error_text");
+        element.textContent = "Error: " + data.message;
+
+        const myModal = new bootstrap.Modal("#error_modal", {});
+        myModal.show();
       }
     } catch (error) {
       console.error("Error fetching data:", error);

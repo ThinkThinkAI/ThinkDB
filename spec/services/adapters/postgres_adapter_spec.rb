@@ -1,18 +1,15 @@
-# frozen_string_literal: true
-
 require 'rails_helper'
 require 'pg'
 require './app/services/adapters/postgres_adapter'
 
 RSpec.describe PostgresAdapter, type: :model do
   let(:data_source) do
-    instance_double('DataSource', {
-                      database: 'test_db',
-                      username: 'user',
-                      password: 'password',
-                      host: 'localhost',
-                      port: '5432'
-                    })
+    instance_double('DataSource',
+                    database: 'test_db',
+                    username: 'user',
+                    password: 'password',
+                    host: 'localhost',
+                    port: '5432')
   end
 
   let(:connection) { instance_double(PG::Connection) }
@@ -66,6 +63,22 @@ RSpec.describe PostgresAdapter, type: :model do
 
       expect(connection).to have_received(:exec).with(paginated_query)
       expect(result_set).to eq(query_result)
+    end
+  end
+
+  describe '#run_raw_query' do
+    let(:raw_query) { 'UPDATE users SET name = \'Alice\' WHERE id = 1' }
+    let(:query_result) { instance_double(PG::Result) }
+    let(:query_values) { [['1']] }
+
+    it 'executes a raw query on the database' do
+      allow(connection).to receive(:exec).with(raw_query).and_return(query_result)
+      allow(query_result).to receive(:values).and_return(query_values)
+
+      result_set = adapter.run_raw_query(raw_query)
+
+      expect(connection).to have_received(:exec).with(raw_query)
+      expect(result_set).to eq(query_values)
     end
   end
 end

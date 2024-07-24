@@ -1,9 +1,9 @@
 <div class="container-fluid">
   <div class="row flex-nowrap">
-    <div class=" w-100  bg-dark">
-      <div class="d-flex flex-column   min-vh-100">
-        <div class="flex-column mb-sm-auto mb-0   w-100">
-          <nav class="navbar navbar-expand-lg w-100 ">
+    <div class="w-100 bg-dark">
+      <div class="d-flex flex-column min-vh-100">
+        <div class="flex-column mb-sm-auto mb-0 w-100">
+          <nav class="navbar navbar-expand-lg w-100">
             <div class="container-fluid p-0">
               <%= form_with(url: queries_path, method: :get, local: true, class: 'd-flex w-100 align-items-start', role: 'search', id: 'query-form') do %>
                 <%= text_area_tag :sql, params[:sql], class: 'form-control me-2 flex-grow-1', placeholder: 'Enter your query here', aria: { label: 'Query' }, rows: 5 %>
@@ -11,21 +11,48 @@
               <% end %>
             </div>
           </nav>
+          <div class="scrollable">
+            <% if @failure.present? %>
+              <div class="alert alert-danger" role="alert">
+                <%= @failure %>
+              </div>
+            <% end %>
+            <% if @results.present? %>
+              <table class="table table-bordered">
+                <thead class="table-light">
+                  <tr>
+                    <% @results.first.each do |header| %>
+                      <th><%= header %></th>
+                    <% end %>
+                  </tr>
+                </thead>
+                <tbody class="table-group-divider">
+                  <% @results.drop(1).each do |row| %>
+                    <tr>
+                      <% row.each do |value| %>
+                        <td><%= value %></td>
+                      <% end %>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            <% end %>
+          </div>
         </div>
         <nav class="navbar navbar-expand-lg w-100 mb-0">
-          <div class="container-fluid p-0 ">
-            <div class="me-2 flex-grow-1 d-flex ">
+          <div class="container-fluid p-0">
+            <div class="me-2 flex-grow-1 d-flex">
             </div>
-            <% if defined?(@page) && defined?(@page_count) %>
+            <% unless @page.nil? || @page_count.nil? %>
               <%= form_with(url: queries_path, method: :get, local: true, class: '', role: 'search') do %>
-                <%= hidden_field_tag :query, params[:sql] %>
+                <%= hidden_field_tag :sql, params[:sql] %>
                 <%= hidden_field_tag :page, @page - 1 %>
                 <%= submit_tag '<<', class: 'btn btn-outline-primary', disabled: @page == 1 %>
               <% end %>&nbsp;
               <div class='btn btn-outline-primary disabled'>page <%=@page%> of <%=@page_count%></div>
               &nbsp;
               <%= form_with(url: queries_path, method: :get, local: true, class: '', role: 'search') do %>
-                <%= hidden_field_tag :query, params[:sql] %>
+                <%= hidden_field_tag :sql, params[:sql] %>
                 <%= hidden_field_tag :page, @page + 1 %>
                 <%= submit_tag '>>', class: 'btn btn-outline-primary', disabled: @page == @page_count %>
               <% end %>

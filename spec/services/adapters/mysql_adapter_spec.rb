@@ -62,4 +62,18 @@ RSpec.describe MysqlAdapter, type: :model do
       expect(result).to eq(query_result)
     end
   end
+
+  describe '#run_raw_query' do
+    let(:raw_query) { 'UPDATE users SET name = "Alice" WHERE id = 1' }
+    let(:query_result) { [{ '1' => 1 }] }
+
+    it 'executes a raw query on the database' do
+      allow(client).to receive(:query).with(raw_query).and_return(query_result)
+
+      result = adapter.run_raw_query(raw_query)
+
+      expect(client).to have_received(:query).with(raw_query)
+      expect(result).to eq(query_result)
+    end
+  end
 end

@@ -1,4 +1,4 @@
- require 'rails_helper'
+require 'rails_helper'
 require 'sqlite3'
 require './app/services/adapters/sqlite_adapter'
 
@@ -55,6 +55,20 @@ RSpec.describe SqliteAdapter, type: :model do
       result = adapter.run_query(query, limit, offset)
 
       expect(connection).to have_received(:execute).with(paginated_query)
+      expect(result).to eq(query_result)
+    end
+  end
+
+  describe '#run_raw_query' do
+    let(:raw_query) { 'UPDATE users SET name = "Alice" WHERE id = 1' }
+    let(:query_result) { [[1]] }
+
+    it 'executes a raw query on the database' do
+      allow(connection).to receive(:execute).with(raw_query).and_return(query_result)
+
+      result = adapter.run_raw_query(raw_query)
+
+      expect(connection).to have_received(:execute).with(raw_query)
       expect(result).to eq(query_result)
     end
   end

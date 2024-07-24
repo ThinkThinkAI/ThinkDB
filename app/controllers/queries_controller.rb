@@ -4,10 +4,24 @@ class QueriesController < ApplicationController
   def index
     active_data_source = DataSource.active.take
 
-    if active_data_source.nil?
-      redirect_to data_sources_path, notice: 'Please connect a data source first.'
-    else
-      @queries = Query.all
+    return redirect_to data_sources_path, notice: 'Please connect a data source first.' if active_data_source.nil?
+
+    return unless params[:sql].present?
+
+    database_service = DatabaseService.build(active_data_source)
+
+    begin
+      @query = params[:sql]
+      @page = params[:page] ? params[:page].to_i : 1
+      @total_records = database_service.count(@query)
+      puts @total_records
+      @page_count = (@total_records.to_f / 10).ceil
+      @results = database_service.run_query(@query, results_per_page: 10, page: @page)
+    rescue StandardError => e
+      @page = nil
+      @page_count = nil
+      @total_records = nil
+      @failure = e.message
     end
   end
 

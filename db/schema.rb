@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_07_22_203655) do
+ActiveRecord::Schema[7.1].define(version: 2024_07_24_043037) do
   create_table "data_sources", force: :cascade do |t|
     t.string "adapter", null: false
     t.string "host"
@@ -23,6 +23,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_22_203655) do
     t.datetime "updated_at", null: false
     t.string "name"
     t.boolean "connected", default: false, null: false
+    t.json "schema", default: {}, null: false
     t.index ["user_id"], name: "index_data_sources_on_user_id"
   end
 
@@ -36,7 +37,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_22_203655) do
 
   create_table "tables", force: :cascade do |t|
     t.string "name", null: false
-    t.json "schema", default: {}, null: false
     t.integer "data_source_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
