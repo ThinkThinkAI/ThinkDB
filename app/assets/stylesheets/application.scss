@@ -26,7 +26,13 @@ $enable-gradients: true;
 }
 
 .scrollable {
-  overflow-y: auto;
-  overflow-x: auto;
+  
+  flex-grow: 1; /* allows the child to grow */
+  max-width: 100%; /* prevents growing beyond the parent's width */
+  max-height: 100%; /* prevents growing beyond the parent's height */
+  overflow: auto; 
 }
 
+.button-container {
+  text-align: right;
+}

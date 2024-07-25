@@ -4,6 +4,7 @@
 # necessary connection details and methods to manage its state.
 class DataSource < ApplicationRecord
   has_many :tables, dependent: :destroy
+  has_many :queries, dependent: :destroy
 
   before_save :encrypt_password
   before_save :unset_other_connected_sources, if: :connected

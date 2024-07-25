@@ -20,19 +20,13 @@ export default class extends Controller {
         },
       });
 
-      console.log(response);
-
       const data = await response.json();
-      console.log(data);
 
       if (response.ok) {
         if (data.data_source.connected) {
           window.location.href = "/query";
         } else {
-          const element = document.querySelector(id);
-
-          element.className = "btn btn-primary btn-sm";
-          element.textContent = "connect";
+          window.location.href = "/data_sources";
         }
       } else {
         const element = document.querySelector("#error_text");
