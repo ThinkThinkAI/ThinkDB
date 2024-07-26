@@ -1,0 +1,9 @@
+<% if connected? %>
+  <ul class="collapse nav flex-column ms-1" id="submenu2" data-bs-parent="#menu">
+    <% current_user.connected_data_source.queries.each do |query| %>
+      <li>
+        <a href="<%= query_path(query) %>" class="nav-link px-0"><%= query.name %></a>
+      </li>
+    <% end%>
+  </ul>
+<% end %>

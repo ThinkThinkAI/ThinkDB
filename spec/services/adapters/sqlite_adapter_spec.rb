@@ -14,7 +14,7 @@ RSpec.describe SqliteAdapter, type: :model do
     allow(SQLite3::Database).to receive(:new).and_return(connection)
   end
 
-  describe '#get_schemas' do
+  describe '#schemas' do
     let(:expected_result) do
       [
         %w[users id INTEGER],
@@ -43,13 +43,32 @@ RSpec.describe SqliteAdapter, type: :model do
   describe '#run_query' do
     let(:query_result) { [[1]] }
 
-    before do
-      allow(connection).to receive(:execute).with('SELECT 1').and_return(query_result)
-    end
+    it 'executes a query on the database with pagination' do
+      query = 'SELECT 1'
+      limit = 10
+      offset = 0
 
-    it 'executes a query on the database' do
-      result = adapter.run_query('SELECT 1')
-      expect(connection).to have_received(:execute).with('SELECT 1')
+      paginated_query = "#{query} LIMIT #{limit} OFFSET #{offset}"
+
+      allow(connection).to receive(:execute).with(paginated_query).and_return(query_result)
+
+      result = adapter.run_query(query, limit, offset)
+
+      expect(connection).to have_received(:execute).with(paginated_query)
+      expect(result).to eq(query_result)
+    end
+  end
+
+  describe '#run_raw_query' do
+    let(:raw_query) { 'UPDATE users SET name = "Alice" WHERE id = 1' }
+    let(:query_result) { [[1]] }
+
+    it 'executes a raw query on the database' do
+      allow(connection).to receive(:execute).with(raw_query).and_return(query_result)
+
+      result = adapter.run_raw_query(raw_query)
+
+      expect(connection).to have_received(:execute).with(raw_query)
       expect(result).to eq(query_result)
     end
   end

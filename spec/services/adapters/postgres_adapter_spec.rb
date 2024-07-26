@@ -1,18 +1,15 @@
-# frozen_string_literal: true
-
 require 'rails_helper'
 require 'pg'
 require './app/services/adapters/postgres_adapter'
 
 RSpec.describe PostgresAdapter, type: :model do
   let(:data_source) do
-    instance_double('DataSource', {
-                      database: 'test_db',
-                      username: 'user',
-                      password: 'password',
-                      host: 'localhost',
-                      port: '5432'
-                    })
+    instance_double('DataSource',
+                    database: 'test_db',
+                    username: 'user',
+                    password: 'password',
+                    host: 'localhost',
+                    port: '5432')
   end
 
   let(:connection) { instance_double(PG::Connection) }
@@ -23,7 +20,7 @@ RSpec.describe PostgresAdapter, type: :model do
     allow(PG).to receive(:connect).and_return(connection)
   end
 
-  describe '#get_schemas' do
+  describe '#schemas' do
     let(:expected_rows) do
       [
         { 'table_name' => 'users', 'column_name' => 'id', 'data_type' => 'integer' },
@@ -50,16 +47,38 @@ RSpec.describe PostgresAdapter, type: :model do
   end
 
   describe '#run_query' do
-    before do
-      allow(connection).to receive(:exec).with('SELECT 1').and_return(result)
-      allow(result).to receive(:values).and_return([['1']])
+    let(:query_result) { [['1']] }
+
+    it 'executes a query on the database with pagination' do
+      query = 'SELECT 1'
+      limit = 10
+      offset = 0
+
+      paginated_query = "#{query} LIMIT #{limit} OFFSET #{offset}"
+
+      allow(connection).to receive(:exec).with(paginated_query).and_return(result)
+      allow(result).to receive(:values).and_return(query_result)
+
+      result_set = adapter.run_query(query, limit, offset)
+
+      expect(connection).to have_received(:exec).with(paginated_query)
+      expect(result_set).to eq(query_result)
     end
+  end
 
-    it 'executes a query on the database' do
-      result = adapter.run_query('SELECT 1')
+  describe '#run_raw_query' do
+    let(:raw_query) { 'UPDATE users SET name = \'Alice\' WHERE id = 1' }
+    let(:query_result) { instance_double(PG::Result) }
+    let(:query_values) { [['1']] }
 
-      expect(connection).to have_received(:exec).with('SELECT 1')
-      expect(result).to eq([['1']])
+    it 'executes a raw query on the database' do
+      allow(connection).to receive(:exec).with(raw_query).and_return(query_result)
+      allow(query_result).to receive(:values).and_return(query_values)
+
+      result_set = adapter.run_raw_query(raw_query)
+
+      expect(connection).to have_received(:exec).with(raw_query)
+      expect(result_set).to eq(query_values)
     end
   end
 end

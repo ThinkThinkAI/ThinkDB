@@ -7,5 +7,4 @@ class Table < ApplicationRecord
   belongs_to :data_source
 
   validates :name, presence: true, uniqueness: { scope: :data_source_id }
-  validates :schema, presence: true
 end

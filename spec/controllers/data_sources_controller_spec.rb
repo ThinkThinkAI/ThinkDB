@@ -91,6 +91,19 @@ RSpec.describe DataSourcesController, type: :controller do
       get :connect, params: { id: data_source.id }
       expect(response).to redirect_to(data_sources_path)
     end
+
+    it 'returns JSON response' do
+      initial_status = data_source.connected
+      get :connect, params: { id: data_source.id }, format: :json
+      data_source.reload
+
+      expect(response.content_type).to eq('application/json; charset=utf-8')
+      expect(response).to have_http_status(:ok)
+
+      json_response = JSON.parse(response.body)
+      expect(json_response['data_source']['connected']).to eq(!initial_status)
+      expect(json_response['message']).to eq('DataSource connection status was successfully updated.')
+    end
   end
 
   describe 'POST #create' do

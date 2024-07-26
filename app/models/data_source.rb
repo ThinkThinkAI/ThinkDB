@@ -4,6 +4,7 @@
 # necessary connection details and methods to manage its state.
 class DataSource < ApplicationRecord
   has_many :tables, dependent: :destroy
+  has_many :queries, dependent: :destroy
 
   before_save :encrypt_password
   before_save :unset_other_connected_sources, if: :connected
@@ -12,6 +13,8 @@ class DataSource < ApplicationRecord
 
   validates :adapter, presence: true, inclusion: { in: %w[postgresql mysql sqlite] }
   validates :port, numericality: { only_integer: true }, allow_blank: true
+
+  scope :active, -> { where(connected: true) }
 
   def encrypt_password
     self.password = encrypt(password) if password.present?
