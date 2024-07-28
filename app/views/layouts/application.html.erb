@@ -14,15 +14,10 @@
             <%= render "layouts/sidebar/main" %>
           </div>
         </div>
-        <div class="col m-0 p-0 scrollable-content">
+        <div class="col m-0 p-0 scrollable-content bg-body-tertiary">
           <%= yield %>
         </div>
       </div>
     </div>
-    <script>
-      document.addEventListener('DOMContentLoaded', (event) => {
-      document.documentElement.setAttribute('data-bs-theme', 'dark');
-      });
-    </script>
   </body>
 </html>

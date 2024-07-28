@@ -22,9 +22,10 @@ gem 'tzinfo-data', platforms: %i[windows jruby]
 
 gem 'bootsnap', require: false
 
-gem 'bootstrap', '~> 5.1.3'
+gem 'bootstrap', '~> 5.3.3'
 gem 'devise'
 gem 'omniauth-github'
+gem 'sassc-rails'
 
 gem 'dotenv-rails'
 gem 'omniauth-rails_csrf_protection'

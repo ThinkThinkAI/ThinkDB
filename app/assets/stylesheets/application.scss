@@ -15,14 +15,15 @@
  */
  
 
-//  $enable-dark-mode: true;
-$primary: #0074d9;
-$danger: #2acaa7;
-$theme-colors: (
-  "primary": $primary,
-  "danger": $danger
-);
+$primary: #6261cc;
+$secondary: #6c757d;
+$success: #5ad8a1;
+$danger: #fa5c7c;
+$warning: #ffc35a;
+$info: #39afd1;
 
+// $light: #f8f9fa;
+// $dark: #343a40;
 
 
 @import "bootstrap";
@@ -30,6 +31,22 @@ $theme-colors: (
 
 
 
+.accordion {
+	//--bs-accordion-active-bg: $light;
+
+  --bs-accordion-btn-color: $light;
+	--bs-accordion-active-bg: $accordion-button-bg;
+  --bs-accordion-active-color: $light;
+}
+
+.card {
+  --bs-card-border-width: 0px;
+  //--bs-card-bg: #373d43;
+}
+
+.accordion-button::after {
+    background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23ffffff'><path fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/></svg>") !important;
+ }
 
 .scrollable-content {
   height: calc(100vh); /* Adjust based on your header height or any top-fixed elements */
@@ -47,4 +64,9 @@ $theme-colors: (
 
 .button-container {
   text-align: right;
+}
+
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900");
+body {
+  font-family: 'Poppins', sans-serif !important;
 }

@@ -21,4 +21,5 @@ Rails.application.routes.draw do
   patch 'users/settings', to: 'users#settings'
 
   root to: 'home#index'
+  get '/swatch', to: 'home#swatch'
 end
