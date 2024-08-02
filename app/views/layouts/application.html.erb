@@ -9,12 +9,12 @@
   <body>
     <div class="container-fluid">
       <div class="row flex-nowrap">
-        <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0">
+        <div class="col-auto col-md-3 col-xl-2 m-0 p-0 scrollable-content">
           <div id="sidebar">
             <%= render "layouts/sidebar/main" %>
           </div>
         </div>
-        <div class="col m-0 p-0 scrollable-content bg-body-tertiary">
+        <div class="col m-0 p-4 scrollable-content bg-body-tertiary">
           <%= yield %>
         </div>
       </div>

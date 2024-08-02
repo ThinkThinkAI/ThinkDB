@@ -1,7 +1,13 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
-  resources :queries
+  resources :queries do
+    collection do
+      get :metadata
+      get :data
+    end
+  end
+
   devise_for :users, controllers: {
     sessions: 'custom_sessions',
     omniauth_callbacks: 'users/omniauth_callbacks'

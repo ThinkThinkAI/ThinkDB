@@ -1,172 +1,44 @@
-<div class="container-fluid">
-  <div class="row flex-nowrap">
-    <div class="w-100 ">
-      <div class="d-flex flex-column min-vh-100">
-        <div class="flex-column mb-sm-auto mb-0 w-100 h-100">
-          <nav class="navbar navbar-expand-lg w-100" id="top_nav">
-            <div class="container-fluid p-0">
-              <%= form_with(url: queries_path, method: :get, local: true, class: 'd-flex w-100 align-items-start', role: 'search', id: 'query-form') do %>
-                <% sql_value = @query ? @query.sql : params[:sql] %>
-                <%= text_area_tag :sql, sql_value, class: 'form-control me-2 flex-grow-1', placeholder: 'Enter your query here', aria: { label: 'Query' }, rows: 5, id: 'sql-textarea' %>
-                <div class="button-container">
-                  <%= submit_tag 'Query', class: 'btn btn-outline-primary fixed-height-button' %><br>
-                  <a href="#" id="save-btn" class="btn btn-outline-primary fixed-height-button mt-2" data-bs-toggle="modal" data-bs-target="#saveModal">Save</a>
-                </div>
-              <% end %>
-            </div>
-          </nav>
-          <div class="scrollable">
-            <% if @failure.present? %>
-              <div class="alert alert-danger" role="alert">
-                <%= @failure %>
-              </div>
-            <% end %>
-            <% if @results.present? %>
-              <table class="table table-bordered">
-                <thead class="table-light">
-                  <tr>
-                    <% @results.first.each do |header| %>
-                      <th><%= header %></th>
-                    <% end %>
-                  </tr>
-                </thead>
-                <tbody class="table-group-divider">
-                  <% @results.drop(1).each do |row| %>
-                    <tr>
-                      <% row.each do |value| %>
-                        <td><%= value %></td>
-                      <% end %>
-                    </tr>
-                  <% end %>
-                </tbody>
-              </table>
-            <% end %>
-          </div>
-        </div>
-        <nav class="navbar navbar-expand-lg w-100 mb-0" id="bottom_nav">
-          <div class="container-fluid p-0">
-            <div class="me-2 flex-grow-1 d-flex">
-            </div>
-            <% unless @page.nil? || @page_count.nil? %>
-              <%= form_with(url: queries_path, method: :get, local: true, class: '', role: 'search') do %>
-                <%= hidden_field_tag :sql, @query ? @query.sql : params[:sql]  %>
-                <%= hidden_field_tag :page, @page - 1 %>
-                <%= submit_tag '<<', class: 'btn btn-outline-primary', disabled: @page == 1 %>
-              <% end %>&nbsp;
-              <div class='btn btn-outline-primary disabled'>page <%=@page%> of <%=@page_count%></div>
-              &nbsp;
-              <%= form_with(url: queries_path, method: :get, local: true, class: '', role: 'search') do %>
-                <%= hidden_field_tag :sql, @query ? @query.sql : params[:sql]  %>
-                <%= hidden_field_tag :page, @page + 1 %>
-                <%= submit_tag '>>', class: 'btn btn-outline-primary', disabled: @page == @page_count %>
-              <% end %>
-            <% else %>
-              <%= form_with(url: queries_path, method: :get, local: true, class: '', role: 'search') do %>
-                <%= submit_tag '<<', class: 'btn btn-outline-primary', disabled: true %>
-              <% end %>&nbsp;
-              <%= form_with(url: queries_path, method: :get, local: true, class: '', role: 'search') do %>
-                <%= submit_tag '>>', class: 'btn btn-outline-primary', disabled: true %>
-              <% end %>
-            <% end %>
-          </div>
-        </nav>
-      </div>
+<% sql_value = @query ? @query.sql : params[:sql] %>
+<style>
+  .tall {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+</style>
+
+<div class="container-fluid tall">
+  <div class="row">
+    <div class="col">
+      <h1 class="mb-4">Query</h1>
     </div>
   </div>
-</div>
-<div class="modal fade" id="saveModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="exampleModalLabel">Save Query</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <div id="save-query-form">
-          <input type="hidden" id="modal-sql-hidden" name="sql">
-          <div class="mb-3">
-            <label for="query_name">Query Name</label>
-            <input type="text" id="query_name" class="form-control" required>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary" onclick="saveQuery()">Save changes</button>
-          </div>
+  <div class="row">
+    <div class="col-12">
+      <div class="card mb-4">
+        <div class="card-body">
+          <%= render partial: 'queries/input', locals: { sql_value: sql_value } %>
         </div>
       </div>
     </div>
   </div>
+ 
+  <% unless sql_value.blank? %>
+    <div class="row flex-grow-1">
+      <div class="col-12 d-flex">
+        <div class="card mb-0 flex-grow-1">
+          <div class="card-body">
+            <%= render partial: "queries/output", locals: { sql: sql_value } %>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end%>
+  
 </div>
-<script>
-  document.addEventListener('DOMContentLoaded', (event) => {
-    const queryForm = document.getElementById('query-form');
-    const textArea = queryForm.querySelector('#sql-textarea');
-    const saveButton = document.getElementById('save-btn');
-    const modalSqlHiddenField = document.getElementById('modal-sql-hidden');
+  
 
-    textArea.addEventListener('keydown', (event) => {
-      if ((event.altKey || event.metaKey) && event.key === 'Enter') {
-        event.preventDefault();
-        queryForm.submit();
-      }
-    });
 
-    saveButton.addEventListener('click', (event) => {
-      modalSqlHiddenField.value = textArea.value;
-    });
-  });
 
-  function adjustContentHeight() {
-    const header = document.querySelector('#top_nav');
-    const footer = document.querySelector('#bottom_nav');
-    const contentArea = document.querySelector('.scrollable');
-
-    const headerHeight = header.offsetHeight;
-    const footerHeight = footer.offsetHeight;
-    const viewportHeight = window.innerHeight;
-
-    contentArea.style.height = `calc(${viewportHeight}px - ${headerHeight + footerHeight}px)`;
-  }
-
-  function saveQuery() {
-  // Retrieve the values from the input fields
-  const sql = document.getElementById('sql-textarea').value;
-  console.log(sql);
-  const queryName = document.getElementById('query_name').value;
-  // Create the data object
-  const data = {
-  sql: sql,
-  name: queryName
-  };
-  // Send POST request to the server
-  fetch('<%= queries_path %>', {
-  method: 'POST',
-  headers: {
-  'Content-Type': 'application/json',
-  'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-  },
-  body: JSON.stringify(data)
-  })
-  .then(response => {
-  if(response.ok) {
-
-  // Reload the page after successful submission
-  window.location.href = response.url;
-  //location.reload();
-  } else {
-  return response.json().then(errorData => {
-  // Handle validation errors or other messages
-  console.error('Error:', errorData);
-  });
-  }
-  })
-  .catch(error => {
-  console.error('Error:', error);
-  });
-  }
-
-  window.addEventListener('resize', adjustContentHeight);
-  window.addEventListener('load', adjustContentHeight);
-  document.addEventListener('turbo:render', adjustContentHeight);
-  document.addEventListener('turbo:render', adjustContentHeight);
-</script>
+ 
+  

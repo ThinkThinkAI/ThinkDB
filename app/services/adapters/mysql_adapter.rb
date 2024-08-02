@@ -22,7 +22,7 @@ class MysqlAdapter < SQLAdapter
 
   def schemas
     qry = "SELECT table_name, column_name, data_type FROM information_schema.columns where table_schema='#{@data_source.username}'"
-    puts qry
+
     result = run_raw_query(qry)
 
     result.each_with_object({}) do |row, acc|
@@ -35,9 +35,11 @@ class MysqlAdapter < SQLAdapter
     end
   end
 
-  def run_query(query, limit = 10, offset = 0)
-    paginated_query = "#{query} LIMIT #{limit} OFFSET #{offset}"
-    result = @client.query(paginated_query)
+  def run_query(query, limit = 10, offset = 0, sort = nil)
+    wrapped_query = add_sorting(query, sort)
+    wrapped_query = add_offset(wrapped_query, limit, offset)
+
+    result = @client.query(wrapped_query)
 
     keys = result.first.keys
     transformed_result = result.map(&:values)

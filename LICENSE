@@ -1,21 +1,71 @@
-MIT License
+[DataDialog] Semi-Open Source Evaluation License
+
+Version 1.0, [2024]
 
 Copyright (c) [2024] [Jason Jacobs]
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+of this software and associated documentation files (the "Software"), to use
+the Software for evaluation purposes only, subject to the following conditions:
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+1. Evaluation Period
+   The Software may be evaluated for an unlimited period ("Evaluation Period").
+   During the Evaluation Period, the Software may be used to assess its
+   functionality and suitability.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+2. License Activation
+   Upon conclusion of the Evaluation Period, if you wish to continue using the
+   Software for any purpose other than evaluation, a valid license must be
+   obtained from the Licensor. Continued use of the Software beyond the
+   Evaluation Period without purchasing a license is strictly prohibited.
+
+3. Restrictions
+   You shall not:
+   - Use the Software for any purpose other than evaluation during the
+     Evaluation Period.
+   - Distribute, sublicense, lease, rent, or otherwise transfer the Software
+     or any part thereof to any third party without prior written consent from
+     the Licensor.
+   - Remove or alter any proprietary notices, labels, or marks on the Software.
+
+4. Ownership
+   The Software is the property of the Licensor and is protected by copyright
+   laws and international treaties. You acknowledge that no title to the
+   intellectual property in the Software is transferred to you under this
+   Agreement. You do not acquire any rights to the Software except as expressly
+   set forth in this Agreement.
+
+5. Disclaimer of Warranties
+   The Software is provided "as is" without warranty of any kind, either express
+   or implied, including, but not limited to, the implied warranties of
+   merchantability, fitness for a particular purpose, or non-infringement. The
+   entire risk arising out of the use or performance of the Software remains
+   with you.
+
+6. Limitation of Liability
+   In no event shall the Licensor be liable for any damages whatsoever
+   (including, without limitation, damages for loss of business profits, business
+   interruption, loss of business information, or any other pecuniary loss)
+   arising out of the use or inability to use the Software, even if the Licensor
+   has been advised of the possibility of such damages.
+
+7. Termination
+   This Agreement will terminate automatically if you fail to comply with any of
+   the terms and conditions of this Agreement. Upon termination, you must cease
+   all use of the Software and destroy all copies of the Software in your
+   possession.
+
+8. Governing Law
+   This Agreement shall be governed by and construed in accordance with the laws
+   of Your Jurisdiction, without regard to its conflict of law principles.
+
+9. Entire Agreement
+   This Agreement constitutes the entire agreement between the parties with
+   respect to the use of the Software and supersedes all prior or contemporaneous
+   understandings regarding such subject matter. No amendment to or modification
+   of this Agreement will be binding unless in writing and signed by the Licensor.
+
+---
+
+By downloading, installing, or using the Software, you acknowledge that you have
+read this Agreement, understand it, and agree to be bound by its terms and conditions.

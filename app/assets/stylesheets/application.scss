@@ -15,15 +15,35 @@
  */
  
 
+
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Inter:wght@100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+
+$font-size-base: 0.813rem;
 $primary: #6261cc;
-$secondary: #6c757d;
+$secondary: #35383b;
 $success: #5ad8a1;
 $danger: #fa5c7c;
 $warning: #ffc35a;
 $info: #39afd1;
+$font-family-sans-serif: "Inter", sans-serif;
 
-// $light: #f8f9fa;
-// $dark: #343a40;
+$input-bg: #2e3133;
+$input-focus-bg: #424649;
+$input-focus-box-shadow: none;
+$input-box-shadow:  none;
+
+$btn-hover-bg-shade-amount:       15%;
+$btn-hover-bg-tint-amount:        15%;
+
+$h1-font-size:   22.75px;
+$h2-font-size:   19.50px;
+$h3-font-size:   17.55px;
+$h4-font-size:   16.25px;
+$h5-font-size:   14.95px;
+$h6-font-size:   13.95px;
+
+$input-border-width: 0px;
+
 
 
 @import "bootstrap";
@@ -31,12 +51,29 @@ $info: #39afd1;
 
 
 
-.accordion {
-	//--bs-accordion-active-bg: $light;
+// @each $color, $value in $theme-colors {
+//   .btn-#{$color} {
+//     @include button-variant($value, $value,
+//     // modify
+//     $hover-background: lighten($value, 7.5%),
+//     $hover-border: lighten($value, 10%),
+//     $active-background: lighten($value, 10%),
+//     $active-border: lighten($value, 12.5%)
+//     // /modify
+//     );
+//   }
+// }
 
+.accordion {
   --bs-accordion-btn-color: $light;
 	--bs-accordion-active-bg: $accordion-button-bg;
   --bs-accordion-active-color: $light;
+  --bs-accordion-body-padding-y: 12px;
+  --bs-accordion-body-padding-x: 12px;
+}
+
+.list-group {
+  --bs-list-group-item-padding-x: 4px;
 }
 
 .card {
@@ -47,6 +84,10 @@ $info: #39afd1;
 .accordion-button::after {
     background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23ffffff'><path fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/></svg>") !important;
  }
+
+ .accordion-button.no-icon::after {
+    background-image: none !important;
+}
 
 .scrollable-content {
   height: calc(100vh); /* Adjust based on your header height or any top-fixed elements */
@@ -66,7 +107,33 @@ $info: #39afd1;
   text-align: right;
 }
 
-@import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900");
-body {
-  font-family: 'Poppins', sans-serif !important;
+
+// body {
+//   font-family: "Inter", sans-serif;
+// }
+
+.floatz {
+    position: fixed;
+    bottom: 10px;
+    left: 10px;
+    z-index: 1000; /* Ensure it's above other content */
+    /* Optional Styling for the div */
+    background-color: $dark; /* semi-transparent background */
+    color: white; /* text color */
+    padding: 0px; /* some padding inside the div */
+    border-width: 1px;
+    border-color: #6c757d;
+    border-radius: 5px; /* rounded corners */
 }
+
+.nav-link, .nav-link i, .nav-link span {
+  display: inline-block;
+  vertical-align: middle; 
+}
+
+
+.gradient-background {
+background-color: #FF3CAC;
+background-image: linear-gradient(286deg, #b12a77 0%, #784BA0 50%, #431661 100%);
+}
+

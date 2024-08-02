@@ -39,9 +39,11 @@ class SqliteAdapter < SQLAdapter
     end
   end
 
-  def run_query(query, limit = 10, offset = 0)
-    paginated_query = "#{query} LIMIT #{limit} OFFSET #{offset}"
-    @connection.execute2(paginated_query)
+  def run_query(query, limit = 10, offset = 0, sort = nil)
+    wrapped_query = add_sorting(query, sort)
+    wrapped_query = add_offset(wrapped_query, limit, offset)
+
+    @connection.execute2(wrapped_query)
   end
 
   def run_raw_query(query)

@@ -20,20 +20,10 @@ class DataSourcesController < ApplicationController
   def create
     @data_source = current_user.data_sources.build(data_source_params)
 
-    respond_to do |format|
-      if @data_source.save
-        format.turbo_stream
-        format.html { redirect_to data_sources_url, notice: 'DataSource was successfully created.' }
-      else
-        format.turbo_stream do
-          render turbo_stream: turbo_stream.replace('new_tier',
-                                                    partial: 'data_sources/form',
-                                                    locals: { data_source: @data_source }),
-                 status: :unprocessable_entity
-        end
-
-        format.html { render :new, status: :unprocessable_entity }
-      end
+    if @data_source.save
+      redirect_to queries_path, notice: 'DataSource was successfully created.'
+    else
+      render :new, status: :unprocessable_entity
     end
   end
 
@@ -43,7 +33,7 @@ class DataSourcesController < ApplicationController
 
   def update
     if @data_source.update(data_source_params)
-      redirect_to data_sources_path, notice: 'DataSource was successfully updated.'
+      redirect_to queries_path, notice: 'DataSource was successfully updated.'
     else
       render :edit
     end
@@ -53,27 +43,32 @@ class DataSourcesController < ApplicationController
     @data_source.destroy
 
     respond_to do |format|
-      format.turbo_stream { render turbo_stream: turbo_stream.remove(@data_source) }
-      format.html { redirect_to data_sources_path, notice: 'Data source was successfully destroyed.' }
+      if current_user.data_sources.exists?
+        format.html { redirect_to queries_path, notice: 'DataSource was successfully deleted.' }
+      else
+        format.html { redirect_to new_data_source_path, notice: 'No DataSource left. Please create a new one.' }
+      end
     end
   end
 
   def connect
     updated_status = !@data_source.connected
 
-    database_service = DatabaseService.build(@data_source) if updated_status
+    if updated_status
+      database_service = DatabaseService.build(@data_source)
 
-    database_service&.build_tables
+      database_service&.build_tables
 
-    @data_source.update!(connected: updated_status)
+      @data_source.update!(connected: updated_status)
+    end
+
     message = 'DataSource connection status was successfully updated.'
 
     respond_to do |format|
-      format.html { redirect_to data_sources_path, notice: message }
+      format.html { redirect_to queries_path, notice: message }
       format.json { render json: { data_source: @data_source, message: }, status: :ok }
     end
   rescue StandardError => e
-    puts e.inspect
     respond_to do |format|
       format.html { redirect_to data_sources_path, alert: "Failed to update DataSource connection: #{e.message}" }
       format.json do
