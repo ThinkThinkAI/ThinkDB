@@ -1,83 +1,101 @@
-<div class="card">
-  <div class="card-body">
-    <%= form_with(model: @data_source, local: true, html: { class: 'needs-validation' }) do |form| %>
-      <% if @data_source.errors.any? %>
-        <div id="error_explanation" class="alert alert-danger">
-          <h2><%= pluralize(@data_source.errors.count, "error") %> prohibited this data_source from being saved:</h2>
-          <ul>
-            <% @data_source.errors.full_messages.each do |message| %>
-              <li><%= message %></li>
-            <% end %>
-          </ul>
-        </div>
-      <% end %>
-      <div class="mb-3">
-        <%= form.label :name, class: 'form-label' %>
-        <%= form.text_field :name, class: 'form-control', autocomplete: 'off' %>
-      </div>
-      <div class="mb-3">
-        <%= form.label :type, 'Type', class: 'form-label' %>
-        <%= form.select :adapter, options_for_select([['PostgreSQL', 'postgresql'], ['MySQL', 'mysql'], ['SQLite', 'sqlite']], @data_source.adapter), { prompt: 'Select Type' }, { class: 'form-select', id: 'data_source_type' } %>
-      </div>
-      <div id="fields">
-        <div class="mb-3">
-          <%= form.label :host, class: 'form-label' %>
-          <%= form.text_field :host, class: 'form-control', autocomplete: 'off' %>
-        </div>
-        <div class="mb-3">
-          <%= form.label :port, class: 'form-label' %>
-          <%= form.number_field :port, class: 'form-control', autocomplete: 'off' %>
-        </div>
-        <div class="mb-3">
-          <%= form.label :database, class: 'form-label', id: 'database_label' %>
-          <%= form.text_field :database, class: 'form-control', autocomplete: 'off', id: 'database_field' %>
-        </div>
-        <div class="mb-3">
-          <%= form.label :username, class: 'form-label' %>
-          <%= form.text_field :username, class: 'form-control', autocomplete: 'off' %>
-        </div>
-        <div class="mb-3">
-          <%= form.label :password, class: 'form-label' %>
-          <%= form.password_field :password, class: 'form-control', autocomplete: 'off' %>
-        </div>
-      </div>
-      <div class="actions d-flex">
-        <%= link_to "Cancel", @data_source, class: 'btn btn-warning' %>
-        <%= form.submit "Submit", class: 'btn btn-primary ms-auto' %>
-      </div>
-    <% end %>
+<%= form_with(model: @data_source, local: true, html: { class: 'needs-validation' }) do |form| %>
+  <% if @data_source.errors.any? %>
+    <div id="error_explanation" class="alert alert-danger">
+      <h2><%= pluralize(@data_source.errors.count, "error") %> prohibited this data_source from being saved:</h2>
+      <ul>
+        <% @data_source.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+  <div class="mb-4">
+    <%= form.label :name, class: 'form-label' %>
+    <%= form.text_field :name, class: 'form-control', autocomplete: 'off' %>
   </div>
-</div>
-<br>
+  <div class="mb-4">
+    <%= form.label :type, 'Type', class: 'form-label' %>
+    <%= form.select :adapter, options_for_select([['PostgreSQL', 'postgresql'], ['MySQL', 'mysql'], ['SQLite', 'sqlite']], @data_source.adapter), { prompt: 'Select Type' }, { class: 'form-select', id: 'data_source_type' } %>
+  </div>
+  <div id="fields">
+    <div class="mb-4">
+      <%= form.label :host, class: 'form-label' %>
+      <%= form.text_field :host, class: 'form-control', autocomplete: 'off' %>
+    </div>
+    <div class="mb-4">
+      <%= form.label :port, class: 'form-label' %>
+      <%= form.number_field :port, value: @data_source.port || "", class: 'form-control', autocomplete: 'off' %>
+    </div>
+    <div class="mb-4">
+      <%= form.label :database, class: 'form-label', id: 'database_label' %>
+      <%= form.text_field :database, class: 'form-control', autocomplete: 'off', id: 'database_field' %>
+    </div>
+    <div class="mb-4">
+      <%= form.label :username, class: 'form-label' %>
+      <%= form.text_field :username, class: 'form-control', autocomplete: 'off' %>
+    </div>
+    <div class="mb-4">
+      <%= form.label :password, class: 'form-label' %>
+      <%= form.password_field :password, class: 'form-control', autocomplete: 'off' %>
+    </div>
+  </div>
+  <div class="float-end">
+    <%= link_to "Cancel", "javascript:history.back()", class: 'btn btn-secondary me-1' %>
+    <%= form.submit "Save", class: "btn btn-primary" %>
+  </div>
+<% end %>
 <script>
   function setupForm() {
-    console.log("setupForm");
+  console.log("setupForm");
   const typeSelect = document.getElementById("data_source_type");
   const fields = document.getElementById("fields");
-  const hostField = fields.querySelector("[name='data_source[host]']").closest(".mb-3");
-  const portField = fields.querySelector("[name='data_source[port]']").closest(".mb-3");
-  const usernameField = fields.querySelector("[name='data_source[username]']").closest(".mb-3");
-  const passwordField = fields.querySelector("[name='data_source[password]']").closest(".mb-3");
+  const hostField = fields.querySelector("[name='data_source[host]']").closest(".mb-4");
+  const portField = fields.querySelector("[name='data_source[port]']").closest(".mb-4");
+  const portInput = fields.querySelector("[name='data_source[port]']");
+  const usernameField = fields.querySelector("[name='data_source[username]']").closest(".mb-4");
+  const passwordField = fields.querySelector("[name='data_source[password]']").closest(".mb-4");
   const databaseLabel = document.getElementById("database_label");
   const databaseField = document.getElementById("database_field");
   function toggleFields() {
-  if (typeSelect.value === "sqlite") {
+  switch (typeSelect.value) {
+  case "sqlite":
   hostField.style.display = "none";
   portField.style.display = "none";
   usernameField.style.display = "none";
   passwordField.style.display = "none";
   databaseLabel.textContent = "File Path";
-  } else {
+  portInput.value = ""; // Clear the port field for SQLite
+  break;
+  case "postgresql":
   hostField.style.display = "";
   portField.style.display = "";
   usernameField.style.display = "";
   passwordField.style.display = "";
   databaseLabel.textContent = "Database";
+  portInput.value = 5432; // Set default port for PostgreSQL
+  break;
+  case "mysql":
+  hostField
+          hostField.style.display = "";
+  portField.style.display = "";
+  usernameField.style.display = "";
+  passwordField.style.display = "";
+  databaseLabel.textContent = "Database";
+  portInput.value = 3306; // Set default port for MySQL
+  break;
+  default:
+  hostField.style.display = "";
+  portField.style.display = "";
+  usernameField.style.display = "";
+  passwordField.style.display = "";
+  databaseLabel.textContent = "Database";
+  portInput.value = ""; // Clear the port field if no default is specified
+  break;
   }
   }
   typeSelect.addEventListener("change", toggleFields);
-  // Initial setup based on current type selection
+  // Initialize the fields based on the current selection
   toggleFields();
   }
-   document.addEventListener("turbo:load", setupForm());
+  document.addEventListener("turbo:load", setupForm);
 </script>

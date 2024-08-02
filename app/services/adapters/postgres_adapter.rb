@@ -31,9 +31,11 @@ class PostgresAdapter < SQLAdapter
     end
   end
 
-  def run_query(query, limit = 10, offset = 0)
-    paginated_query = "#{query} LIMIT #{limit} OFFSET #{offset}"
-    result = @connection.exec(paginated_query)
+  def run_query(query, limit = 10, offset = 0, sort = nil)
+    wrapped_query = add_sorting(query, sort)
+    wrapped_query = add_offset(wrapped_query, limit, offset)
+
+    result = @connection.exec(wrapped_query)
     fields = result.fields
     values = result.values
     [fields] + values

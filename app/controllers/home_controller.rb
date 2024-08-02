@@ -11,4 +11,8 @@ class HomeController < ApplicationController
       redirect_to data_sources_path
     end
   end
+
+  def swatch
+    
+  end
 end

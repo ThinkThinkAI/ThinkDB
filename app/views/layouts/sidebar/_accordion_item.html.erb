@@ -1,0 +1,12 @@
+<div class="accordion-item">
+  <h2 class="accordion-header">
+    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse<%= title.sub(' ','_') %>" aria-expanded="false" aria-controls="collapse<%= title.sub(' ','_') %>">
+      <i class="fs-4 <%= icon_class %> <%= text_muted %>"></i> <span class="ms-2 d-none d-sm-inline <%= text_muted %>"><%= title %></span>
+    </button>
+  </h2>
+  <div id="collapse<%= title.sub(' ','_') %>" class="accordion-collapse collapse" data-bs-parent="#accordianBar">
+    <div class="accordion-body">
+      <%= render "layouts/sidebar/#{title.downcase.sub(' ','_')}" %>
+    </div>
+  </div>
+</div>

@@ -1,26 +1,32 @@
-<h1>Configure Your Account</h1>
-<%= form_with(model: @user, url: user_settings_path, method: :patch, local: true, class: "needs-validation", novalidate: true) do |form| %>
-  <div class="mb-3">
-    <%= form.label :ai_url, "AI URL", class: "form-label" %>
-    <%= form.text_field :ai_url, class: "form-control" %>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col">
+      <h1 class="mb-4">Settings</h1>
+    </div>
   </div>
-  <div class="mb-3">
-    <%= form.label :ai_model, "AI Model", class: "form-label" %>
-    <%= form.text_field :ai_model, class: "form-control" %>
+  <div class="row">
+    <div class="col-sm-12 col-md-7 col-lg-6">
+      <div class="card">
+        <div class="card-body">
+          <%= form_with(model: @user, url: user_settings_path, method: :patch, local: true, class: "needs-validation mb-0", novalidate: true) do |form| %>
+            <div class="mb-4">
+              <%= form.label :ai_url, "AI URL", class: "form-label" %>
+              <%= form.text_field :ai_url, class: "form-control" %>
+            </div>
+            <div class="mb-4">
+              <%= form.label :ai_model, "AI Model", class: "form-label" %>
+              <%= form.text_field :ai_model, class: "form-control" %>
+            </div>
+            <div class="mb-4">
+              <%= form.label :ai_api_key, "AI API Key", class: "form-label" %>
+              <%= form.text_field :ai_api_key, class: "form-control" %>
+            </div>
+            <div class="float-end">
+              <%= link_to "Cancel", "javascript:history.back()", class: 'btn btn-secondary me-1' %>
+              <%= form.submit "Save", class: "btn btn-primary" %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
   </div>
-  <div class="mb-3">
-    <%= form.label :ai_api_key, "AI API Key", class: "form-label" %>
-    <%= form.text_field :ai_api_key, class: "form-control" %>
-  </div>
-  <%
-=begin%>
-  <div class="form-check mb-3">
-    <%= form.check_box :darkmode, class: "form-check-input" %>
-    <%= form.label :darkmode, "Dark Mode", class: "form-check-label" %>
-  </div>
-  <%
-=end%>
-  <div class="d-grid">
-    <%= form.submit "Save", class: "btn btn-primary" %>
-  </div>
-<% end %>

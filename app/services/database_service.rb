@@ -26,23 +26,45 @@ class DatabaseService
 
   def build_tables
     schemas = @adapter.schemas
-    puts schemas.inspect
+
     @data_source.update(schema: schemas.to_json)
     @data_source.tables.destroy_all
 
     schemas.each_key do |key|
-      puts key
       @data_source.tables.create(name: key)
     end
   end
 
-  def run_query(query, results_per_page: 10, page: 1)
+  def format_json(data)
+    if data.any?
+      headers = data.shift
+      data.map do |row|
+        headers.zip(row).to_h
+      end
+    else
+      []
+    end
+  end
+
+  def run_query(query, results_per_page: 10, page: 1, format: 'default', sort: nil)
     offset = (page - 1) * results_per_page
-    @adapter.run_query(query, results_per_page, offset)
+
+    raw_data = @adapter.run_query(query, results_per_page, offset, sort)
+
+    case format
+    when 'json'
+      format_json(raw_data)
+    else
+      raw_data
+    end
   end
 
   def run_raw_query(query)
     @adapter.run_raw_query(query)
+  end
+
+  def column_names(query)
+    run_query(query, results_per_page: 1).first
   end
 
   def count(query)

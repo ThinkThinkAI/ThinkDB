@@ -1,0 +1,27 @@
+<% if user_signed_in? %>
+  <div>
+    <ul class="list-group list-group-flush">
+      <% current_user.data_sources.each do |data_source| %>
+        <% next unless data_source.id.present? %>
+        
+          <% icon_color = data_source.connected? ? "success" : "danger" %>
+          <li class="list-group-item d-flex justify-content-between align-items-center border-0 border-bottom">
+            <a href="<%= connect_data_source_path(data_source) %>" class="nav-link d-flex align-items-center">
+              <i class="me-1 bi bi-circle-fill text-<%= icon_color %>"></i>
+              <%= data_source.name %>
+            </a>
+            <span>
+              <a href="<%= edit_data_source_path(data_source) %>" class="nav-link">
+                <i class="bi bi-pencil-fill text-warning">
+                </i>
+              </a>
+              <%= link_to data_source_path(data_source), method: :delete, data: { turbo_method: "delete", turbo_confirm: 'Are you sure?' }, class: 'nav-link text-danger' do %>
+                <i class="bi bi-trash-fill"></i>
+              <% end %></span>
+          </li>
+        
+      <% end%>
+      <li class="list-group-item" ><a href="<%= new_data_source_path %>" class="nav-link"><i class="me-1 bi bi-plus-circle-fill "></i>New Data Source</a></li>
+    </ul>
+  </div>
+<% end %>

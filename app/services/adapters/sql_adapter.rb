@@ -7,13 +7,30 @@ class SQLAdapter
     return nil unless supported_query_type?(query)
 
     count_query = convert_to_count_query(query)
-    puts count_query.inspect
+
     result = run_raw_query(count_query)
-    puts result.inspect
     result.first[0]
   end
 
   private
+
+  def select_query?(query)
+    query.strip.match?(/^SELECT/i)
+  end
+
+  def add_offset(query, limit, offset)
+    return query unless select_query?(query)
+    "#{query} LIMIT #{limit} OFFSET #{offset}"
+  end
+
+  def add_sorting(query, sort)
+    return query unless select_query?(query)
+    return query unless sort && sort[:column]
+
+    query_without_order = query.sub(/ORDER\s+BY\s+[\w\s,]*/i, '')
+
+    "#{query_without_order} ORDER BY #{sort[:column]} #{sort[:order].upcase}"
+  end
 
   def supported_query_type?(query)
     query.strip.downcase.start_with?('select', 'update', 'delete', 'insert')

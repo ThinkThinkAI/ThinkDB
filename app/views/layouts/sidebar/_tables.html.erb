@@ -1,7 +1,7 @@
 <% if connected? %>
-  <ul class="collapse nav flex-column ms-1" id="submenu1" data-bs-parent="#menu">
+  <ul class="list-group list-group-flush">
     <% current_user.connected_data_source.tables.each do |table| %>
-      <li>
+      <li class="list-group-item">
         <a href="<%= queries_path(sql: "select * from #{table.name}").sub('queries','query') %>" class="nav-link px-0"><%= table.name %></a>
       </li>
     <% end%>
