@@ -1,4 +1,5 @@
-# app/services/database_service.rb
+# frozen_string_literal: true
+
 require_relative 'adapters/postgres_adapter'
 require_relative 'adapters/mysql_adapter'
 require_relative 'adapters/sqlite_adapter'

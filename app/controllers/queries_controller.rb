@@ -60,7 +60,7 @@ class QueriesController < ApplicationController
 
       result_data[:column_names] = database_service.column_names(sql)
     rescue StandardError => e
-      result_data[:failure] = e.message
+      return render json: { failure: e.message }
     end
 
     render json: result_data
@@ -83,7 +83,7 @@ class QueriesController < ApplicationController
 
       formatted_results = database_service.run_query(sql, results_per_page:, page:, format: 'json', sort:)
     rescue StandardError => e
-      return result_data[:failure] = e.message
+      return render json: { failure: e.message }
     end
 
     render json: formatted_results
@@ -102,7 +102,7 @@ class QueriesController < ApplicationController
   end
 
   def set_active_data_source
-    @active_data_source = DataSource.active.take
+    @active_data_source = current_user.connected_data_source
   end
 
   def check_active_data_source
