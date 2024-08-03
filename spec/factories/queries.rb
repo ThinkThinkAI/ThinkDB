@@ -1,6 +1,7 @@
 FactoryBot.define do
   factory :query do
-    query { "MyString" }
-    data_source { nil }
+    sequence(:name) { |n| "Test Query #{n}" }
+    sql { "SELECT * FROM users" }
+    data_source
   end
 end

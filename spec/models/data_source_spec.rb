@@ -1,7 +1,4 @@
-# frozen_string_literal: true
-
 # spec/models/data_source_spec.rb
-
 require 'rails_helper'
 
 RSpec.describe DataSource, type: :model do
@@ -33,6 +30,30 @@ RSpec.describe DataSource, type: :model do
         data_source.connected = true
         expect(data_source).to receive(:unset_other_connected_sources)
         data_source.save
+      end
+    end
+
+    context 'after destroy' do
+      it 'activates the first available inactive data source if none active' do
+        active_data_source = create(:data_source, user:, connected: true)
+        inactive_data_source1 = create(:data_source, user:, connected: false)
+        inactive_data_source2 = create(:data_source, user:, connected: false)
+
+        active_data_source.destroy
+
+        expect(inactive_data_source1.reload.connected).to be true
+        expect(inactive_data_source2.reload.connected).to be false
+      end
+
+      it 'does not change state if there are still active data sources' do
+        active_data_source1 = create(:data_source, user:, connected: true)
+        active_data_source2 = create(:data_source, user:, connected: true)
+        inactive_data_source = create(:data_source, user:, connected: false)
+
+        active_data_source1.destroy
+
+        expect(inactive_data_source.reload.connected).to be false
+        expect(active_data_source2.reload.connected).to be true
       end
     end
   end

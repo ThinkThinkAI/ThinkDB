@@ -2,78 +2,99 @@ require 'rails_helper'
 require 'mysql2'
 require './app/services/adapters/mysql_adapter'
 
-RSpec.describe MysqlAdapter, type: :model do
+
+RSpec.describe MysqlAdapter, type: :service do
   let(:data_source) do
-    instance_double('DataSource',
-                    database: 'test_db',
-                    username: 'user',
-                    password: 'pass',
-                    host: 'localhost',
-                    port: '3306')
+    double('DataSource',
+           database: 'test_db',
+           username: 'test_user',
+           password: 'test_password',
+           host: 'localhost',
+           port: 3306)
   end
 
-  let(:client) { instance_double(Mysql2::Client) }
-  let(:adapter) { MysqlAdapter.new(data_source) }
+  let(:mock_client) { instance_double(Mysql2::Client) }
+  let(:adapter) { described_class.new(data_source) }
 
   before do
-    allow(Mysql2::Client).to receive(:new).and_return(client)
+    allow(Mysql2::Client).to receive(:new).with(
+      hash_including(
+        database: 'test_db',
+        username: 'test_user',
+        password: 'test_password',
+        host: 'localhost',
+        port: 3306
+      )
+    ).and_return(mock_client)
+  end
+
+  describe '#initialize' do
+    it 'initializes with connection parameters' do
+      expect(adapter.instance_variable_get(:@client)).to eq(mock_client)
+      expect(adapter.instance_variable_get(:@data_source)).to eq(data_source)
+    end
   end
 
   describe '#schemas' do
-    let(:expected_rows) do
-      [
-        { 'table_name' => 'users', 'column_name' => 'id', 'data_type' => 'int' },
-        { 'table_name' => 'users', 'column_name' => 'name', 'data_type' => 'varchar' }
+    it 'retrieves schema information' do
+      schema_query = "SELECT table_name, column_name, data_type FROM information_schema.columns where table_schema='test_user'"
+      schema_result = [
+        { 'table_name' => 'users', 'column_name' => 'id', 'data_type' => 'INT' },
+        { 'table_name' => 'users', 'column_name' => 'name', 'data_type' => 'VARCHAR' }
       ]
-    end
 
-    before do
-      allow(client).to receive(:query).and_return(expected_rows)
-    end
+      allow(mock_client).to receive(:query).with(schema_query).and_return(schema_result)
 
-    it 'retrieves schemas from the database' do
-      schemas = adapter.schemas
-
-      expected_result = {
-        'users' => [
-          { column_name: 'id', data_type: 'int' },
-          { column_name: 'name', data_type: 'varchar' }
-        ]
-      }
-
-      expect(schemas).to eq(expected_result.to_json)
+      schema = adapter.schemas
+      expect(schema).to have_key('users')
+      expect(schema['users']).to include(
+        { column_name: 'id', data_type: 'INT' },
+        { column_name: 'name', data_type: 'VARCHAR' }
+      )
     end
   end
 
   describe '#run_query' do
-    let(:query_result) { [{ '1' => 1 }] }
+    it 'executes a query with limit and offset' do
+      query = 'SELECT * FROM users'
+      limited_query = "#{query} LIMIT 1 OFFSET 1"
+      mock_result = [
+        { 'id' => 2, 'name' => 'Test User 2', 'email' => 'user2@example.com' }
+      ]
 
-    it 'executes a query on the database with pagination' do
-      query = 'SELECT 1'
-      limit = 10
-      offset = 0
+      allow(mock_client).to receive(:query).with(limited_query).and_return(mock_result)
 
-      paginated_query = "#{query} LIMIT #{limit} OFFSET #{offset}"
+      result = adapter.run_query(query, 1, 1)
+      expect(result).to eq([['id', 'name', 'email'], [2, 'Test User 2', 'user2@example.com']])
+    end
 
-      allow(client).to receive(:query).with(paginated_query).and_return(query_result)
+    it 'executes a query with sorting' do
+      query = 'SELECT * FROM users'
+      sorted_query = "#{query} ORDER BY name DESC LIMIT 10 OFFSET 0"
+      mock_result = [
+        { 'id' => 2, 'name' => 'Test User 2', 'email' => 'user2@example.com' },
+        { 'id' => 1, 'name' => 'Test User 1', 'email' => 'user1@example.com' }
+      ]
 
-      result = adapter.run_query(query, limit, offset)
-      expect(client).to have_received(:query).with(paginated_query)
-      expect(result).to eq(query_result)
+      allow(mock_client).to receive(:query).with(sorted_query).and_return(mock_result)
+
+      result = adapter.run_query(query, 10, 0, { column: 'name', order: 'desc' })
+      expect(result).to eq([['id', 'name', 'email'], [2, 'Test User 2', 'user2@example.com'], [1, 'Test User 1', 'user1@example.com']])
     end
   end
 
   describe '#run_raw_query' do
-    let(:raw_query) { 'UPDATE users SET name = "Alice" WHERE id = 1' }
-    let(:query_result) { [{ '1' => 1 }] }
+    it 'executes a raw query' do
+      query = 'SELECT name FROM users'
+      mock_result = [
+        { 'name' => 'Test User 1' },
+        { 'name' => 'Test User 2' }
+      ]
 
-    it 'executes a raw query on the database' do
-      allow(client).to receive(:query).with(raw_query).and_return(query_result)
+      allow(mock_client).to receive(:query).with(query).and_return(mock_result)
 
-      result = adapter.run_raw_query(raw_query)
-
-      expect(client).to have_received(:query).with(raw_query)
-      expect(result).to eq(query_result)
+      result = adapter.run_raw_query(query)
+      expect(result).to eq([['Test User 1'], ['Test User 2']])
     end
   end
 end

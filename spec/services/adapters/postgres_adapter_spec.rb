@@ -2,83 +2,90 @@ require 'rails_helper'
 require 'pg'
 require './app/services/adapters/postgres_adapter'
 
-RSpec.describe PostgresAdapter, type: :model do
+RSpec.describe PostgresAdapter do
   let(:data_source) do
-    instance_double('DataSource',
-                    database: 'test_db',
-                    username: 'user',
-                    password: 'password',
-                    host: 'localhost',
-                    port: '5432')
+    OpenStruct.new(
+      database: 'test_db',
+      username: 'test_user',
+      password: 'test_pass',
+      host: 'localhost',
+      port: 5432
+    )
   end
-
   let(:connection) { instance_double(PG::Connection) }
-  let(:result) { instance_double(PG::Result) }
-  let(:adapter) { PostgresAdapter.new(data_source) }
 
   before do
     allow(PG).to receive(:connect).and_return(connection)
   end
 
+  describe '#initialize' do
+    it 'creates a new PG connection with the provided parameters' do
+      adapter = described_class.new(data_source)
+      expect(PG).to have_received(:connect).with(
+        dbname: data_source.database,
+        user: data_source.username,
+        password: data_source.password,
+        host: data_source.host,
+        port: data_source.port
+      )
+    end
+  end
+
   describe '#schemas' do
-    let(:expected_rows) do
+    let(:pg_result) { instance_double(PG::Result) }
+    let(:rows) do
       [
-        { 'table_name' => 'users', 'column_name' => 'id', 'data_type' => 'integer' },
-        { 'table_name' => 'users', 'column_name' => 'name', 'data_type' => 'varchar' }
+        { 'table_name' => 'table1', 'column_name' => 'id', 'data_type' => 'integer' },
+        { 'table_name' => 'table1', 'column_name' => 'name', 'data_type' => 'text' }
       ]
     end
 
     before do
-      allow(connection).to receive(:exec).with('SELECT table_name, column_name, data_type FROM information_schema.columns').and_return(expected_rows)
+      allow(connection).to receive(:exec).with(
+        "SELECT table_name, column_name, data_type FROM information_schema.columns WHERE table_schema = 'public'"
+      ).and_return(pg_result)
+      allow(pg_result).to receive(:each).and_yield(rows[0]).and_yield(rows[1])
     end
 
-    it 'retrieves schemas from the database' do
-      schemas = adapter.schemas
-
-      expected_result = {
-        'users' => [
+    it 'returns a hash with table schemas' do
+      adapter = described_class.new(data_source)
+      expect(adapter.schemas).to eq(
+        'table1' => [
           { column_name: 'id', data_type: 'integer' },
-          { column_name: 'name', data_type: 'varchar' }
+          { column_name: 'name', data_type: 'text' }
         ]
-      }
-
-      expect(schemas).to eq(expected_result.to_json)
+      )
     end
   end
 
   describe '#run_query' do
-    let(:query_result) { [['1']] }
+    let(:query) { 'SELECT * FROM users' }
+    let(:pg_result) do
+      instance_double(PG::Result, fields: %w[id name], values: [['1', 'Alice'], ['2', 'Bob']])
+    end
 
-    it 'executes a query on the database with pagination' do
-      query = 'SELECT 1'
-      limit = 10
-      offset = 0
+    before do
+      allow(connection).to receive(:exec).and_return(pg_result)
+    end
 
-      paginated_query = "#{query} LIMIT #{limit} OFFSET #{offset}"
-
-      allow(connection).to receive(:exec).with(paginated_query).and_return(result)
-      allow(result).to receive(:values).and_return(query_result)
-
-      result_set = adapter.run_query(query, limit, offset)
-
-      expect(connection).to have_received(:exec).with(paginated_query)
-      expect(result_set).to eq(query_result)
+    it 'executes the query and returns the result with fields and values' do
+      adapter = described_class.new(data_source)
+      result = adapter.run_query(query)
+      expect(result).to eq([%w[id name], ['1', 'Alice'], ['2', 'Bob']])
     end
   end
 
   describe '#run_raw_query' do
-    let(:raw_query) { 'UPDATE users SET name = \'Alice\' WHERE id = 1' }
-    let(:query_result) { instance_double(PG::Result) }
-    let(:query_values) { [['1']] }
+    let(:query) { 'SELECT * FROM users' }
+    let(:pg_result) { instance_double(PG::Result, values: [['1', 'Alice'], ['2', 'Bob']]) }
 
-    it 'executes a raw query on the database' do
-      allow(connection).to receive(:exec).with(raw_query).and_return(query_result)
-      allow(query_result).to receive(:values).and_return(query_values)
+    before do
+      allow(connection).to receive(:exec).with(query).and_return(pg_result)
+    end
 
-      result_set = adapter.run_raw_query(raw_query)
-
-      expect(connection).to have_received(:exec).with(raw_query)
-      expect(result_set).to eq(query_values)
+    it 'executes the raw query and returns the result values' do
+      adapter = described_class.new(data_source)
+      expect(adapter.run_raw_query(query)).to eq([['1', 'Alice'], ['2', 'Bob']])
     end
   end
 end

@@ -12,6 +12,10 @@ class SQLAdapter
     result.first[0]
   end
 
+  def run_raw_query(query)
+    raise NotImplementedError, 'Subclasses must implement the run_raw_query method'
+  end
+
   private
 
   def select_query?(query)
@@ -20,6 +24,7 @@ class SQLAdapter
 
   def add_offset(query, limit, offset)
     return query unless select_query?(query)
+
     "#{query} LIMIT #{limit} OFFSET #{offset}"
   end
 

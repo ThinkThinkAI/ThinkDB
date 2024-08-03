@@ -1,7 +1,6 @@
 FactoryBot.define do
   factory :table do
     name { 'MyString' }
-    schema { 'public' }
-    data_source { nil }
+    association :data_source
   end
 end

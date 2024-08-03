@@ -13,6 +13,7 @@ class DataSource < ApplicationRecord
 
   belongs_to :user
 
+  validates :name, presence: true
   validates :adapter, presence: true, inclusion: { in: %w[postgresql mysql sqlite] }
   validates :port, numericality: { only_integer: true }, allow_blank: true
 

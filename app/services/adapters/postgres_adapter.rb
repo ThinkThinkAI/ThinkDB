@@ -20,15 +20,16 @@ class PostgresAdapter < SQLAdapter
 
   def schemas
     result = @connection.exec("SELECT table_name, column_name, data_type FROM information_schema.columns WHERE table_schema = 'public'")
-
-    result.each_with_object({}) do |row, acc|
+    schemas = {}
+    result.each do |row|
       table_name = row['table_name']
-      acc[table_name] ||= []
-      acc[table_name] << {
+      schemas[table_name] ||= []
+      schemas[table_name] << {
         column_name: row['column_name'],
         data_type: row['data_type']
       }
     end
+    schemas
   end
 
   def run_query(query, limit = 10, offset = 0, sort = nil)
