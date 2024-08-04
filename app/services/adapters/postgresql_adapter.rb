@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
 require 'pg'
-require_relative 'sql_adapter'
+require_relative 'sql/sql_adapter'
 
 # PostgresAdapter provides methods to interact with a PostgreSQL database.
 # It connects to the database using provided connection parameters and
 # can retrieve schema information and execute queries.
-class PostgresAdapter < SQLAdapter
+class PostgresqlAdapter < SQLAdapter
   def initialize(data_source)
     connection_params = {
       dbname: data_source.database,

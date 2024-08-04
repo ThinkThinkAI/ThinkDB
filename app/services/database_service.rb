@@ -1,17 +1,18 @@
 # frozen_string_literal: true
 
-require_relative 'adapters/postgres_adapter'
-require_relative 'adapters/mysql_adapter'
-require_relative 'adapters/sqlite_adapter'
-
 # DatabaseService is responsible for creating the appropriate database adapter
 # based on the provided data source configuration.
 class DatabaseService
-  ADAPTER_CLASSES = {
-    'postgresql' => PostgresAdapter,
-    'mysql' => MysqlAdapter,
-    'sqlite' => SqliteAdapter
-  }.freeze
+  ADAPTERS_DIR = File.expand_path('adapters', __dir__)
+  ADAPTER_CLASSES = {}
+
+  Dir[File.join(ADAPTERS_DIR, '*.rb')].each do |file|
+    require_relative file
+    adapter_name = File.basename(file, '.rb')
+    config_name = adapter_name.split('_').first
+    class_name = adapter_name.split('_').collect(&:capitalize).join
+    ADAPTER_CLASSES[config_name] = Object.const_get(class_name)
+  end
 
   def self.build(data_source)
     adapter_class = ADAPTER_CLASSES[data_source.adapter]
