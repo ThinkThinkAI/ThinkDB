@@ -1,8 +1,8 @@
 require 'rails_helper'
 require 'pg'
-require './app/services/adapters/postgres_adapter'
+require './app/services/adapters/postgresql_adapter'
 
-RSpec.describe PostgresAdapter do
+RSpec.describe PostgresqlAdapter do
   let(:data_source) do
     OpenStruct.new(
       database: 'test_db',

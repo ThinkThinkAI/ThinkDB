@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
-require './app/services/adapters/sql_adapter'
+require './app/services/adapters/sql/sql_adapter'
 
 RSpec.describe SQLAdapter do
   let(:adapter) { SQLAdapter.new }

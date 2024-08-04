@@ -2,7 +2,7 @@
 
 require 'mysql2'
 require 'json'
-require_relative 'sql_adapter'
+require_relative 'sql/sql_adapter'
 
 # MysqlAdapter provides methods to interact with a MySQL database.
 # It connects to the database using provided connection parameters and

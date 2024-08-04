@@ -2,7 +2,7 @@
 
 require 'sqlite3'
 require 'json'
-require_relative 'sql_adapter'
+require_relative 'sql/sql_adapter'
 
 # SqliteAdapter provides methods to interact with an SQLite database.
 # It connects to the database using a file location and

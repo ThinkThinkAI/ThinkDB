@@ -14,7 +14,7 @@ RSpec.describe DatabaseService do
   let(:database_service) { described_class.new(adapter, data_source) }
 
   before do
-    allow(PostgresAdapter).to receive(:new).with(data_source).and_return(adapter)
+    allow(PostgresqlAdapter).to receive(:new).with(data_source).and_return(adapter)
     allow(MysqlAdapter).to receive(:new).with(data_source).and_return(adapter)
     allow(SqliteAdapter).to receive(:new).with(data_source).and_return(adapter)
   end
