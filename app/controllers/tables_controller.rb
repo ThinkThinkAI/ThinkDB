@@ -14,10 +14,10 @@ class TablesController < ApplicationController
   private
 
   def set_data_source
-    @data_source = DataSource.find(params[:data_source_id])
+    @data_source = DataSource.friendly.find(params[:data_source_id])
   end
 
   def set_table
-    @table = @data_source.tables.find(params[:id])
+    @table = @data_source.tables.friendly.find(params[:id])
   end
 end

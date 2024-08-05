@@ -3,6 +3,9 @@
 # DataSource model represents a data source associated with a user, containing
 # necessary connection details and methods to manage its state.
 class DataSource < ApplicationRecord
+  extend FriendlyId
+  friendly_id :name, use: :slugged
+  
   has_many :tables, dependent: :destroy
   has_many :queries, dependent: :destroy
 

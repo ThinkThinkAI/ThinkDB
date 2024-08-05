@@ -80,7 +80,7 @@ class DataSourcesController < ApplicationController
   private
 
   def set_data_source
-    @data_source = current_user.data_sources.find(params[:id])
+    @data_source = current_user.data_sources.friendly.find(params[:id])
   end
 
   def data_source_params

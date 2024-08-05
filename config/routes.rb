@@ -21,6 +21,7 @@ Rails.application.routes.draw do
     resources :queries
   end
 
+
   get 'query', to: 'queries#index'
 
   get 'users/settings', to: 'users#settings', as: 'user_settings'
