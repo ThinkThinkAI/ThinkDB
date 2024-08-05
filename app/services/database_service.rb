@@ -33,6 +33,9 @@ class DatabaseService
     @data_source.tables.destroy_all
 
     schemas.each_key do |key|
+      puts key
+      next if key == "Friendly"
+
       @data_source.tables.create(name: key)
     end
   end

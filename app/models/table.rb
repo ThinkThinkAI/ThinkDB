@@ -4,6 +4,8 @@
 # and a JSON schema that defines its structure. Tables belong to a DataSource
 # and cannot be created or edited from the front-end.
 class Table < ApplicationRecord
+  extend FriendlyId
+  friendly_id :name, use: :slugged
   belongs_to :data_source
 
   validates :name, presence: true, uniqueness: { scope: :data_source_id }
