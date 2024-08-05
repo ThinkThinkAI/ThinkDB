@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe AIService do
@@ -6,7 +8,7 @@ RSpec.describe AIService do
   let(:api_key) { 'fake_api_key' }
   let(:client_response) { { 'choices' => [{ 'text' => 'Test response' }] } }
 
-  subject(:ai_service) { described_class.new(url: url, model: model, api_key: api_key) }
+  subject(:ai_service) { described_class.new(url:, model:, api_key:) }
 
   let(:client) { instance_double(OpenAI::Client) }
 

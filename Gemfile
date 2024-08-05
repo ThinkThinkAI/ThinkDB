@@ -57,5 +57,3 @@ end
 
 gem 'ruby-handlebars'
 gem 'ruby-openai'
-
-

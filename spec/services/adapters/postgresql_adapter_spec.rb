@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 require 'pg'
 require './app/services/adapters/postgresql_adapter'
@@ -20,7 +22,7 @@ RSpec.describe PostgresqlAdapter do
 
   describe '#initialize' do
     it 'creates a new PG connection with the provided parameters' do
-      adapter = described_class.new(data_source)
+      described_class.new(data_source)
       expect(PG).to have_received(:connect).with(
         dbname: data_source.database,
         user: data_source.username,
@@ -61,7 +63,7 @@ RSpec.describe PostgresqlAdapter do
   describe '#run_query' do
     let(:query) { 'SELECT * FROM users' }
     let(:pg_result) do
-      instance_double(PG::Result, fields: %w[id name], values: [['1', 'Alice'], ['2', 'Bob']])
+      instance_double(PG::Result, fields: %w[id name], values: [%w[1 Alice], %w[2 Bob]])
     end
 
     before do
@@ -71,13 +73,13 @@ RSpec.describe PostgresqlAdapter do
     it 'executes the query and returns the result with fields and values' do
       adapter = described_class.new(data_source)
       result = adapter.run_query(query)
-      expect(result).to eq([%w[id name], ['1', 'Alice'], ['2', 'Bob']])
+      expect(result).to eq([%w[id name], %w[1 Alice], %w[2 Bob]])
     end
   end
 
   describe '#run_raw_query' do
     let(:query) { 'SELECT * FROM users' }
-    let(:pg_result) { instance_double(PG::Result, values: [['1', 'Alice'], ['2', 'Bob']]) }
+    let(:pg_result) { instance_double(PG::Result, values: [%w[1 Alice], %w[2 Bob]]) }
 
     before do
       allow(connection).to receive(:exec).with(query).and_return(pg_result)
@@ -85,7 +87,7 @@ RSpec.describe PostgresqlAdapter do
 
     it 'executes the raw query and returns the result values' do
       adapter = described_class.new(data_source)
-      expect(adapter.run_raw_query(query)).to eq([['1', 'Alice'], ['2', 'Bob']])
+      expect(adapter.run_raw_query(query)).to eq([%w[1 Alice], %w[2 Bob]])
     end
   end
 end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # spec/controllers/data_sources_controller_spec.rb
 require 'rails_helper'
 
@@ -31,9 +33,9 @@ RSpec.describe DataSourcesController, type: :controller do
   describe 'POST #create' do
     context 'with valid attributes' do
       it 'creates a new data source' do
-        expect {
+        expect do
           post :create, params: { data_source: attributes_for(:data_source) }
-        }.to change(user.data_sources, :count).by(1)
+        end.to change(user.data_sources, :count).by(1)
       end
 
       it 'redirects to queries_path' do
@@ -44,9 +46,9 @@ RSpec.describe DataSourcesController, type: :controller do
 
     context 'with invalid attributes' do
       it 'does not save the new data source' do
-        expect {
+        expect do
           post :create, params: { data_source: attributes_for(:data_source, name: nil) }
-        }.not_to change(DataSource, :count)
+        end.not_to change(DataSource, :count)
       end
 
       it 're-renders the :new template with unprocessable_entity status' do
@@ -85,15 +87,15 @@ RSpec.describe DataSourcesController, type: :controller do
   end
 
   describe 'DELETE #destroy' do
-    before { data_source }  # Create a data source before running delete tests
+    before { data_source } # Create a data source before running delete tests
 
     context 'when other data sources exist' do
       let!(:other_data_source) { create(:data_source, user:) }
 
       it 'deletes the data source' do
-        expect {
+        expect do
           delete :destroy, params: { id: data_source.id }
-        }.to change(DataSource, :count).by(-1)
+        end.to change(DataSource, :count).by(-1)
       end
 
       it 'redirects to queries_path' do

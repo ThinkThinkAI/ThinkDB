@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CreateTables < ActiveRecord::Migration[6.1]
   def change
     create_table :tables do |t|
@@ -8,6 +10,6 @@ class CreateTables < ActiveRecord::Migration[6.1]
       t.timestamps
     end
 
-    add_index :tables, [:data_source_id, :name], unique: true
+    add_index :tables, %i[data_source_id name], unique: true
   end
 end
