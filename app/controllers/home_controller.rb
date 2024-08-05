@@ -12,7 +12,5 @@ class HomeController < ApplicationController
     end
   end
 
-  def swatch
-    
-  end
+  def swatch; end
 end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CreateQueries < ActiveRecord::Migration[7.1]
   def change
     create_table :queries do |t|

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 require 'sqlite3'
 require './app/services/adapters/sqlite_adapter'
@@ -47,19 +49,19 @@ RSpec.describe SqliteAdapter, type: :service do
     it 'executes a query with limit and offset' do
       result = adapter.run_query('SELECT * FROM users', 1, 1)
       expect(result).to eq([
-        ["id", "name", "email"],
-        [2, "Test User 2", "user2@example.com"]
-      ])
+                             ['id', 'name', 'email'],
+                             [2, 'Test User 2', 'user2@example.com']
+                           ])
     end
 
     it 'executes a query with sorting' do
       allow(adapter).to receive(:add_sorting).and_call_original
       result = adapter.run_query('SELECT * FROM users', 10, 0, { column: 'name', order: 'desc' })
       expect(result).to eq([
-        ["id", "name", "email"],
-        [2, "Test User 2", "user2@example.com"],
-        [1, "Test User 1", "user1@example.com"]
-      ])
+                             ['id', 'name', 'email'],
+                             [2, 'Test User 2', 'user2@example.com'],
+                             [1, 'Test User 1', 'user1@example.com']
+                           ])
     end
   end
 

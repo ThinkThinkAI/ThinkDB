@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe QueriesController, type: :controller do
@@ -47,7 +49,7 @@ RSpec.describe QueriesController, type: :controller do
     context 'with valid params' do
       it 'creates a new Query' do
         expect do
-          post :create, params:  valid_attributes
+          post :create, params: valid_attributes
         end.to change(Query, :count).by(1)
       end
 

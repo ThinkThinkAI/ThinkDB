@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AIService
   attr_reader :model, :client, :messages
 
@@ -5,21 +7,21 @@ class AIService
     @url = url
     @model = model
     @api_key = api_key
-    @client = OpenAI::Client.new(api_key: api_key)
+    @client = OpenAI::Client.new(api_key:)
     @messages = []
   end
 
   def add_message(role, content)
-    @messages << { role: role, content: content }
+    @messages << { role:, content: }
   end
 
   def chat
     response = @client.chat(parameters: {
-      model: @model,
-      response_format: { type: 'json_object' },
-      messages: @messages,
-      temperature: 0.7
-    })
+                              model: @model,
+                              response_format: { type: 'json_object' },
+                              messages: @messages,
+                              temperature: 0.7
+                            })
     response['choices']
   end
 end

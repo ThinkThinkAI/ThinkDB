@@ -4,7 +4,7 @@ require 'rails_helper'
 
 RSpec.describe TablesController, type: :controller do
   let(:data_source) { create(:data_source) }
-  let(:table) { create(:table, data_source: data_source) }
+  let(:table) { create(:table, data_source:) }
 
   describe 'GET #show' do
     context 'when the data_source and table exist' do
@@ -32,17 +32,17 @@ RSpec.describe TablesController, type: :controller do
 
     context 'when the data_source does not exist' do
       it 'raises an ActiveRecord::RecordNotFound error' do
-        expect {
+        expect do
           get :show, params: { data_source_id: 9999, id: table.id }
-        }.to raise_error(ActiveRecord::RecordNotFound)
+        end.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
 
     context 'when the table does not exist' do
       it 'raises an ActiveRecord::RecordNotFound error' do
-        expect {
+        expect do
           get :show, params: { data_source_id: data_source.id, id: 9999 }
-        }.to raise_error(ActiveRecord::RecordNotFound)
+        end.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
   end

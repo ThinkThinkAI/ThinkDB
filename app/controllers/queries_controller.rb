@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class QueriesController < ApplicationController
   before_action :set_query, only: %i[show edit update destroy]
   before_action :set_active_data_source, only: %i[index show metadata data]
@@ -74,7 +76,6 @@ class QueriesController < ApplicationController
     sort = { column: params[:column], order: params[:order] } if params[:column] && params[:order]
 
     database_service = DatabaseService.build(@active_data_source)
-    result_data = {}
 
     begin
       sql = @query ? @query.sql : params[:sql]

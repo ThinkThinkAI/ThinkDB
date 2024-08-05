@@ -1,7 +1,8 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 require 'mysql2'
 require './app/services/adapters/mysql_adapter'
-
 
 RSpec.describe MysqlAdapter, type: :service do
   let(:data_source) do
@@ -79,7 +80,8 @@ RSpec.describe MysqlAdapter, type: :service do
       allow(mock_client).to receive(:query).with(sorted_query).and_return(mock_result)
 
       result = adapter.run_query(query, 10, 0, { column: 'name', order: 'desc' })
-      expect(result).to eq([['id', 'name', 'email'], [2, 'Test User 2', 'user2@example.com'], [1, 'Test User 1', 'user1@example.com']])
+      expect(result).to eq([['id', 'name', 'email'], [2, 'Test User 2', 'user2@example.com'],
+                            [1, 'Test User 1', 'user1@example.com']])
     end
   end
 

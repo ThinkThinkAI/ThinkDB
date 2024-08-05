@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # spec/models/data_source_spec.rb
 require 'rails_helper'
 

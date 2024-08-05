@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # spec/services/database_service_spec.rb
 require 'rails_helper'
 require 'json'
@@ -22,7 +24,7 @@ RSpec.describe DatabaseService do
   describe '.build' do
     it 'raises an error for unsupported adapters' do
       allow(data_source).to receive(:adapter).and_return('unsupported')
-      expect { described_class.build(data_source) }.to raise_error("Adapter not supported: unsupported")
+      expect { described_class.build(data_source) }.to raise_error('Adapter not supported: unsupported')
     end
 
     it 'returns a new DatabaseService instance for supported adapters' do
@@ -69,7 +71,7 @@ RSpec.describe DatabaseService do
 
   describe '#run_query' do
     let(:query) { 'SELECT * FROM users' }
-    let(:raw_data) { [%w[id name], ['1', 'Alice'], ['2', 'Bob']] }
+    let(:raw_data) { [%w[id name], %w[1 Alice], %w[2 Bob]] }
 
     before do
       allow(adapter).to receive(:run_query).and_return(raw_data)
@@ -90,7 +92,7 @@ RSpec.describe DatabaseService do
 
   describe '#run_raw_query' do
     let(:query) { 'SELECT * FROM users' }
-    let(:result) { [['1', 'Alice'], ['2', 'Bob']] }
+    let(:result) { [%w[1 Alice], %w[2 Bob]] }
 
     before do
       allow(adapter).to receive(:run_raw_query).with(query).and_return(result)
