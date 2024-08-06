@@ -2,7 +2,7 @@
   <ul class="list-group list-group-flush">
     <% current_user.connected_data_source.tables.each do |table| %>
       <li class="list-group-item">
-         <a href="<%= data_source_table_path(table.data_source, table) %>" class="nav-link px-0"><%= table.name %></a>
+         <a href="<%= data_source_table_path(table.data_source, table) %>" class="nav-link px-0" data-turbo-frame="table-content"><%= table.name %></a>
       </li>
     <% end%>
   </ul>

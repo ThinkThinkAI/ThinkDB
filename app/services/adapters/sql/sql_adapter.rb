@@ -16,6 +16,10 @@ class SQLAdapter
     raise NotImplementedError, 'Subclasses must implement the run_raw_query method'
   end
 
+  def all_records_query(table_name)
+    "SELECT * FROM #{table_name}"
+  end
+
   private
 
   def select_query?(query)

@@ -1,4 +1,5 @@
 <% sql_value = @query ? @query.sql : params[:sql] %>
+<%= render partial: 'queries/grid' %>
 <style>
   .tall {
     height: 100%;
@@ -28,7 +29,7 @@
       <div class="col-12 d-flex">
         <div class="card mb-0 flex-grow-1">
           <div class="card-body">
-            <%= render partial: "queries/output", locals: { sql: sql_value } %>
+            <%= render partial: "queries/output", locals: { sql: sql_value, adjustment: 32, data_grid_id: "out-grid" } %>
           </div>
         </div>
       </div>

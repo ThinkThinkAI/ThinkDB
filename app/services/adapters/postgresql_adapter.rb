@@ -46,4 +46,8 @@ class PostgresqlAdapter < SQLAdapter
     result = @connection.exec(query)
     result.values
   end
+
+  def table_structure_query(table_name)
+    "select * from information_schema.columns where table_name = '#{table_name}'"
+  end
 end

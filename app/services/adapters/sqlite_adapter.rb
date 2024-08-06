@@ -49,4 +49,8 @@ class SqliteAdapter < SQLAdapter
   def run_raw_query(query)
     @connection.execute(query)
   end
+
+  def table_structure_query(table_name)
+    "PRAGMA table_info(#{table_name})"
+  end
 end
