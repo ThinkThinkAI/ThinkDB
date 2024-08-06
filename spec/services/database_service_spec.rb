@@ -128,4 +128,30 @@ RSpec.describe DatabaseService do
       expect(database_service.count(query)).to eq(count_result)
     end
   end
+
+  describe '#all_records_query' do
+    let(:query) { 'table_structure_query' }
+    let(:count_result) { 2 }
+
+    before do
+      allow(adapter).to receive(:all_records_query).with(query).and_return(count_result)
+    end
+
+    it 'returns the row count for the query' do
+      expect(database_service.all_records_query(query)).to eq(count_result)
+    end
+  end
+
+  describe '#table_structure_query' do
+    let(:query) { 'Stable_structure_query' }
+    let(:count_result) { 2 }
+
+    before do
+      allow(adapter).to receive(:table_structure_query).with(query).and_return(count_result)
+    end
+
+    it 'returns the row count for the query' do
+      expect(database_service.table_structure_query(query)).to eq(count_result)
+    end
+  end
 end

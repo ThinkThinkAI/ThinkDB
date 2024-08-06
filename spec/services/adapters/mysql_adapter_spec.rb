@@ -17,6 +17,15 @@ RSpec.describe MysqlAdapter, type: :service do
   let(:mock_client) { instance_double(Mysql2::Client) }
   let(:adapter) { described_class.new(data_source) }
 
+  let(:table_name) { 'users' }
+
+  describe '#table_structure_query' do
+    it 'returns the correct SELECT query for fetching all records from a table' do
+      expected_query = "SHOW COLUMNS FROM #{table_name}"
+      expect(adapter.table_structure_query(table_name)).to eq(expected_query)
+    end
+  end
+
   before do
     allow(Mysql2::Client).to receive(:new).with(
       hash_including(

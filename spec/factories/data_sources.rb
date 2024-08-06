@@ -10,6 +10,7 @@ FactoryBot.define do
     password { 'your_password' }
     user
     connected { true }
-    name { 'Example Data Source' }
+    sequence(:name) { |n| "name#{n}" }
+    sequence(:slug) { |n| "slug#{n}" }
   end
 end
