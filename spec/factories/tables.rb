@@ -2,7 +2,8 @@
 
 FactoryBot.define do
   factory :table do
-    name { 'MyString' }
+    sequence(:name) { |n| "name#{n}" }
+    sequence(:slug) { |n| "slug#{n}" }
     association :data_source
   end
 end

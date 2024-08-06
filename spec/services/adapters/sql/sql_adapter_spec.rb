@@ -5,6 +5,20 @@ require './app/services/adapters/sql/sql_adapter'
 
 RSpec.describe SQLAdapter do
   let(:adapter) { SQLAdapter.new }
+  let(:table_name) { 'users' }
+
+  describe '#all_records_query' do
+    it 'returns the correct SELECT query for fetching all records from a table' do
+      expected_query = "SELECT * FROM #{table_name}"
+      expect(adapter.all_records_query(table_name)).to eq(expected_query)
+    end
+
+    it 'handles table names with special characters correctly' do
+      table_name_with_special_chars = 'user-data'
+      expected_query = 'SELECT * FROM user-data'
+      expect(adapter.all_records_query(table_name_with_special_chars)).to eq(expected_query)
+    end
+  end
 
   describe '#run_raw_query' do
     it 'raises NotImplementedError' do

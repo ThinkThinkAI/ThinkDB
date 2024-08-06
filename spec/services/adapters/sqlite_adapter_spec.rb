@@ -26,6 +26,15 @@ RSpec.describe SqliteAdapter, type: :service do
     SQL
   end
 
+  let(:table_name) { 'users' }
+
+  describe '#table_structure_query' do
+    it 'returns the correct SHOW query for fetching structure from a table' do
+      expected_query = "PRAGMA table_info(#{table_name})"
+      expect(adapter.table_structure_query(table_name)).to eq(expected_query)
+    end
+  end
+
   describe '#initialize' do
     it 'initializes with a database file' do
       expect(adapter.instance_variable_get(:@db_file)).to eq(db_file)

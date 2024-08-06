@@ -20,6 +20,8 @@ RSpec.describe PostgresqlAdapter do
     allow(PG).to receive(:connect).and_return(connection)
   end
 
+
+
   describe '#initialize' do
     it 'creates a new PG connection with the provided parameters' do
       described_class.new(data_source)
@@ -74,6 +76,16 @@ RSpec.describe PostgresqlAdapter do
       adapter = described_class.new(data_source)
       result = adapter.run_query(query)
       expect(result).to eq([%w[id name], %w[1 Alice], %w[2 Bob]])
+    end
+  end
+
+    let(:table_name) { 'users' }
+
+  describe '#table_structure_query' do
+    it 'returns the correct SHOW query for fetching structure from a table' do
+      adapter = described_class.new(data_source)
+      expected_query = "select * from information_schema.columns where table_name = '#{table_name}'"
+      expect(adapter.table_structure_query(table_name)).to eq(expected_query)
     end
   end
 

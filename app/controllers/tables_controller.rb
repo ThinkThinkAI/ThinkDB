@@ -11,8 +11,6 @@ class TablesController < ApplicationController
   def show
     @all_records_query = @database_service.all_records_query(@table.name)
     @table_structure_query = @database_service.table_structure_query(@table.name)
-
-    # render json: @table
   end
 
   private

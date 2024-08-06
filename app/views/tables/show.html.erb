@@ -1,19 +1,6 @@
-<% 
-    puts "TEST"
-    puts @all_records_query
-    puts @table_structure_query
-%>
-<style>
-  .tall {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-  }
-</style>
+<%= render partial: "queries/grid" %>
 
-
-<turbo-frame id="table-content"  data-turbo-action="replace">
-    <%= render partial: "queries/grid" %>
+<turbo-frame id="table-content"  data-turbo-action="replace">    
     <div class="container-fluid tall">
     <div class="row">
         <div class="col">

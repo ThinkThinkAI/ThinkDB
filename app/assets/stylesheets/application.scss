@@ -137,3 +137,8 @@ background-color: #FF3CAC;
 background-image: linear-gradient(286deg, #b12a77 0%, #784BA0 50%, #431661 100%);
 }
 
+  .tall {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
