@@ -52,4 +52,8 @@ class MysqlAdapter < SQLAdapter
     result = @client.query(query)
     result.map(&:values)
   end
+
+  def table_structure_query(table_name)
+    "SHOW COLUMNS FROM #{table_name}"
+  end
 end

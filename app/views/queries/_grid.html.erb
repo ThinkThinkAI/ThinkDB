@@ -1,0 +1,134 @@
+<link rel="stylesheet" href="https://unpkg.com/ag-grid-community/styles/ag-grid.css">
+<link rel="stylesheet" href="https://unpkg.com/ag-grid-community/styles/ag-theme-material.css">
+<script src="https://unpkg.com/ag-grid-community/dist/ag-grid-community.noStyle.js"></script>
+<style>
+  .out-tall {
+    display: flex;
+    flex-direction: column;
+    flex: 1; /* Ensure the container stretches to accommodate content */
+    min-height: 0; /* Prevent it from breaking out of its parent */
+  }
+
+ .ag-theme-material-dark {   
+    --ag-row-hover-color: #6261cc;
+    --ag-font-family: "Inter", sans-serif;
+    --ag-font-size: 13px;
+    --ag-border-color: #000000
+} 
+
+.ag-root ::-webkit-scrollbar {
+    width: 5px;
+    height: 5px
+}
+.ag-root ::-webkit-scrollbar-button {
+    background: #ccc
+}
+.ag-root ::-webkit-scrollbar-track-piece {
+    background: #000
+}
+.ag-root ::-webkit-scrollbar-thumb {
+    background: #6261cc
+}​
+</style>
+<script>
+
+window.gridApi = {};
+
+async function initializeGrid(gridId, querySql) {
+  const gridElement = document.getElementById(gridId);
+
+  if (!gridElement) {
+    console.warn("Grid element not found!");
+    return;
+  }
+
+  if (window.gridApi[gridId]) {
+    window.gridApi[gridId].destroy();
+    window.gridApi[gridId] = null;
+  }
+
+  const columnDefs = [];
+  const pageSizeOptions = [15, 30, 40, 50, 100];
+  
+  let totalRecords = 0;
+
+  const gridOptions = {
+    rowModelType: "infinite",
+    columnDefs: columnDefs,
+    pagination: true,
+    paginationPageSize: 15,
+    paginationPageSizeSelector: pageSizeOptions,
+    onGridReady: function (event) {
+      fetchMetadata(querySql, columnDefs, setGridOptionsCallback);
+    },
+  };
+
+  window.gridApi[gridId] = agGrid.createGrid(gridElement, gridOptions);
+
+  function setGridOptionsCallback(updatedColumnDefs, datasource) {
+    totalRecords = datasource.rowCount;
+    window.gridApi[gridId].setGridOption("columnDefs", updatedColumnDefs);
+    window.gridApi[gridId].setGridOption("datasource", datasource);
+  }
+}
+
+async function fetchMetadata(querySql, columnDefs, callback) {
+  try {
+    console.log(querySql);
+    const fetchUrl = `/queries/metadata?sql=${encodeURIComponent(querySql)}`;
+    const response = await fetch(fetchUrl);
+    const data = await response.json();
+
+    if (data.failure) {
+      alert(data.failure);
+      return;
+    }
+
+    data.column_names.forEach((column) => {
+      columnDefs.push({ headerName: column, field: column });
+    });
+
+    const datasource = createDatasource(data.total_records, querySql);
+    callback(columnDefs, datasource);
+  } catch (error) {
+    console.log("An error occurred while fetching metadata: " + error.message);
+  }
+}
+
+function createDatasource(totalRecords, querySql) {
+  return {
+    rowCount: totalRecords,
+    getRows: async function (params) {
+      try {
+        console.log(params);
+        const page = Math.floor(params.startRow / params.endRow) + 1;
+
+        let sort_options = "";
+
+        if (params.sortModel.length > 0) {
+          sort_options = `&column=${params.sortModel[0].colId}&order=${params.sortModel[0].sort}`;
+        }
+
+        let url = `/queries/data?sql=${encodeURIComponent(
+          querySql
+        )}&page=${page}&results_per_page=${
+          params.endRow - params.startRow
+        }&${sort_options}`;
+
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (data.failure) {
+          params.failCallback();
+          return;
+        }
+
+        params.successCallback(data, totalRecords);
+      } catch (error) {
+        params.failCallback();
+        console.log("Error while fetching data: " + error.message);
+      }
+    },
+  };
+}
+</script>

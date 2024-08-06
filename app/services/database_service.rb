@@ -75,4 +75,12 @@ class DatabaseService
   def count(query)
     @adapter.count(query)
   end
+
+  def all_records_query(table_name)
+    @adapter.all_records_query(table_name)
+  end
+
+  def table_structure_query(table_name)
+    @adapter.table_structure_query(table_name)
+  end
 end
