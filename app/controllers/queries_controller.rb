@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class QueriesController < ApplicationController
+  before_action :authenticate_user!
   before_action :set_query, only: %i[show edit update destroy]
   before_action :set_active_data_source, only: %i[index show metadata data]
   before_action :check_active_data_source, only: %i[index show metadata data]
@@ -20,8 +21,10 @@ class QueriesController < ApplicationController
 
     respond_to do |format|
       if @query.save
-        format.html { redirect_to query_url(@query), notice: 'Query was successfully created.' }
-        format.json { render :show, status: :created, location: @query }
+        format.html do
+          redirect_to data_source_query_path(@query.data_source, @query), notice: 'Query was successfully created.'
+        end
+        format.json { render :show, status: :created, location: data_source_query_path(@query.data_source, @query) }
       else
         format.html { render :new, status: :unprocessable_entity }
         format.json { render json: @query.errors, status: :unprocessable_entity }
@@ -30,24 +33,17 @@ class QueriesController < ApplicationController
   end
 
   def update
-    respond_to do |format|
-      if @query.update(query_params)
-        format.html { redirect_to query_url(@query), notice: 'Query was successfully updated.' }
-        format.json { render :show, status: :ok, location: @query }
-      else
-        format.html { render :edit, status: :unprocessable_entity }
-        format.json { render json: @query.errors, status: :unprocessable_entity }
-      end
+    if @query.update(sql: params[:sql])
+      render json: { message: 'Query was updated.' }, status: :ok
+    else
+      render json: { message: 'Query was not updated' }, status: :unprocessable_entity
     end
   end
 
   def destroy
     @query.destroy!
 
-    respond_to do |format|
-      format.html { redirect_to queries_url, notice: 'Query was successfully destroyed.' }
-      format.json { head :no_content }
-    end
+    render json: { message: 'Query was successfully destroyed' }, status: :ok
   end
 
   def metadata
@@ -93,11 +89,11 @@ class QueriesController < ApplicationController
   private
 
   def set_query
-    @query = Query.find(params[:id])
+    @query = Query.friendly.find(params[:id])
   end
 
   def query_params
-    result = params.permit(:id, :sql, :name, :data_source_id, :column, :order)
+    result = params.permit(:id, :sql, :name, :data_source_id, :column, :order, :query)
     result[:data_source_id] ||= current_user.connected_data_source.id
     result
   end

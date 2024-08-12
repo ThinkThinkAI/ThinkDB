@@ -1,10 +1,64 @@
-<p style="color: green"><%= notice %></p>
+<%= render partial: 'queries/grid' %>
+<style>
+  .tall {
+    height: calc(100% - 280px);
+    display: flex;
+    flex-direction: column;
+  }
+</style>
 
-<%= render @query %>
-
-<div>
-  <%= link_to "Edit this query", edit_query_path(@query) %> |
-  <%= link_to "Back to queries", queries_path %>
-
-  <%= button_to "Destroy this query", @query, method: :delete %>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col">
+      <h1 class="mb-4"><%= @query.name %></h1>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12" >
+      <div class="card mb-4" style="resize: vertical !important;overflow: auto;" id="resizableDiv">
+        <div class="card-body">
+          <%= render partial: 'queries/saved_input', locals: { query: @query } %>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
+ 
+ <turbo-frame id="output-content"  data-turbo-action="replace">
+
+
+  <div class="alert alert-success alert-dismissible fade show d-none" role="alert">
+  <strong>Error!</strong><span id="error"></span>
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+
+  <% sql_value = params[:sql] %>
+    <div class="alert alert-warning alert-dismissible fade show d-none mx-3" role="alert" id="sql_error">
+   <span id="error"></span>
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+
+
+ <div class="container-fluid tall d-none" id="sql_complete">
+  <% unless sql_value.blank? %>
+    <div class="row flex-grow-1" id="output-content">
+      <div class="col-12 d-flex">
+        <div class="card mb-0 flex-grow-1">
+          <div class="card-body">
+            <%= render partial: "queries/output", locals: { sql: sql_value, adjustment: 32, data_grid_id: "out-grid" } %>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end%>
+</div>
+
+
+</turbo-frame>
+  
+<script>
+  initAdjustHeight();
+</script>
+
+ 
+  

@@ -36,9 +36,10 @@ window.gridApi = {};
 
 async function initializeGrid(gridId, querySql) {
   const gridElement = document.getElementById(gridId);
+  const showElement = document.getElementById("sql_complete");
+  const alertElement = document.getElementById("sql_error");
 
   if (!gridElement) {
-    console.warn("Grid element not found!");
     return;
   }
 
@@ -59,7 +60,7 @@ async function initializeGrid(gridId, querySql) {
     paginationPageSize: 15,
     paginationPageSizeSelector: pageSizeOptions,
     onGridReady: function (event) {
-      fetchMetadata(querySql, columnDefs, setGridOptionsCallback);
+      fetchMetadata(querySql, columnDefs, setGridOptionsCallback, gridElement, alertElement, showElement);
     },
   };
 
@@ -72,15 +73,15 @@ async function initializeGrid(gridId, querySql) {
   }
 }
 
-async function fetchMetadata(querySql, columnDefs, callback) {
+async function fetchMetadata(querySql, columnDefs, callback, gridElement, alertElement, showElement) {
   try {
-    console.log(querySql);
     const fetchUrl = `/queries/metadata?sql=${encodeURIComponent(querySql)}`;
     const response = await fetch(fetchUrl);
     const data = await response.json();
 
     if (data.failure) {
-      alert(data.failure);
+      showAlert(alertElement, data.failure);
+      
       return;
     }
 
@@ -88,19 +89,18 @@ async function fetchMetadata(querySql, columnDefs, callback) {
       columnDefs.push({ headerName: column, field: column });
     });
 
-    const datasource = createDatasource(data.total_records, querySql);
+    const datasource = createDatasource(data.total_records, querySql, gridElement, alertElement, showElement);
     callback(columnDefs, datasource);
   } catch (error) {
-    console.log("An error occurred while fetching metadata: " + error.message);
+    showAlert(alertElement, error.message);
   }
 }
 
-function createDatasource(totalRecords, querySql) {
+function createDatasource(totalRecords, querySql, gridElement, alertElement, showElement) {
   return {
     rowCount: totalRecords,
     getRows: async function (params) {
       try {
-        console.log(params);
         const page = Math.floor(params.startRow / params.endRow) + 1;
 
         let sort_options = "";
@@ -120,15 +120,58 @@ function createDatasource(totalRecords, querySql) {
 
         if (data.failure) {
           params.failCallback();
+          showAlert(alertElement, data.failure);
+          
           return;
         }
-
+        showOutput(showElement);
         params.successCallback(data, totalRecords);
       } catch (error) {
         params.failCallback();
-        console.log("Error while fetching data: " + error.message);
+        showAlert(alertElement, error.message);
       }
     },
   };
 }
+
+function showAlert(alertElement, message) {
+  alertElement.querySelector('#error').innerText = message;
+  alertElement.classList.remove('d-none');
+  alertElement.classList.add('show');
+}
+
+function showOutput(showElement) {
+  if(showElement) {
+    showElement.classList.remove('d-none');
+    showElement.classList.add('show');
+  }
+}
+
+
+  function adjustSqlHeight() {
+    const resizableDiv = document.getElementById('resizableDiv');
+    const adjustableDiv = document.getElementById('sql_complete');
+
+    const totalHeight = window.innerHeight;
+    const newHeight = totalHeight - resizableDiv.offsetHeight - 130;
+
+    adjustableDiv.style.height = newHeight + 'px';
+  }
+
+  function initAdjustHeight() {  
+    const resizableDiv = document.getElementById('resizableDiv');
+    resizeObserver.observe(resizableDiv);
+
+    window.addEventListener('resize', adjustHeight);
+
+    adjustSqlHeight();
+  }
+
+  const resizeObserver = new ResizeObserver(entries => {
+    for (let entry of entries) {
+      adjustSqlHeight(); 
+    }
+  });
+
+  initAdjustHeight();
 </script>

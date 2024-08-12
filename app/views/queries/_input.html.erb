@@ -1,8 +1,18 @@
-<%= form_with(url: queries_path, method: :get, local: true, class: 'd-flex w-100 align-items-start mb-0', role: 'search', id: 'query-form') do %>
-  <%= text_area_tag :sql, sql_value, class: 'form-control me-2 flex-grow-1', placeholder: 'Enter your query here', aria: { label: 'Query' }, rows: 5, id: 'sql-textarea' %>
-  <div class="button-container">
-    <%= submit_tag 'Query', class: 'btn btn-primary fixed-height-button' %><br>
-    <a href="#" id="save-btn" class="btn btn-primary fixed-height-button mt-2" data-bs-toggle="modal" data-bs-target="#saveModal">Save</a>
+<style>
+  .ta_tall {
+    height: calc(100% - 40px);
+  }
+</style>
+
+<%= form_with(url: '/query', method: :get, local: false, class: ' w-100 align-items-start mb-0 ta_tall', role: 'search', id: 'query-form', data: { turbo_frame: 'output-content' }) do %>
+  <div class="d-flex  ta_tall flex-column">
+  
+  <%= text_area_tag :sql, sql_value, class: 'form-control flex-grow-1 ta_tall', placeholder: 'Enter your query here', aria: { label: 'Query' }, rows: 5, id: 'sql-textarea', style: 'resize: none; ' %>
+  
+  </div>
+  <div class="button-container mt-3">
+    <%= submit_tag 'Execute', class: 'btn btn-primary fixed-height-button ' %>
+    <a href="#" id="save-btn" class="ms-1 btn btn-primary fixed-height-button " data-bs-toggle="modal" data-bs-target="#saveModal">Save</a>
   </div>
 <% end %>
 
@@ -11,31 +21,52 @@ document.addEventListener("turbo:load", (event) => {
   const queryForm = document.getElementById("query-form");
   const textArea = queryForm.querySelector("#sql-textarea");
   const saveButton = document.getElementById("save-btn");
+  const executeButton = queryForm.querySelector('input[type="submit"]');
   const modalSqlHiddenField = document.getElementById("modal-sql-hidden");
+
+  textArea.focus();
+
+  function toggleButtons() {
+    const hasText = textArea.value.trim().length > 0;
+    saveButton.classList.toggle('disabled', !hasText);
+    saveButton.setAttribute('aria-disabled', !hasText);
+    executeButton.disabled = !hasText;
+  }
+
+  // Initially disable buttons if the textarea is empty
+  toggleButtons();
+
+  // Listen for input changes to enable/disable buttons
+  textArea.addEventListener("input", toggleButtons);
 
   textArea.addEventListener("keydown", (event) => {
     if ((event.altKey || event.metaKey) && event.key === "Enter") {
       event.preventDefault();
-      queryForm.submit();
+      if (textArea.value.trim().length > 0) { // Only submit if there is text
+        queryForm.requestSubmit(); // Use requestSubmit instead of submit
+      }
     }
   });
 
   saveButton.addEventListener("click", (event) => {
-    modalSqlHiddenField.value = textArea.value;
+    if (saveButton.classList.contains('disabled')) {
+      event.preventDefault();
+    } else {
+      modalSqlHiddenField.value = textArea.value;
+    }
   });
 });
 
 function saveQuery() {
-  // Retrieve the values from the input fields
   const sql = document.getElementById("sql-textarea").value;
   console.log(sql);
   const queryName = document.getElementById("query_name").value;
-  // Create the data object
+  
   const data = {
     sql: sql,
     name: queryName,
   };
-  // Send POST request to the server
+  
   fetch("<%= queries_path %>", {
     method: "POST",
     headers: {
@@ -61,3 +92,28 @@ function saveQuery() {
     });
 }
 </script>
+
+<div class="modal fade" id="saveModal" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="ModalLabel">Save Query</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <input type="hidden" id="modal-sql-hidden" name="modal-sql-hidden">
+          <div class="mb-3 d-flex align-items-center">
+            <label for="query_name" class="col-form-label me-2">Name:</label>
+            <input type="text" class="form-control flex-grow-1" id="query_name">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" onclick="saveQuery()">Save Query</button>
+      </div>
+    </div>
+  </div>
+</div>
+

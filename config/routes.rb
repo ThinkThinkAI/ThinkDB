@@ -1,12 +1,13 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
-  resources :queries do
+  resources :queries, except: [:index] do
     collection do
       get :metadata
       get :data
     end
   end
+  get '/query', to: 'queries#index'
 
   devise_for :users, controllers: {
     sessions: 'custom_sessions',
@@ -22,7 +23,7 @@ Rails.application.routes.draw do
   end
 
 
-  get 'query', to: 'queries#index'
+   #get '/query', to: 'queries#index', as: 'query'
 
   get 'users/settings', to: 'users#settings', as: 'user_settings'
   patch 'users/settings', to: 'users#settings'
