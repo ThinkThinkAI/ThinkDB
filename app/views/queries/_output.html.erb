@@ -1,17 +1,12 @@
 <% adjustment = defined?(adjustment) ? adjustment : 32 %>
 <% data_grid_id = defined?(data_grid_id) ? data_grid_id : "dataGrid-#{SecureRandom.hex(8)}" %>
-
-
+<% sanitized_sql = sql.gsub('"', "'") %>
 <script>
 document.addEventListener("turbo:load", function() {
-  initializeGrid('<%= data_grid_id %>', "<%= j sql %>");
-});
-
-document.addEventListener("turbo:frame-render", function(event) {
-  if (event.target.id === "table-content") {
-    initializeGrid('<%= data_grid_id %>', "<%= j sql %>");
-  }
+  initializeGrid('<%= data_grid_id %>', "<%= raw sanitized_sql %>");
+  initAdjustHeight();
 });
 </script>
 
 <div id="<%= data_grid_id %>" class="ag-theme-material-dark mb-n4" style="height: calc(100% - <%= adjustment %>px);"></div>
+

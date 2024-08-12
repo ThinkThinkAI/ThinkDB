@@ -1,7 +1,7 @@
 <div class="p-1 ">
   <a href="/" class="text-white text-decoration-none">
     <center>
-      <h1>DataDialog</h1>
+      <h1 class="mt-2">ThinkThink</h1>
     </center>
   </a>
 </div>
@@ -10,7 +10,7 @@
   <%= render partial: 'layouts/sidebar/accordion_item', locals: { title: 'Data Sources', text_muted: text_muted, icon_class: 'bi-server' } %>
   <div class="accordion-item">
     <h2 class="accordion-header">
-      <a href="<%= queries_path() %>" class="nav-link  accordion-button no-icon">
+      <a href="/query" class="nav-link  accordion-button no-icon">
         <i class="fs-4  bi-question-circle-fill <%= text_muted %>"></i><span class="ms-2  <%= text_muted %>">Query</span>
       </a>
     </h2>

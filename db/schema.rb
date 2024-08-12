@@ -48,7 +48,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_05_033311) do
     t.string "name", null: false
     t.string "slug"
     t.index ["data_source_id"], name: "index_queries_on_data_source_id"
-    t.index ["slug"], name: "index_queries_on_slug", unique: true
   end
 
   create_table "tables", force: :cascade do |t|

@@ -1,0 +1,217 @@
+<style>
+  .ta_tall {
+    height: calc(100% - 40px);
+  }
+</style>
+
+  <%= form_with(url: data_source_query_path(query.data_source, query), method: :get, local: false, class: 'w-100 align-items-start mb-0 ta_tall', role: 'search', id: 'query-form', data: { turbo_frame: 'output-content' }) do %>
+    <div class="d-flex  ta_tall flex-column">
+      <%= text_area_tag :sql, query.sql, class: 'form-control flex-grow-1 ta_tall', placeholder: 'Enter your query here', aria: { label: 'Query' }, rows: 5, id: 'sql-textarea', style: 'resize: none; ' %>
+    </div>
+    <div class="button-container mt-3">
+      <div class="dropdown">
+        <%= submit_tag 'Execute', class: 'ms-1 btn btn-primary fixed-height-button' %>
+        <button class="ms-1 btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+          File
+        </button>
+        <ul class="dropdown-menu">
+          <li><a href="#" id="save-btn" class="dropdown-item">Save</a></li>
+          <li><a href="#" id="save-as-btn" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#saveAsModal">Save As</a></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><a href="#" id="delete-btn" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#deleteModal">Delete</a></li>
+        </ul>
+      </div>
+    </div>
+  <% end %>
+
+<script>
+document.addEventListener("turbo:load", (event) => {
+  const queryForm = document.getElementById("query-form");
+  const textArea = queryForm.querySelector("#sql-textarea");
+  const saveButton = document.getElementById("save-btn");
+  const saveAsButton = document.getElementById("save-as-btn");
+  const deleteButton = document.getElementById("delete-btn");
+  const executeButton = queryForm.querySelector('input[type="submit"]');
+  const modalSqlHiddenField = document.getElementById("modal-sql-hidden");
+
+  textArea.focus();
+
+  function toggleButtons() {
+    const hasText = textArea.value.trim().length > 0;
+    saveButton.classList.toggle('disabled', !hasText);
+    saveButton.setAttribute('aria-disabled', !hasText);
+    executeButton.disabled = !hasText;
+  }
+
+  // Initially disable buttons if the textarea is empty
+  toggleButtons();
+
+  // Listen for input changes to enable/disable save and submit buttons
+  textArea.addEventListener("input", toggleButtons);
+
+  textArea.addEventListener("keydown", (event) => {
+    if ((event.altKey || event.metaKey) && event.key === "Enter") {
+      event.preventDefault();
+      if (textArea.value.trim().length > 0) { // Only submit if there is text
+        queryForm.requestSubmit(); // Use requestSubmit instead of submit
+      }
+    }
+  });
+
+  saveButton.addEventListener("click", (event) => {
+    if (saveButton.classList.contains('disabled')) {
+      event.preventDefault();
+    } else {
+      saveQuery();
+    }
+  });
+
+  saveAsButton.addEventListener("click", (event) => {
+    modalSqlHiddenField.value = textArea.value;
+  });
+
+  deleteButton.addEventListener("click", (event) => {
+    // No need to call deleteQuery in this click handler since it's triggered by the modal button
+  });
+});
+
+async function saveQuery() {
+  try {
+    const sql = document.getElementById("sql-textarea").value;
+    const queryName = document.getElementById("query_name").value;
+    
+    const data = {
+      sql: sql,
+      name: queryName,
+    };
+    
+    const response = await fetch("<%= data_source_query_path(@query.data_source, @query) %>", { 
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRF-Token": document
+          .querySelector('meta[name="csrf-token"]')
+          .getAttribute("content"),
+      },
+      body: JSON.stringify(data),
+    });
+    
+    if (response.ok) {
+      //showNotification("Saved!")
+    } else {
+      const errorData = await response.json();
+      console.error("Error:", errorData);
+    }
+  } catch (error) {
+    console.error("Error:", error);
+  }
+}
+
+function saveAsQuery() {
+  const sql = document.getElementById("sql-textarea").value;
+  
+  const queryName = document.getElementById("query_name").value;
+  
+  const data = {
+    sql: sql,
+    name: queryName,
+  };
+  
+  fetch("<%= queries_path %>", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-CSRF-Token": document
+        .querySelector('meta[name="csrf-token"]')
+        .getAttribute("content"),
+    },
+    body: JSON.stringify(data),
+  })
+    .then((response) => {
+      if (response.ok) {
+        window.location.href = response.url;
+      } else {
+        return response.json().then((errorData) => {
+          console.error("Error:", errorData);
+        });
+      }
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+    });
+}
+
+async function deleteQuery() {
+  try {
+    const response = await fetch("<%= data_source_query_path(query.data_source, query) %>", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "X-CSRF-Token": document
+          .querySelector('meta[name="csrf-token"]')
+          .getAttribute("content"),
+      },
+    });
+    
+    if (response.ok) {
+      window.location.href = "/query";
+    } else {
+      const errorData = await response.json();
+      throw new Error(errorData);
+    }
+  } catch (error) {
+    console.error("Error:", error);
+  }
+}
+
+function showNotification(message) {
+  const alertElement = document.getElementById("notification");
+  alertElement.querySelector('#notification').innerText = message;
+  alertElement.classList.remove('d-none');
+  alertElement.classList.add('show');
+}
+</script>
+
+<!-- Save Modal -->
+<div class="modal fade" id="saveAsModal" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="ModalLabel">Save Query As</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="save-query-form">
+          <input type="hidden" id="modal-sql-hidden" name="modal-sql-hidden">
+          <div class="mb-3 d-flex align-items-center">
+            <label for="query_name" class="col-form-label me-2">Name:</label>
+            <input type="text" class="form-control flex-grow-1" id="query_name">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" onclick="saveAsQuery()">Save Query</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header text-bg-danger text-white">
+        <h1 class="modal-title fs-5" id="ModalLabel">Delete Query?</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+        <button type="button" class="btn btn-danger" onclick="deleteQuery()">Yes</button>
+      </div>
+    </div>
+  </div>
+</div>
+

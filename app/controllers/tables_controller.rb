@@ -4,6 +4,7 @@
 # It is responsible for retrieving and displaying individual tables
 # that belong to a specific DataSource.
 class TablesController < ApplicationController
+  before_action :authenticate_user!
   before_action :set_data_source
   before_action :set_database_service
   before_action :set_table, only: [:show]

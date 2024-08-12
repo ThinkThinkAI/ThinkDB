@@ -2,7 +2,7 @@
   <ul class="list-group list-group-flush">
     <% current_user.connected_data_source.queries.each do |query| %>
       <li class="list-group-item">
-        <a href="<%= query_path(query) %>" class="nav-link px-0"><%= query.name %></a>
+        <a href="<%= data_source_query_path(query.data_source, query) %>" class="nav-link px-0"><%= query.name %></a>
       </li>
     <% end%>
   </ul>
