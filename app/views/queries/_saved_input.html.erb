@@ -2,6 +2,7 @@
   .ta_tall {
     height: calc(100% - 40px);
   }
+
 </style>
 
   <%= form_with(url: data_source_query_path(query.data_source, query), method: :get, local: false, class: 'w-100 align-items-start mb-0 ta_tall', role: 'search', id: 'query-form', data: { turbo_frame: 'output-content' }) do %>
@@ -25,55 +26,71 @@
   <% end %>
 
 <script>
-document.addEventListener("turbo:load", (event) => {
-  const queryForm = document.getElementById("query-form");
-  const textArea = queryForm.querySelector("#sql-textarea");
-  const saveButton = document.getElementById("save-btn");
-  const saveAsButton = document.getElementById("save-as-btn");
-  const deleteButton = document.getElementById("delete-btn");
-  const executeButton = queryForm.querySelector('input[type="submit"]');
-  const modalSqlHiddenField = document.getElementById("modal-sql-hidden");
+  document.addEventListener("turbo:load", (event) => {
+    const queryForm = document.getElementById("query-form");
+    const saveButton = document.getElementById("save-btn");
+    const saveAsButton = document.getElementById("save-as-btn");
+    const deleteButton = document.getElementById("delete-btn");
+    const executeButton = queryForm.querySelector('input[type="submit"]');
+    const modalSqlHiddenField = document.getElementById("modal-sql-hidden");
 
-  textArea.focus();
+    
+    let existingEditorDiv = document.querySelector(".CodeMirror");
+    if (existingEditorDiv) {
+      existingEditorDiv.remove();
+    }
 
-  function toggleButtons() {
-    const hasText = textArea.value.trim().length > 0;
-    saveButton.classList.toggle('disabled', !hasText);
-    saveButton.setAttribute('aria-disabled', !hasText);
-    executeButton.disabled = !hasText;
-  }
+    const textAreaElement = document.getElementById("sql-textarea");
+    const textArea = CodeMirror.fromTextArea(textAreaElement, {
+      lineNumbers: true,
+      mode: "sql",
+      theme: "dracula"
+    });
 
-  // Initially disable buttons if the textarea is empty
-  toggleButtons();
+    existingEditorDiv = document.querySelector(".CodeMirror");
+    existingEditorDiv.classList.add('flex-grow-1');
+    existingEditorDiv.classList.add('ta_tall');
 
-  // Listen for input changes to enable/disable save and submit buttons
-  textArea.addEventListener("input", toggleButtons);
+    textArea.focus();
 
-  textArea.addEventListener("keydown", (event) => {
-    if ((event.altKey || event.metaKey) && event.key === "Enter") {
-      event.preventDefault();
-      if (textArea.value.trim().length > 0) { // Only submit if there is text
-        queryForm.requestSubmit(); // Use requestSubmit instead of submit
+    function toggleButtons() {
+      const hasText = textArea.getValue().trim().length > 0;
+      saveButton.classList.toggle('disabled', !hasText);
+      saveButton.setAttribute('aria-disabled', !hasText);
+      executeButton.disabled = !hasText;
+    }
+
+    toggleButtons();
+
+    textArea.on("change", () => {
+      toggleButtons();
+      textAreaElement.value = textArea.getValue(); 
+    });
+
+    textArea.on("keydown", (cm, event) => {
+      if ((event.altKey || event.metaKey) && event.key === "Enter") {
+        event.preventDefault();
+        if (textArea.getValue().trim().length > 0) { 
+          queryForm.requestSubmit(); 
+        }
       }
-    }
-  });
+    });
 
-  saveButton.addEventListener("click", (event) => {
-    if (saveButton.classList.contains('disabled')) {
-      event.preventDefault();
-    } else {
-      saveQuery();
-    }
-  });
+    saveButton.addEventListener("click", (event) => {
+      if (saveButton.classList.contains('disabled')) {
+        event.preventDefault();
+      } else {
+        saveQuery();
+      }
+    });
 
-  saveAsButton.addEventListener("click", (event) => {
-    modalSqlHiddenField.value = textArea.value;
-  });
+    saveAsButton.addEventListener("click", (event) => {
+      modalSqlHiddenField.value = textArea.getValue(); 
+    });
 
-  deleteButton.addEventListener("click", (event) => {
-    // No need to call deleteQuery in this click handler since it's triggered by the modal button
+    deleteButton.addEventListener("click", (event) => {
+    });
   });
-});
 
 async function saveQuery() {
   try {
@@ -97,7 +114,6 @@ async function saveQuery() {
     });
     
     if (response.ok) {
-      //showNotification("Saved!")
     } else {
       const errorData = await response.json();
       console.error("Error:", errorData);

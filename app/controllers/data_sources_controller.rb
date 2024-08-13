@@ -55,13 +55,7 @@ class DataSourcesController < ApplicationController
   def connect
     updated_status = !@data_source.connected
 
-    if updated_status
-      database_service = DatabaseService.build(@data_source)
-
-      database_service&.build_tables
-
-      @data_source.update!(connected: updated_status)
-    end
+    @data_source.update!(connected: updated_status)
 
     message = 'DataSource connection status was successfully updated.'
 

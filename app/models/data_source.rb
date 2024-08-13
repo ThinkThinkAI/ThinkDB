@@ -5,12 +5,14 @@
 class DataSource < ApplicationRecord
   extend FriendlyId
   friendly_id :name, use: :slugged
-  
+
   has_many :tables, dependent: :destroy
   has_many :queries, dependent: :destroy
 
   before_save :encrypt_password
   before_save :unset_other_connected_sources, if: :connected
+
+  after_save :build_tables_if_connected
 
   after_destroy :activate_first_available_data_source_if_none_active
 
@@ -54,5 +56,12 @@ class DataSource < ApplicationRecord
     return unless user.data_sources.active.empty? && user.data_sources.inactive.any?
 
     user.data_sources.inactive.first.update(connected: true)
+  end
+
+  def build_tables_if_connected
+    return unless saved_change_to_connected? && connected?
+
+    database_service = DatabaseService.build(self)
+    database_service&.build_tables
   end
 end
