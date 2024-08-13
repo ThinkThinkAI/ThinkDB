@@ -5,6 +5,11 @@
     <%= csp_meta_tag %>
     <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
     <%= javascript_importmap_tags %>
+    <%= stylesheet_link_tag 'codemirror/lib/codemirror', media: 'all' %>
+    <%= javascript_include_tag 'codemirror/lib/codemirror' %>
+    <%= javascript_include_tag 'codemirror/addon/comment/comment' %>
+    <%= javascript_include_tag 'codemirror/mode/sql/sql' %>
+    <%= stylesheet_link_tag 'codemirror/theme/dracula' %>
   </head>
   <body>
     <div class="container-fluid">
