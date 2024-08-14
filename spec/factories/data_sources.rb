@@ -9,7 +9,7 @@ FactoryBot.define do
     username { 'your_username' }
     password { 'your_password' }
     user
-    connected { true }
+    connected { false }
     sequence(:name) { |n| "name#{n}" }
     sequence(:slug) { |n| "slug#{n}" }
   end

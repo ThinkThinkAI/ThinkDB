@@ -1,7 +1,7 @@
 <div class="p-1 ">
   <a href="/" class="text-white text-decoration-none">
     <center>
-      <h1 class="mt-2">ThinkThink</h1>
+      <h1 class="mt-2">ThinkDB</h1>
     </center>
   </a>
 </div>
@@ -17,7 +17,7 @@
   </div>
   <%= render partial: 'layouts/sidebar/accordion_item', locals: { title: 'Tables', text_muted: text_muted, icon_class: 'bi-table' } %>
   <%= render partial: 'layouts/sidebar/accordion_item', locals: { title: 'Queries', text_muted: text_muted, icon_class: 'bi-folder-symlink-fill' } %>
-</div>
+</div> 
 <hr class="p-0 m-0">
 <% if user_signed_in? %>
   <div class="dropdown p-2 floatz border">

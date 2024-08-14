@@ -3,43 +3,49 @@
 require 'rails_helper'
 
 RSpec.describe TablesController, type: :controller do
-  let(:data_source) { create(:data_source) }
+  let(:user) { create(:user) }
+  let(:data_source) { create(:data_source, user: user) }
   let(:table) { create(:table, data_source: data_source) }
-  let(:database_service) { instance_double(DatabaseService) }
+
+  # Mock the database service
+  let(:database_service_mock) { instance_double("DatabaseService", all_records_query: [], table_structure_query: [], build_tables: nil) }
 
   before do
-    allow(DataSource).to receive(:friendly).and_return(DataSource)
-    allow(DataSource).to receive(:find).with(data_source.id.to_s).and_return(data_source)
-    allow(DatabaseService).to receive(:build).with(data_source).and_return(database_service)
-    allow(database_service).to receive(:all_records_query).with(table.name).and_return("SELECT * FROM #{table.name}")
-    allow(database_service).to receive(:table_structure_query).with(table.name).and_return("DESCRIBE #{table.name}")
-    allow(data_source.tables).to receive(:friendly).and_return(data_source.tables)
-    allow(data_source.tables).to receive(:find).with(table.id.to_s).and_return(table)
+    sign_in user
+    allow(DatabaseService).to receive(:build).and_return(database_service_mock)
+    allow(DataSource).to receive(:friendly).and_return(double(find: data_source))
+    allow(data_source.tables).to receive(:friendly).and_return(double(find: table))
   end
 
   describe 'GET #show' do
-    before do
-      get :show, params: { data_source_id: data_source.id, id: table.id }
-    end
-
-    it 'assigns the requested data_source to @data_source' do
-      expect(assigns(:data_source)).to eq(data_source)
-    end
-
     it 'assigns the requested table to @table' do
+      get :show, params: { data_source_id: data_source.id, id: table.id }
       expect(assigns(:table)).to eq(table)
     end
 
-    it 'initializes the database service' do
-      expect(assigns(:database_service)).to eq(database_service)
+    it 'assigns the result of the all_records_query to @all_records_query' do
+      get :show, params: { data_source_id: data_source.id, id: table.id }
+      expect(assigns(:all_records_query)).to eq([])
     end
 
-    it 'sets @all_records_query' do
-      expect(assigns(:all_records_query)).to eq("SELECT * FROM #{table.name}")
+    it 'assigns the result of the table_structure_query to @table_structure_query' do
+      get :show, params: { data_source_id: data_source.id, id: table.id }
+      expect(assigns(:table_structure_query)).to eq([])
     end
 
-    it 'sets @table_structure_query' do
-      expect(assigns(:table_structure_query)).to eq("DESCRIBE #{table.name}")
+    it 'calls the all_records_query method on the database service' do
+      get :show, params: { data_source_id: data_source.id, id: table.id }
+      expect(database_service_mock).to have_received(:all_records_query).with(table.name)
+    end
+
+    it 'calls the table_structure_query method on the database service' do
+      get :show, params: { data_source_id: data_source.id, id: table.id }
+      expect(database_service_mock).to have_received(:table_structure_query).with(table.name)
+    end
+
+    it 'renders the show template' do
+      get :show, params: { data_source_id: data_source.id, id: table.id }
+      expect(response).to render_template(:show)
     end
   end
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_08_05_033311) do
+ActiveRecord::Schema[7.1].define(version: 2024_08_13_062438) do
   create_table "data_sources", force: :cascade do |t|
     t.string "adapter", null: false
     t.string "host"
@@ -25,6 +25,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_05_033311) do
     t.boolean "connected", default: false, null: false
     t.json "schema", default: {}, null: false
     t.string "slug"
+    t.string "autocomplete_schema"
     t.index ["slug"], name: "index_data_sources_on_slug", unique: true
     t.index ["user_id"], name: "index_data_sources_on_user_id"
   end

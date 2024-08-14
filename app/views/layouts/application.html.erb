@@ -1,15 +1,18 @@
 <html data-bs-theme="dark" >
   <head>
-    <title>thinkthink.ai</title>
+    <title>ThinkDB</title>
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
     <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
     <%= javascript_importmap_tags %>
     <%= stylesheet_link_tag 'codemirror/lib/codemirror', media: 'all' %>
+    <%= stylesheet_link_tag 'codemirror/theme/dracula' %>
+    <%= stylesheet_link_tag 'codemirror/addon/hint/show-hint' %>
     <%= javascript_include_tag 'codemirror/lib/codemirror' %>
     <%= javascript_include_tag 'codemirror/addon/comment/comment' %>
     <%= javascript_include_tag 'codemirror/mode/sql/sql' %>
-    <%= stylesheet_link_tag 'codemirror/theme/dracula' %>
+    <%= javascript_include_tag 'codemirror/addon/hint/show-hint' %>
+    <%= javascript_include_tag 'codemirror/addon/hint/sql-hint' %>
   </head>
   <body>
     <div class="container-fluid">

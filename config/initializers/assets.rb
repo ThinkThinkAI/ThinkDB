@@ -9,4 +9,7 @@ Rails.application.config.assets.precompile += %w[ codemirror/lib/codemirror.js
                                                   codemirror/lib/codemirror.css
                                                   codemirror/addon/comment/comment.js
                                                   codemirror/mode/sql/sql.js
-                                                  codemirror/theme/dracula.css]
+                                                  codemirror/theme/dracula.css
+                                                  codemirror/addon/hint/sql-hint.js
+                                                  codemirror/addon/hint/show-hint.js
+                                                  codemirror/addon/hint/show-hint.css ]
