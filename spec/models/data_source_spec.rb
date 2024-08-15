@@ -1,99 +1,75 @@
 # frozen_string_literal: true
 
 # spec/models/data_source_spec.rb
+
 require 'rails_helper'
 
 RSpec.describe DataSource, type: :model do
   let(:user) { create(:user) }
-  let(:data_source) { create(:data_source, user:) }
 
-  describe 'Validations' do
+  # Mock the adapter interactions
+  let(:database_service_mock) { instance_double('DatabaseService', build_tables: true) }
+
+  before do
+    allow(DatabaseService).to receive(:build).and_return(database_service_mock)
+  end
+
+  describe 'validations' do
+    it { should validate_presence_of(:name) }
     it { should validate_presence_of(:adapter) }
     it { should validate_inclusion_of(:adapter).in_array(%w[postgresql mysql sqlite]) }
-    it { should validate_numericality_of(:port).only_integer }
+    it { should validate_numericality_of(:port).only_integer.allow_nil }
   end
 
-  describe 'Associations' do
+  describe 'associations' do
     it { should belong_to(:user) }
+    it { should have_many(:tables).dependent(:destroy) }
+    it { should have_many(:queries).dependent(:destroy) }
   end
 
-  describe 'Callbacks' do
-    context 'before save' do
-      it 'encrypts the password' do
-        data_source = build(:data_source, user:, password: 'plainpassword')
-        expect(data_source).to receive(:encrypt_password)
-        data_source.save
-      end
+  describe 'callbacks' do
+    let!(:data_source) { create(:data_source, user:, connected: true) }
 
-      it 'unsets other connected sources if this one is connected' do
-        data_source = create(:data_source, user:, connected: true)
-        create(:data_source, user:, connected: false)
-
-        data_source.connected = true
-        expect(data_source).to receive(:unset_other_connected_sources)
-        data_source.save
-      end
-    end
-
-    context 'after destroy' do
-      it 'activates the first available inactive data source if none active' do
-        active_data_source = create(:data_source, user:, connected: true)
-        inactive_data_source1 = create(:data_source, user:, connected: false)
-        inactive_data_source2 = create(:data_source, user:, connected: false)
-
-        active_data_source.destroy
-
-        expect(inactive_data_source1.reload.connected).to be true
-        expect(inactive_data_source2.reload.connected).to be false
-      end
-
-      it 'does not change state if there are still active data sources' do
-        active_data_source1 = create(:data_source, user:, connected: true)
-        active_data_source2 = create(:data_source, user:, connected: true)
-        inactive_data_source = create(:data_source, user:, connected: false)
-
-        active_data_source1.destroy
-
-        expect(inactive_data_source.reload.connected).to be false
-        expect(active_data_source2.reload.connected).to be true
-      end
-    end
-  end
-
-  describe '#encrypt_password' do
-    it 'encrypts the password if present' do
-      data_source.password = 'plainpassword'
-      expect(data_source).to receive(:encrypt).with(data_source.password)
+    it 'encrypts the password before saving' do
+      data_source.password = 'plain_password'
       data_source.save
+      expect(data_source.password).not_to eq('plain_password')
+      expect(data_source.decrypt_password).to eq('plain_password')
     end
-  end
 
-  describe '#decrypt_password' do
-    it 'decrypts the encrypted password' do
-      plain_password = 'plainpassword'
-      data_source.password = plain_password
+    it 'unsets other connected sources before saving if connected' do
+      another_data_source = create(:data_source, user:, connected: true)
       data_source.save
-      decrypted_password = data_source.decrypt_password
+      another_data_source.reload
+      expect(another_data_source.connected).to be_falsey
+    end
 
-      expect(decrypted_password).to eq(plain_password)
+    it 'activates the first inactive data source after destruction if none are active' do
+      inactive_data_source = create(:data_source, user:, connected: false)
+      data_source.destroy
+      inactive_data_source.reload
+      expect(inactive_data_source.connected).to be_truthy
+    end
+
+    it 'builds tables if connected after save' do
+      data_source.connected = true
+      data_source.save
+      expect(DatabaseService).to have_received(:build).with(data_source)
     end
   end
 
-  describe '#unset_other_connected_sources' do
-    it 'sets other connected data sources to false' do
-      connected_data_source = create(:data_source, user:, connected: true)
-      second_data_source = create(:data_source, user:, connected: false)
-
-      connected_data_source.update(connected: true)
-      second_data_source.reload
-
-      expect(second_data_source.connected).to be false
+  describe 'scopes' do
+    before do
+      create(:data_source, user:, connected: true)
+      create(:data_source, user:, connected: false)
     end
-  end
 
-  describe '#encryptor' do
-    it 'returns an ActiveSupport::MessageEncryptor instance' do
-      expect(data_source.send(:encryptor)).to be_a(ActiveSupport::MessageEncryptor)
+    it '.active' do
+      expect(DataSource.active.count).to eq(1)
+    end
+
+    it '.inactive' do
+      expect(DataSource.inactive.count).to eq(1)
     end
   end
 end

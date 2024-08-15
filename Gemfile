@@ -34,8 +34,8 @@ gem 'mysql2'
 gem 'pg'
 gem 'sqlite3', '~> 1.4'
 
-gem 'rubocop'
 gem 'friendly_id', '~> 5.5.0'
+gem 'rubocop'
 gem 'ruby-lsp-rails'
 
 group :development, :test do
@@ -50,6 +50,7 @@ end
 group :test do
   gem 'capybara'
   gem 'factory_bot_rails'
+  gem 'faker'
   gem 'rails-controller-testing'
   gem 'selenium-webdriver'
   gem 'shoulda-matchers'

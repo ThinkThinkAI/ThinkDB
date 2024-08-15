@@ -18,7 +18,7 @@
     <div class="col-12">
       <div class="card mb-4" style="resize: vertical !important;overflow: auto; height: 200px" id="resizableDiv">
         <div class="card-body">
-          <%= render partial: 'queries/input', locals: { sql_value: sql_value } %>
+          <%= render partial: 'queries/input', locals: { sql_value: sql_value, data_source: @current_user.connected_data_source } %>
         </div>
       </div>
     </div>

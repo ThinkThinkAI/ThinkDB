@@ -57,6 +57,8 @@ class DataSourcesController < ApplicationController
 
     @data_source.update!(connected: updated_status)
 
+    @data_source.reload
+
     message = 'DataSource connection status was successfully updated.'
 
     respond_to do |format|

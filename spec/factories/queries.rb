@@ -2,8 +2,8 @@
 
 FactoryBot.define do
   factory :query do
-    sequence(:name) { |n| "Test Query #{n}" }
+    sequence(:name) { |n| "Test Query #{n} #{Faker::Lorem.sentence}" }
     sql { 'SELECT * FROM users' }
-    data_source
+    association :data_source
   end
 end

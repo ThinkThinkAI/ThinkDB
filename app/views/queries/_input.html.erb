@@ -32,7 +32,8 @@
     const textArea = CodeMirror.fromTextArea(textAreaElement, {
       lineNumbers: true,
       mode: "sql",
-      theme: "dracula"
+      theme: "dracula",
+      extraKeys: { "Ctrl-Space": "autocomplete" }
     });
 
     existingEditorDiv = document.querySelector(".CodeMirror");
@@ -41,6 +42,20 @@
 
     textArea.focus();
 
+    textArea.setOption("hintOptions", <%= raw data_source.autocomplete_schema %>);
+
+    textArea.on("inputRead", function(cm, change) {
+      if (change.origin !== "setValue") {
+        const cursor = cm.getCursor();
+        const token = cm.getTokenAt(cursor);
+
+        // Check if the current token's string length is at least 1 character
+        if (token.string.trim().length >= 1) {
+          CodeMirror.commands.autocomplete(cm, null, { completeSingle: false });
+        }
+      }
+    });
+    
     function toggleButtons() {
       const hasText = textArea.getValue().trim().length > 0;
       saveButton.classList.toggle('disabled', !hasText);
@@ -48,20 +63,18 @@
       executeButton.disabled = !hasText;
     }
 
-    // Initially disable buttons if the editor is empty
     toggleButtons();
 
-    // Listen for input changes in CodeMirror to enable/disable buttons
     textArea.on("change", () => {
       toggleButtons();
-      textAreaElement.value = textArea.getValue(); // Sync with the hidden textarea
+      textAreaElement.value = textArea.getValue(); 
     });
 
     textArea.on("keydown", (cm, event) => {
       if ((event.altKey || event.metaKey) && event.key === "Enter") {
         event.preventDefault();
-        if (textArea.getValue().trim().length > 0) { // Only submit if there is text
-          queryForm.requestSubmit(); // Use requestSubmit instead of submit
+        if (textArea.getValue().trim().length > 0) { 
+          queryForm.requestSubmit(); 
         }
       }
     });
@@ -70,7 +83,7 @@
       if (saveButton.classList.contains('disabled')) {
         event.preventDefault();
       } else {
-        modalSqlHiddenField.value = textArea.getValue(); // Get value from CodeMirror
+        modalSqlHiddenField.value = textArea.getValue(); 
       }
     });
   });

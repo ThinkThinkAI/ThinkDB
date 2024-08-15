@@ -30,14 +30,21 @@ class DatabaseService
     schemas = @adapter.schemas
 
     @data_source.update(schema: schemas.to_json)
+
     @data_source.tables.destroy_all
 
-    schemas.each_key do |key|
-      puts key
-      next if key == "Friendly"
+    autocomplete_schema = { tables: {} }
 
-      @data_source.tables.create(name: key)
+    schemas.each_key do |table_name|
+      next if table_name == 'Friendly'
+
+      @data_source.tables.create(name: table_name)
+
+      column_names = schemas[table_name].map { |column| column[:column_name] }
+      autocomplete_schema[:tables][table_name] = column_names
     end
+
+    @data_source.update(autocomplete_schema: autocomplete_schema.to_json)
   end
 
   def format_json(data)

@@ -33,11 +33,10 @@ class QueriesController < ApplicationController
   end
 
   def update
-    if @query.update(sql: params[:sql])
-      render json: { message: 'Query was updated.' }, status: :ok
-    else
-      render json: { message: 'Query was not updated' }, status: :unprocessable_entity
-    end
+    return render json: { message: 'Query was not updated' }, status: :unprocessable_entity if params[:sql].blank?
+
+    @query.update(sql: params[:sql])
+    render json: { message: 'Query was updated.' }, status: :ok
   end
 
   def destroy
