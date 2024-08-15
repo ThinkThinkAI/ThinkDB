@@ -36,7 +36,7 @@ class DatabaseService
     autocomplete_schema = { tables: {} }
 
     schemas.each_key do |table_name|
-      next if table_name == "Friendly"
+      next if table_name == 'Friendly'
 
       @data_source.tables.create(name: table_name)
 

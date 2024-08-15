@@ -1,14 +1,18 @@
+# frozen_string_literal: true
+
 # spec/controllers/tables_controller_spec.rb
 
 require 'rails_helper'
 
 RSpec.describe TablesController, type: :controller do
   let(:user) { create(:user) }
-  let(:data_source) { create(:data_source, user: user) }
-  let(:table) { create(:table, data_source: data_source) }
+  let(:data_source) { create(:data_source, user:) }
+  let(:table) { create(:table, data_source:) }
 
   # Mock the database service
-  let(:database_service_mock) { instance_double("DatabaseService", all_records_query: [], table_structure_query: [], build_tables: nil) }
+  let(:database_service_mock) do
+    instance_double('DatabaseService', all_records_query: [], table_structure_query: [], build_tables: nil)
+  end
 
   before do
     sign_in user

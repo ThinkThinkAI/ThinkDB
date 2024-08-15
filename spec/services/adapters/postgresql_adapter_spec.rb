@@ -20,8 +20,6 @@ RSpec.describe PostgresqlAdapter do
     allow(PG).to receive(:connect).and_return(connection)
   end
 
-
-
   describe '#initialize' do
     it 'creates a new PG connection with the provided parameters' do
       described_class.new(data_source)
@@ -79,7 +77,7 @@ RSpec.describe PostgresqlAdapter do
     end
   end
 
-    let(:table_name) { 'users' }
+  let(:table_name) { 'users' }
 
   describe '#table_structure_query' do
     it 'returns the correct SHOW query for fetching structure from a table' do

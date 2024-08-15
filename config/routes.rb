@@ -22,8 +22,7 @@ Rails.application.routes.draw do
     resources :queries
   end
 
-
-   #get '/query', to: 'queries#index', as: 'query'
+  # get '/query', to: 'queries#index', as: 'query'
 
   get 'users/settings', to: 'users#settings', as: 'user_settings'
   patch 'users/settings', to: 'users#settings'

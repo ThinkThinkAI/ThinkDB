@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe DataSourcesController, type: :controller do
@@ -131,7 +133,7 @@ RSpec.describe DataSourcesController, type: :controller do
 
       it 'returns an error response for JSON format' do
         patch :connect, params: { id: data_source.to_param }, as: :json
-        parsed_response = JSON.parse(response.body)
+        JSON.parse(response.body)
         expect(response.status).to eq(422)
       end
     end

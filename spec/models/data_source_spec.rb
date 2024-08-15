@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # spec/models/data_source_spec.rb
 
 require 'rails_helper'
@@ -6,7 +8,7 @@ RSpec.describe DataSource, type: :model do
   let(:user) { create(:user) }
 
   # Mock the adapter interactions
-  let(:database_service_mock) { instance_double("DatabaseService", build_tables: true) }
+  let(:database_service_mock) { instance_double('DatabaseService', build_tables: true) }
 
   before do
     allow(DatabaseService).to receive(:build).and_return(database_service_mock)
@@ -26,7 +28,7 @@ RSpec.describe DataSource, type: :model do
   end
 
   describe 'callbacks' do
-    let!(:data_source) { create(:data_source, user: user, connected: true) }
+    let!(:data_source) { create(:data_source, user:, connected: true) }
 
     it 'encrypts the password before saving' do
       data_source.password = 'plain_password'
@@ -36,14 +38,14 @@ RSpec.describe DataSource, type: :model do
     end
 
     it 'unsets other connected sources before saving if connected' do
-      another_data_source = create(:data_source, user: user, connected: true)
+      another_data_source = create(:data_source, user:, connected: true)
       data_source.save
       another_data_source.reload
       expect(another_data_source.connected).to be_falsey
     end
 
     it 'activates the first inactive data source after destruction if none are active' do
-      inactive_data_source = create(:data_source, user: user, connected: false)
+      inactive_data_source = create(:data_source, user:, connected: false)
       data_source.destroy
       inactive_data_source.reload
       expect(inactive_data_source.connected).to be_truthy
@@ -58,8 +60,8 @@ RSpec.describe DataSource, type: :model do
 
   describe 'scopes' do
     before do
-      create(:data_source, user: user, connected: true)
-      create(:data_source, user: user, connected: false)
+      create(:data_source, user:, connected: true)
+      create(:data_source, user:, connected: false)
     end
 
     it '.active' do

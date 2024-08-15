@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AddSlugToDataSources < ActiveRecord::Migration[7.1]
   def change
     add_column :data_sources, :slug, :string
