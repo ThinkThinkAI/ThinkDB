@@ -8,6 +8,7 @@ class DataSource < ApplicationRecord
 
   has_many :tables, dependent: :destroy
   has_many :queries, dependent: :destroy
+  has_many :chats, dependent: :destroy
 
   before_save :encrypt_password
   before_save :unset_other_connected_sources, if: :connected

@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
-Rails.application.routes.draw do
+Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
+  resources :messages
+  resources :chats
   resources :queries, except: [:index] do
     collection do
       get :metadata
@@ -18,11 +20,16 @@ Rails.application.routes.draw do
     member do
       get :connect
     end
+
     resources :tables, only: [:show]
     resources :queries
+
+    resources :chats do
+      resources :messages, only: %i[create destroy]
+    end
   end
 
-  # get '/query', to: 'queries#index', as: 'query'
+  get '/chat', to: 'chats#index'
 
   get 'users/settings', to: 'users#settings', as: 'user_settings'
   patch 'users/settings', to: 'users#settings'
