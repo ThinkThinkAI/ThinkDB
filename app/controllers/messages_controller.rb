@@ -7,10 +7,18 @@ class MessagesController < ApplicationController
 
   def create
     @message = @chat.messages.new(message_params)
+
     if @message.save
-      redirect_to data_source_chat_path(@data_source, @chat), notice: 'Message was successfully created.'
+      respond_to do |format|
+        format.turbo_stream
+        format.html { redirect_to data_source_chat_path(@data_source, @chat), notice: "Message sent!" }
+      end
     else
-      render 'chats/show'
+      # Handle failure response
+      respond_to do |format|
+        format.turbo_stream { render turbo_stream: turbo_stream.replace("new_message", partial: "form", locals: { chat: @chat, data_source: @data_source, message: @message.errors }) }
+        format.html { redirect_to data_source_chat_path(@data_source, @chat), alert: "Message could not be sent!" }
+      end
     end
   end
 
@@ -22,7 +30,7 @@ class MessagesController < ApplicationController
   private
 
   def set_data_source
-    @data_source = DataSource.find(params[:data_source_id])
+    @data_source = current_user.connected_data_source
   end
 
   def set_chat

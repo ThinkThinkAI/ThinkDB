@@ -1,17 +1,9 @@
 <div id="<%= dom_id message %>">
-  <p>
-    <strong>Role:</strong>
-    <%= message.role %>
-  </p>
-
-  <p>
-    <strong>Content:</strong>
+  <% if message.role == "user" %>
+  <div class="card p-3 mb-3 rounded-4 col-7">
     <%= message.content %>
-  </p>
-
-  <p>
-    <strong>Chat:</strong>
-    <%= message.chat_id %>
-  </p>
-
+  </div>
+  <% elsif message.role == "assistant" %>
+    <%= message.content %>
+  <% end %>
 </div>

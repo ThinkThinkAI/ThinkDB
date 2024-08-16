@@ -1,16 +1,47 @@
+<!-- app/views/chats/show.html.erb -->
+<%= render partial: 'queries/grid' %> 
+<style>
+  .tall {
+    height: calc(100% - 50px);
+    display: flex;
+    flex-direction: column;
+  }
+</style>
 
-<div class="container-fluid tall">
-    <div class="row">
-        <div class="col">
-        <h1 class="mb-4">Chat</h1>
-        </div>
+<div class="container-fluid tall ">
+  <div class="row">
+    <div class="col">
+      <h1 class="mb-4">Chat</h1>
     </div>
-
+  </div>
+  <div class="row scrollable-content">
+    <div class="col-12 ">
+      <div id="messages">
+        <%= render @chat.messages %> 
+      </div>
+    </div>
+  </div>
 </div>
 
-  
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12">
+      <%= turbo_frame_tag "new_message" do %>
+        <%= form_with model: [@data_source, @chat, Message.new], url: data_source_chat_messages_path(@data_source, @chat), local: false, data: { turbo: "true" } do |form| %>
+          <%= form.hidden_field :role, value: 'user' %>
+          <%= form.text_field :content, class: 'form-control border-1', placeholder: "Message AI" %>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+</div>
+<script>
+  document.addEventListener('turbo:submit-end', (event) => {
+  const form = event.target;
 
-
-
- 
-  
+  // Check if the form submission was successful
+  if (form.querySelector('input[name="message[content]"]')) {
+    form.querySelector('input[name="message[content]"]').value = '';
+  }
+});
+</script>
