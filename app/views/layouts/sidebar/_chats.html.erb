@@ -1,0 +1,11 @@
+<% if connected? %>
+  <ul class="list-group list-group-flush">
+    <% current_user.connected_data_source.chats.each do |chat| %>
+      <% if chat.name != "Chat" %>
+        <li class="list-group-item">
+          <a href="<%= data_source_chat_path(chat.data_source, chat) %>" class="nav-link px-0"><%= chat.name %></a>
+        </li>
+      <% end%>
+    <% end%>
+  </ul>
+<% end %>

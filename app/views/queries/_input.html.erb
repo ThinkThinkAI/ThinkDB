@@ -19,8 +19,9 @@
 <script>
   document.addEventListener("turbo:load", (event) => {
     const queryForm = document.getElementById("query-form");
-    const saveButton = document.getElementById("save-btn");
     const executeButton = queryForm.querySelector('input[type="submit"]');
+
+    const saveButton = document.getElementById("save-btn");
     const modalSqlHiddenField = document.getElementById("modal-sql-hidden");
 
     let existingEditorDiv = document.querySelector(".CodeMirror");

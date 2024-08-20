@@ -61,7 +61,7 @@ class DatabaseService
   def run_query(query, results_per_page: 10, page: 1, format: 'default', sort: nil)
     offset = (page - 1) * results_per_page
 
-    raw_data = @adapter.run_query(query, results_per_page, offset, sort)
+    raw_data = @adapter.run_query(query.gsub(';', ''), results_per_page, offset, sort)
 
     case format
     when 'json'
@@ -72,15 +72,15 @@ class DatabaseService
   end
 
   def run_raw_query(query)
-    @adapter.run_raw_query(query)
+    @adapter.run_raw_query(query.gsub(';', ''))
   end
 
   def column_names(query)
-    run_query(query, results_per_page: 1).first
+    run_query(query.gsub(';', ''), results_per_page: 1).first
   end
 
   def count(query)
-    @adapter.count(query)
+    @adapter.count(query.gsub(';', ''))
   end
 
   def all_records_query(table_name)

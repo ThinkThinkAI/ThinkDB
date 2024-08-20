@@ -79,6 +79,7 @@ async function fetchMetadata(querySql, columnDefs, callback, gridElement, alertE
     const response = await fetch(fetchUrl);
     const data = await response.json();
 
+
     if (data.failure) {
       showAlert(alertElement, data.failure);
       
@@ -152,19 +153,23 @@ function showOutput(showElement) {
     const resizableDiv = document.getElementById('resizableDiv');
     const adjustableDiv = document.getElementById('sql_complete');
 
-    const totalHeight = window.innerHeight;
-    const newHeight = totalHeight - resizableDiv.offsetHeight - 130;
+    if (resizableDiv && adjustableDiv) {
+      const totalHeight = window.innerHeight;
+      const newHeight = totalHeight - resizableDiv.offsetHeight - 130;
 
-    adjustableDiv.style.height = newHeight + 'px';
+      adjustableDiv.style.height = newHeight + 'px';
+    }
   }
 
   function initAdjustHeight() {  
     const resizableDiv = document.getElementById('resizableDiv');
-    resizeObserver.observe(resizableDiv);
+    if(resizableDiv) {
+      resizeObserver.observe(resizableDiv);
 
-    window.addEventListener('resize', adjustHeight);
+      window.addEventListener('resize', adjustSqlHeight);
 
-    adjustSqlHeight();
+      adjustSqlHeight();
+    }
   }
 
   const resizeObserver = new ResizeObserver(entries => {

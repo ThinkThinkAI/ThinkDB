@@ -1,0 +1,40 @@
+<div id="<%= dom_id message %>">
+  <% if message.role == "user" %>
+  <div class="card p-3 mb-3 rounded-4 col-7">
+    <%= message.content.html_safe %>
+  </div>
+  <% elsif message.role == "assistant" %>
+    <div class="card p-1 mb-3 rounded-1 col-12">
+      <% if message.preview.present? %>
+      <div class="card-header rounded-1 text-danger mb-0 p-1">
+        <div class="row">
+          <div class="col">
+          PREVIEW RECORDS: <%= message.sql %>
+          </div>
+           <div class="col-1 text-end  me-1">
+            <%= link_to '/query?sql=' +  URI.encode_www_form_component(message.sql), class: "btn btn-dark", title: "New Chat" do %>
+              execute
+            <% end %>
+          </div>
+        </div>
+      </div>
+      <% else %>
+      <div class="card-header rounded-1 mb-0 p-1">
+         <div class="row">
+          <div class="col">
+          <%= message.sql %>
+          </div>
+           <div class="col-1 text-end  me-1">
+            <%= link_to '/query?sql=' +  URI.encode_www_form_component(message.sql), class: "btn btn-dark", title: "New Chat" do %>
+              execute
+            <% end %>
+          </div>
+        </div>
+      </div>
+      <% end %>
+       <div class="card-body p-0">
+        <div id="id<%= message.id  %>" class="ag-theme-material-dark" style="height: 250px"></div>
+      </div>
+    </div>
+  <% end %>
+</div>

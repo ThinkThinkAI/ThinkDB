@@ -4,19 +4,21 @@
       <h1 class="mt-2">ThinkDB</h1>
     </center>
   </a>
+  <div class="btn-group w-100 p-2" role="group" aria-label="">
+         <a href="/chat" class="btn btn-outline-light">
+        <i class="fs-4 bi-chat-dots-fill <%= text_muted %>"></i><span class="ms-2  <%= text_muted %>">Chat</span> 
+      </a>
+      <a href="/query" class="btn btn-outline-light">
+        <i class="fs-4 bi-question-circle-fill <%= text_muted %>"></i><span class="ms-2  <%= text_muted %>">Query</span>
+      </a>
+      </div>
 </div>
 <hr class="p-0 m-0">
 <div class="accordion accordion-flush" id="accordianBar">
   <%= render partial: 'layouts/sidebar/accordion_item', locals: { title: 'Data Sources', text_muted: text_muted, icon_class: 'bi-server' } %>
-  <div class="accordion-item">
-    <h2 class="accordion-header">
-      <a href="/query" class="nav-link  accordion-button no-icon">
-        <i class="fs-4  bi-question-circle-fill <%= text_muted %>"></i><span class="ms-2  <%= text_muted %>">Query</span>
-      </a>
-    </h2>
-  </div>
   <%= render partial: 'layouts/sidebar/accordion_item', locals: { title: 'Tables', text_muted: text_muted, icon_class: 'bi-table' } %>
   <%= render partial: 'layouts/sidebar/accordion_item', locals: { title: 'Queries', text_muted: text_muted, icon_class: 'bi-folder-symlink-fill' } %>
+  <%= render partial: 'layouts/sidebar/accordion_item', locals: { title: 'Chats', text_muted: text_muted, icon_class: 'bi-chat-square-text-fill' } %>
 </div> 
 <hr class="p-0 m-0">
 <% if user_signed_in? %>
