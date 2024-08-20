@@ -9,12 +9,17 @@
 </style>
 
 <div class="container-fluid tall ">
-  <div class="row">
+   <div class="row">
     <div class="col">
       <h1 class="mb-4">Chat</h1>
     </div>
+    <div class="col text-end">
+      <%= link_to new_chat_path, class: "btn btn-dark btn-plus btn-lg", data: { bs_toggle: "tooltip", bs_placement: "bottom", bs_custom_class: "custom-tooltip", bs_title: "New Chat" }, title: "New Chat" do %>
+        <i class="bi bi-pencil-square"></i>
+      <% end %>
+    </div>
   </div>
-  <div class="row scrollable-content">
+  <div class="row scrollable-content" id="messages-scrollbox">
     <div class="col-12 ">
       <div id="messages">
         <%= render @chat.messages %> 
@@ -36,10 +41,28 @@
   </div>
 </div>
 <script>
+  document.addEventListener("turbo:load", () => {
+    const scrollboxDiv = document.getElementById("messages-scrollbox");
+    
+    if (scrollboxDiv) {
+      scrollboxDiv.scrollTop = scrollboxDiv.scrollHeight;
+    } else {
+      console.error('Element with ID "messages-scrollbox" not found.');
+    }
+
+    <% @chat.messages.each do |message| %>
+      <% if message.role == 'assistant' %>
+          initializeGrid(
+                'id<%= message.id %>',
+                '<%= message.preview || message.sql %>'
+          );
+      <% end %>
+    <% end %>
+  });
   document.addEventListener('turbo:submit-end', (event) => {
   const form = event.target;
 
-  // Check if the form submission was successful
+
   if (form.querySelector('input[name="message[content]"]')) {
     form.querySelector('input[name="message[content]"]').value = '';
   }

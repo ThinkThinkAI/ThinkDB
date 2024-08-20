@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require 'sidekiq/web'
 
 Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
   resources :messages
@@ -36,4 +37,7 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
 
   root to: 'home#index'
   get '/swatch', to: 'home#swatch'
+
+  mount Sidekiq::Web => '/sidekiq'
+  mount ActionCable.server => '/cable'
 end

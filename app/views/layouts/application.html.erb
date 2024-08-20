@@ -13,8 +13,13 @@
     <%= javascript_include_tag 'codemirror/mode/sql/sql' %>
     <%= javascript_include_tag 'codemirror/addon/hint/show-hint' %>
     <%= javascript_include_tag 'codemirror/addon/hint/sql-hint' %>
+    <%= favicon_link_tag 'box.png' %>
   </head>
   <body>
+    <% if user_signed_in? %>
+      <%= tag.input type: 'hidden', id: 'current-user-id', value: current_user.id %>
+    <% end %>
+    
     <div class="container-fluid">
       <div class="row flex-nowrap">
         <div class="col-auto col-md-3 col-xl-2 m-0 p-0 scrollable-content">
@@ -29,3 +34,4 @@
     </div>
   </body>
 </html>
+

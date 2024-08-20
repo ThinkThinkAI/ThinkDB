@@ -1,7 +1,11 @@
 FactoryBot.define do
   factory :chat do
-    name { "MyString" }
-    data_source { nil }
-    slug { "MyString" }
+    name { 'MyString' }
+    association :data_source
+    slug { 'MyString' }
+
+    after(:create) do |chat|
+      create_list(:message, 3, chat:)
+    end
   end
 end

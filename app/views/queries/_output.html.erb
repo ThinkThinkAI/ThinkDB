@@ -6,6 +6,7 @@ document.addEventListener("turbo:load", function() {
   initializeGrid('<%= data_grid_id %>', "<%= raw sanitized_sql %>");
   initAdjustHeight();
 });
+
 </script>
 
 <div id="<%= data_grid_id %>" class="ag-theme-material-dark mb-n4" style="height: calc(100% - <%= adjustment %>px);"></div>

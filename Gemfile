@@ -34,6 +34,11 @@ gem 'mysql2'
 gem 'pg'
 gem 'sqlite3', '~> 1.4'
 
+gem 'redis'
+gem 'sidekiq'
+
+gem 'redcarpet'
+
 gem 'friendly_id', '~> 5.5.0'
 gem 'rubocop'
 gem 'ruby-lsp-rails'

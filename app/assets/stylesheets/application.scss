@@ -161,3 +161,47 @@ background-image: linear-gradient(286deg, #b12a77 0%, #784BA0 50%, #431661 100%)
 .fade-in {
   animation: fadeIn 0.25s ease-in-out;
 }
+
+
+.typing {
+  align-items: center;
+  display: flex;
+  height: 17px;
+}
+.typing .dot {
+  animation: mercuryTypingAnimation 1.8s infinite ease-in-out;
+  background-color: #6261cc ; 
+  border-radius: 50%;
+  height: 15px;
+  margin-right: 4px;
+  vertical-align: middle;
+  width: 15px;
+  display: inline-block;
+}
+.typing .dot:nth-child(1) {
+  animation-delay: 200ms;
+}
+.typing .dot:nth-child(2) {
+  animation-delay: 300ms;
+}
+.typing .dot:nth-child(3) {
+  animation-delay: 400ms;
+}
+.typing .dot:last-child {
+  margin-right: 0;
+}
+
+@keyframes mercuryTypingAnimation {
+  0% {
+    transform: translateY(0px);
+    background-color:#6c6ae2; // rgba(20,105,69,.7);
+  }
+  28% {
+    transform: translateY(-7px);
+    background-color:#716fe6; //rgba(20,105,69,.4);
+  }
+  44% {
+    transform: translateY(0px);
+    background-color: #7875f2; //rgba(20,105,69,.2);
+  }
+}

@@ -3,3 +3,15 @@
   <%= render @message %>
   </div>
 <% end %>
+
+<%= turbo_stream.append "messages" do %>
+  <div id="loading-message" class="fade-in">
+    <div class="d-flex align-items-center justify-content-center" style="height: 100px;">
+    <div class="typing">
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+    </div>
+    </div>
+  </div>
+<% end %>
