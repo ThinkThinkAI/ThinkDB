@@ -44,7 +44,15 @@ class PostgresqlAdapter < SQLAdapter
 
   def run_raw_query(query)
     result = @connection.exec(query)
-    result.values
+
+    command = query.strip.split.first.upcase
+    
+    case command
+    when 'INSERT', 'UPDATE', 'DELETE', 'DROP', 'CREATE', 'ALTER'
+      result.cmd_tuples
+    else
+      result.values
+    end
   end
 
   def table_structure_query(table_name)

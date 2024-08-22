@@ -1,14 +1,21 @@
 # frozen_string_literal: true
 
+require 'ostruct'
+
 class QueriesController < ApplicationController
   before_action :authenticate_user!
   before_action :set_query, only: %i[show edit update destroy]
   before_action :set_active_data_source, only: %i[index show metadata data]
   before_action :check_active_data_source, only: %i[index show metadata data]
+  before_action :handle_sql, only: %i[index show]
 
-  def index; end
+  def index
+    render :index
+  end
 
-  def show; end
+  def show
+    render :index
+  end
 
   def new
     @query = Query.new
@@ -105,5 +112,33 @@ class QueriesController < ApplicationController
     return unless @active_data_source.nil?
 
     redirect_to data_sources_path, notice: 'Please connect a data source first.' and return
+  end
+
+  def handle_sql
+    @sql = @query ? @query.sql : params[:sql]
+
+    return unless @sql.present?
+    return unless @sql.sql_modification? || @sql.sql_statement_count > 1
+
+    database_service = DatabaseService.build(@active_data_source)
+
+    @row_results = []
+
+    @sql.split(';').each do |sql_statement|
+      row_result = { error: false, message: '', count: 0, sql: '' }
+      begin
+        row_result[:sql] = sql_statement.strip.gsub("\r", '')
+        row_result[:count] = if sql_statement.sql_modification?
+                               database_service.run_raw_query(sql_statement)
+                             else
+                               database_service.run_raw_query(sql_statement).count
+                             end
+      rescue StandardError => e
+        row_result[:error] = true
+        row_result[:message] = e.message
+      end
+
+      @row_results << OpenStruct.new(row_result)
+    end
   end
 end
