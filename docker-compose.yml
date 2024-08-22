@@ -1,0 +1,15 @@
+version: '3.7'
+services:
+  web:
+    build: .
+    command: bundle exec rails server -b 0.0.0.0
+    volumes:
+      - .:/app
+      - db-data:/app/db
+    ports:
+      - "3000:3000"
+    environment:
+      RAILS_ENV: development
+
+volumes:
+  db-data:
