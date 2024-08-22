@@ -51,11 +51,11 @@ class ChatsController < ApplicationController
   private
 
   def set_data_source
-    @data_source = DataSource.find(params[:data_source_id])
+    @data_source = DataSource.friendly.find(params[:data_source_id] || current_user.connected_data_source.id)
   end
 
   def set_chat
-    @chat = @data_source.chats.find(params[:id])
+    @chat = @data_source.chats.friendly.find(params[:id])
   end
 
   def chat_params

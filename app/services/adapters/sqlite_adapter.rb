@@ -47,7 +47,17 @@ class SqliteAdapter < SQLAdapter
   end
 
   def run_raw_query(query)
-    @connection.execute(query)
+    result = @connection.execute(query)
+
+    command = query.strip.split.first.upcase
+    case command
+    when 'INSERT', 'UPDATE', 'DELETE'
+      @connection.changes
+    when 'DROP', 'CREATE', 'ALTER'
+      0 
+    else
+      result
+    end
   end
 
   def table_structure_query(table_name)

@@ -6,7 +6,6 @@
     flex-direction: column;
   }
 </style>
-
 <div class="container-fluid">
   <div class="row">
     <div class="col">
@@ -23,42 +22,30 @@
     </div>
   </div>
 </div>
- 
- <turbo-frame id="output-content"  data-turbo-action="replace">
-
-
+<turbo-frame id="output-content"  data-turbo-action="replace">
   <div class="alert alert-success alert-dismissible fade show d-none" role="alert">
-  <strong>Error!</strong><span id="error"></span>
-  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    <strong>Error!</strong><span id="error"></span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
   </div>
-
   <% sql_value = params[:sql] %>
-    <div class="alert alert-warning alert-dismissible fade show d-none mx-3" role="alert" id="sql_error">
-   <span id="error"></span>
-  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  <div class="alert alert-warning alert-dismissible fade show d-none mx-3" role="alert" id="sql_error">
+    <span id="error"></span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
   </div>
-
-
- <div class="container-fluid tall d-none" id="sql_complete">
-  <% unless sql_value.blank? %>
-    <div class="row flex-grow-1" id="output-content">
-      <div class="col-12 d-flex">
-        <div class="card mb-0 flex-grow-1">
-          <div class="card-body">
-            <%= render partial: "queries/output", locals: { sql: sql_value, adjustment: 32, data_grid_id: "out-grid" } %>
+  <div class="container-fluid tall d-none" id="sql_complete">
+    <% unless sql_value.blank? %>
+      <div class="row flex-grow-1" id="output-content">
+        <div class="col-12 d-flex">
+          <div class="card mb-0 flex-grow-1">
+            <div class="card-body">
+              <%= render partial: "queries/output", locals: { sql: sql_value, adjustment: 32, data_grid_id: "out-grid" } %>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  <% end%>
-</div>
-
-
+    <% end%>
+  </div>
 </turbo-frame>
-  
 <script>
   initAdjustHeight();
 </script>
-
- 
-  

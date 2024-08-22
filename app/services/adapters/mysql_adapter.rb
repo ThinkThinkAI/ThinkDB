@@ -50,7 +50,15 @@ class MysqlAdapter < SQLAdapter
 
   def run_raw_query(query)
     result = @client.query(query)
-    result.map(&:values)
+
+    command = query.strip.split.first.upcase
+    
+    case command
+    when 'INSERT', 'UPDATE', 'DELETE', 'DROP', 'CREATE', 'ALTER'
+      result.affected_rows
+    else
+      result.to_a
+    end
   end
 
   def table_structure_query(table_name)
