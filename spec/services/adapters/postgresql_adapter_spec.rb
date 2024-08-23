@@ -43,19 +43,36 @@ RSpec.describe PostgresqlAdapter do
     end
 
     before do
+      schema_query = <<-SQL
+      SELECT c.table_name, c.column_name, c.data_type,
+             k.constraint_name, k.ordinal_position, k.position_in_unique_constraint, k.referenced_table_name, k.referenced_column_name,
+             t.constraint_type
+      FROM information_schema.columns c
+      LEFT JOIN information_schema.key_column_usage k
+      ON c.table_schema = k.table_schema
+      AND c.table_name = k.table_name
+      AND c.column_name = k.column_name
+      LEFT JOIN information_schema.table_constraints t
+      ON k.constraint_name = t.constraint_name
+      WHERE c.table_schema = 'public'
+      SQL
       allow(connection).to receive(:exec).with(
-        "SELECT table_name, column_name, data_type FROM information_schema.columns WHERE table_schema = 'public'"
+        schema_query
       ).and_return(pg_result)
       allow(pg_result).to receive(:each).and_yield(rows[0]).and_yield(rows[1])
     end
 
     it 'returns a hash with table schemas' do
       adapter = described_class.new(data_source)
-      expect(adapter.schemas).to eq(
-        'table1' => [
-          { column_name: 'id', data_type: 'integer' },
-          { column_name: 'name', data_type: 'text' }
-        ]
+      schemas = adapter.schemas
+
+      simplified_schema = schemas['table1'].map do |column|
+        column.slice(:column_name, :data_type)
+      end
+
+      expect(simplified_schema).to include(
+        { column_name: 'id', data_type: 'integer' },
+        { column_name: 'name', data_type: 'text' }
       )
     end
   end
