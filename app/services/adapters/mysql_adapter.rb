@@ -52,12 +52,12 @@ class MysqlAdapter < SQLAdapter
     result = @client.query(query)
 
     command = query.strip.split.first.upcase
-    
+
     case command
     when 'INSERT', 'UPDATE', 'DELETE', 'DROP', 'CREATE', 'ALTER'
       result.affected_rows
     else
-      result.to_a
+      result.map(&:values)
     end
   end
 

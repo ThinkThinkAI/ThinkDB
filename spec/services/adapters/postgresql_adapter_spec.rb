@@ -88,16 +88,100 @@ RSpec.describe PostgresqlAdapter do
   end
 
   describe '#run_raw_query' do
-    let(:query) { 'SELECT * FROM users' }
-    let(:pg_result) { instance_double(PG::Result, values: [%w[1 Alice], %w[2 Bob]]) }
+    let(:select_query) { 'SELECT * FROM users' }
+    let(:pg_select_result) { instance_double(PG::Result, values: [%w[1 Alice], %w[2 Bob]]) }
 
     before do
-      allow(connection).to receive(:exec).with(query).and_return(pg_result)
+      allow(connection).to receive(:exec).with(select_query).and_return(pg_select_result)
     end
 
-    it 'executes the raw query and returns the result values' do
+    it 'executes the raw SELECT query and returns the result values' do
       adapter = described_class.new(data_source)
-      expect(adapter.run_raw_query(query)).to eq([%w[1 Alice], %w[2 Bob]])
+      expect(adapter.run_raw_query(select_query)).to eq([%w[1 Alice], %w[2 Bob]])
+    end
+
+    context 'when executing INSERT query' do
+      let(:insert_query) { "INSERT INTO users (name) VALUES ('Eve')" }
+      let(:pg_insert_result) { instance_double(PG::Result, cmd_tuples: 1) }
+
+      before do
+        allow(connection).to receive(:exec).with(insert_query).and_return(pg_insert_result)
+      end
+
+      it 'returns the number of affected rows' do
+        adapter = described_class.new(data_source)
+        expect(adapter.run_raw_query(insert_query)).to eq(1)
+      end
+    end
+
+    context 'when executing UPDATE query' do
+      let(:update_query) { "UPDATE users SET name = 'Eve' WHERE id = 1" }
+      let(:pg_update_result) { instance_double(PG::Result, cmd_tuples: 1) }
+
+      before do
+        allow(connection).to receive(:exec).with(update_query).and_return(pg_update_result)
+      end
+
+      it 'returns the number of affected rows' do
+        adapter = described_class.new(data_source)
+        expect(adapter.run_raw_query(update_query)).to eq(1)
+      end
+    end
+
+    context 'when executing DELETE query' do
+      let(:delete_query) { 'DELETE FROM users WHERE id = 1' }
+      let(:pg_delete_result) { instance_double(PG::Result, cmd_tuples: 1) }
+
+      before do
+        allow(connection).to receive(:exec).with(delete_query).and_return(pg_delete_result)
+      end
+
+      it 'returns the number of affected rows' do
+        adapter = described_class.new(data_source)
+        expect(adapter.run_raw_query(delete_query)).to eq(1)
+      end
+    end
+
+    context 'when executing DROP query' do
+      let(:drop_query) { 'DROP TABLE users' }
+      let(:pg_drop_result) { instance_double(PG::Result, cmd_tuples: 0) }
+
+      before do
+        allow(connection).to receive(:exec).with(drop_query).and_return(pg_drop_result)
+      end
+
+      it 'returns the number of affected rows' do
+        adapter = described_class.new(data_source)
+        expect(adapter.run_raw_query(drop_query)).to eq(0)
+      end
+    end
+
+    context 'when executing CREATE query' do
+      let(:create_query) { 'CREATE TABLE new_table (id INT, name TEXT)' }
+      let(:pg_create_result) { instance_double(PG::Result, cmd_tuples: 0) }
+
+      before do
+        allow(connection).to receive(:exec).with(create_query).and_return(pg_create_result)
+      end
+
+      it 'returns the number of affected rows' do
+        adapter = described_class.new(data_source)
+        expect(adapter.run_raw_query(create_query)).to eq(0)
+      end
+    end
+
+    context 'when executing ALTER query' do
+      let(:alter_query) { 'ALTER TABLE users ADD COLUMN age INT' }
+      let(:pg_alter_result) { instance_double(PG::Result, cmd_tuples: 0) }
+
+      before do
+        allow(connection).to receive(:exec).with(alter_query).and_return(pg_alter_result)
+      end
+
+      it 'returns the number of affected rows' do
+        adapter = described_class.new(data_source)
+        expect(adapter.run_raw_query(alter_query)).to eq(0)
+      end
     end
   end
 end
