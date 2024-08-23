@@ -21,17 +21,36 @@ class MysqlAdapter < SQLAdapter
   end
 
   def schemas
-    qry = "SELECT table_name, column_name, data_type FROM information_schema.columns where table_schema='#{@data_source.username}'"
+    columns_query = <<-SQL
+      SELECT c.table_name, c.column_name, c.data_type,
+             k.constraint_name, k.ordinal_position, k.position_in_unique_constraint, k.referenced_table_name, k.referenced_column_name,
+             t.constraint_type
+      FROM information_schema.columns c
+      LEFT JOIN information_schema.key_column_usage k
+      ON c.table_schema = k.table_schema
+      AND c.table_name = k.table_name
+      AND c.column_name = k.column_name
+      LEFT JOIN information_schema.table_constraints t
+      ON k.constraint_name = t.constraint_name
+      WHERE c.table_schema = '#{@data_source.database}'
+    SQL
 
-    result = run_raw_query(qry)
+    result = run_raw_query(columns_query)
 
     result.each_with_object({}) do |row, acc|
       table_name = row[0]
       acc[table_name] ||= []
-      acc[table_name] << {
+      column = {
         column_name: row[1],
-        data_type: row[2]
+        data_type: row[2],
+        constraint_name: row[3],
+        ordinal_position: row[4],
+        position_in_unique_constraint: row[5],
+        referenced_table_name: row[6],
+        referenced_column_name: row[7],
+        constraint_type: row[8]
       }
+      acc[table_name] << column
     end
   end
 

@@ -19,15 +19,37 @@ class PostgresqlAdapter < SQLAdapter
   end
 
   def schemas
-    result = @connection.exec("SELECT table_name, column_name, data_type FROM information_schema.columns WHERE table_schema = 'public'")
+    columns_query = <<-SQL
+      SELECT c.table_name, c.column_name, c.data_type,
+             k.constraint_name, k.ordinal_position, k.position_in_unique_constraint, k.referenced_table_name, k.referenced_column_name,
+             t.constraint_type
+      FROM information_schema.columns c
+      LEFT JOIN information_schema.key_column_usage k
+      ON c.table_schema = k.table_schema
+      AND c.table_name = k.table_name
+      AND c.column_name = k.column_name
+      LEFT JOIN information_schema.table_constraints t
+      ON k.constraint_name = t.constraint_name
+      WHERE c.table_schema = 'public'
+    SQL
+
+    result = @connection.exec(columns_query)
+
     schemas = {}
     result.each do |row|
       table_name = row['table_name']
       schemas[table_name] ||= []
-      schemas[table_name] << {
+      column = {
         column_name: row['column_name'],
-        data_type: row['data_type']
+        data_type: row['data_type'],
+        constraint_name: row['constraint_name'],
+        ordinal_position: row['ordinal_position'],
+        position_in_unique_constraint: row['position_in_unique_constraint'],
+        referenced_table_name: row['referenced_table_name'],
+        referenced_column_name: row['referenced_column_name'],
+        constraint_type: row['constraint_type']
       }
+      schemas[table_name] << column
     end
     schemas
   end
@@ -46,7 +68,7 @@ class PostgresqlAdapter < SQLAdapter
     result = @connection.exec(query)
 
     command = query.strip.split.first.upcase
-    
+
     case command
     when 'INSERT', 'UPDATE', 'DELETE', 'DROP', 'CREATE', 'ALTER'
       result.cmd_tuples

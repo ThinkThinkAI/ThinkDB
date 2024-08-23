@@ -14,29 +14,46 @@ class SqliteAdapter < SQLAdapter
   end
 
   def schemas
-    query = <<-SQL
-    SELECT
-      m.name AS table_name,
-      p.name AS column_name,
-      p.type AS data_type
-    FROM
-      sqlite_master m
-      JOIN pragma_table_info(m.name) p
-    WHERE
-      m.type = 'table'
-      AND m.name NOT LIKE 'sqlite_%';
-    SQL
+    table_query = "SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%';"
+    tables = @connection.execute(table_query).flatten
 
-    result = @connection.execute(query)
+    schemas = {}
 
-    result.each_with_object({}) do |row, acc|
-      table_name, column_name, data_type = row
-      acc[table_name] ||= []
-      acc[table_name] << {
-        column_name:,
-        data_type:
-      }
+    tables.each do |table_name|
+      columns_query = "PRAGMA table_info(#{table_name});"
+      foreign_keys_query = "PRAGMA foreign_key_list(#{table_name});"
+
+      columns_result = @connection.execute(columns_query)
+      foreign_keys_result = @connection.execute(foreign_keys_query)
+
+      foreign_keys = foreign_keys_result.each_with_object({}) do |fk, hash|
+        hash[fk[3]] = { table: fk[2], from: fk[3], to: fk[4] }
+      end
+
+      column_details = columns_result.map do |column|
+        column_info = {
+          column_name: column[1],
+          data_type: column[2],
+          not_null: column[3] == 1,
+          default_value: column[4],
+          primary_key: column[5] == 1
+        }
+
+        if column_info[:primary_key]
+          column_info[:constraint_type] = 'PRIMARY KEY'
+        elsif foreign_key = foreign_keys[column[1]]
+          column_info[:constraint_type] = 'FOREIGN KEY'
+          column_info[:referenced_table_name] = foreign_key[:table]
+          column_info[:referenced_column_name] = foreign_key[:to]
+        end
+
+        column_info
+      end
+
+      schemas[table_name] = column_details
     end
+
+    schemas
   end
 
   def run_query(query, limit = 10, offset = 0, sort = nil)
@@ -54,7 +71,7 @@ class SqliteAdapter < SQLAdapter
     when 'INSERT', 'UPDATE', 'DELETE'
       @connection.changes
     when 'DROP', 'CREATE', 'ALTER'
-      0 
+      0
     else
       result
     end

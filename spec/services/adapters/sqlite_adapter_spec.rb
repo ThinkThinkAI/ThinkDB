@@ -9,8 +9,8 @@ RSpec.describe SqliteAdapter, type: :service do
   let(:data_source) { double('DataSource', database: db_file) } # Mocking the data_source
   let(:adapter) { described_class.new(data_source) }
 
-  before do
-    # Creating a test table and inserting sample data
+before do
+    # Creating a test table and inserting sample data for users
     adapter.run_raw_query <<-SQL
       CREATE TABLE users (
         id INTEGER PRIMARY KEY,
@@ -23,6 +23,23 @@ RSpec.describe SqliteAdapter, type: :service do
       INSERT INTO users (name, email)
       VALUES ('Test User 1', 'user1@example.com'),
              ('Test User 2', 'user2@example.com');
+    SQL
+
+    # Creating another table `posts` with a foreign key relationship to `users`
+    adapter.run_raw_query <<-SQL
+      CREATE TABLE posts (
+        id INTEGER PRIMARY KEY,
+        user_id INTEGER,
+        title TEXT,
+        body TEXT,
+        FOREIGN KEY(user_id) REFERENCES users(id)
+      );
+    SQL
+
+    adapter.run_raw_query <<-SQL
+      INSERT INTO posts (user_id, title, body)
+      VALUES (1, 'First Post', 'Content of the first post'),
+             (2, 'Second Post', 'Content of the second post');
     SQL
   end
 
@@ -47,9 +64,9 @@ RSpec.describe SqliteAdapter, type: :service do
       schema = adapter.schemas
       expect(schema).to have_key('users')
       expect(schema['users']).to include(
-        { column_name: 'id', data_type: 'INTEGER' },
-        { column_name: 'name', data_type: 'TEXT' },
-        { column_name: 'email', data_type: 'TEXT' }
+        a_hash_including(column_name: 'id', data_type: 'INTEGER'),
+        a_hash_including(column_name: 'name', data_type: 'TEXT'),
+        a_hash_including(column_name: 'email', data_type: 'TEXT')
       )
     end
   end
