@@ -37,7 +37,37 @@ RSpec.describe QueriesController, type: :controller do
   end
 
   describe 'GET #show' do
+    let(:mock_database_service) { instance_double(DatabaseService) }
+
+    before do
+      allow(DatabaseService).to receive(:build).and_return(mock_database_service)
+    end
+
     it 'returns a success response' do
+      get :show, params: { id: query.to_param }
+      expect(response).to be_successful
+    end
+
+    it 'returns a success response with multiple selects' do
+      query.update(sql: 'SELECT * FROM users;SELECT * FROM users')
+      query.reload
+      allow(mock_database_service).to receive(:run_raw_query).with('SELECT * FROM users').and_return(%w[id name])
+      get :show, params: { id: query.to_param }
+      expect(response).to be_successful
+    end
+
+    it 'returns a success response sql modification' do
+      query.update(sql: 'DELETE USERS')
+      query.reload
+      allow(mock_database_service).to receive(:run_raw_query).with(query.sql).and_return(0)
+      get :show, params: { id: query.to_param }
+      expect(response).to be_successful
+    end
+
+    it 'returns a success even if exception' do
+      query.update(sql: 'DELETE USERS')
+      query.reload
+      allow(mock_database_service).to receive(:run_raw_query).with(query.sql).and_raise(StandardError)
       get :show, params: { id: query.to_param }
       expect(response).to be_successful
     end

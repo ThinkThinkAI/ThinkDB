@@ -94,18 +94,81 @@ RSpec.describe MysqlAdapter, type: :service do
     end
   end
 
-  describe '#run_raw_query' do
-    it 'executes a raw query' do
-      query = 'SELECT name FROM users'
-      mock_result = [
-        { 'name' => 'Test User 1' },
-        { 'name' => 'Test User 2' }
-      ]
+  # Add the following to `spec/services/adapters/mysql_adapter_spec.rb`
 
-      allow(mock_client).to receive(:query).with(query).and_return(mock_result)
+describe '#run_raw_query' do
+  it 'executes a raw SELECT query' do
+    query = 'SELECT name FROM users'
+    mock_result = [
+      { 'name' => 'Test User 1' },
+      { 'name' => 'Test User 2' }
+    ]
 
-      result = adapter.run_raw_query(query)
-      expect(result).to eq([['Test User 1'], ['Test User 2']])
-    end
+    allow(mock_client).to receive(:query).with(query).and_return(mock_result)
+
+    result = adapter.run_raw_query(query)
+    expect(result).to eq([['Test User 1'], ['Test User 2']])
   end
+
+  it 'executes a raw INSERT query' do
+    query = "INSERT INTO users (name, email) VALUES ('New User', 'newuser@example.com')"
+    affected_rows = 1
+
+    allow(mock_client).to receive(:query).with(query).and_return(double(affected_rows: affected_rows))
+
+    result = adapter.run_raw_query(query)
+    expect(result).to eq(affected_rows)
+  end
+
+  it 'executes a raw UPDATE query' do
+    query = "UPDATE users SET email='updated@example.com' WHERE name='Old User'"
+    affected_rows = 1
+
+    allow(mock_client).to receive(:query).with(query).and_return(double(affected_rows: affected_rows))
+
+    result = adapter.run_raw_query(query)
+    expect(result).to eq(affected_rows)
+  end
+
+  it 'executes a raw DELETE query' do
+    query = "DELETE FROM users WHERE name='Test User'"
+    affected_rows = 1
+
+    allow(mock_client).to receive(:query).with(query).and_return(double(affected_rows: affected_rows))
+
+    result = adapter.run_raw_query(query)
+    expect(result).to eq(affected_rows)
+  end
+
+  it 'executes a raw DROP query' do
+    query = 'DROP TABLE users'
+    affected_rows = 0
+
+    allow(mock_client).to receive(:query).with(query).and_return(double(affected_rows: affected_rows))
+
+    result = adapter.run_raw_query(query)
+    expect(result).to eq(affected_rows)
+  end
+
+  it 'executes a raw CREATE query' do
+    query = 'CREATE TABLE new_table (id INT, name VARCHAR(255))'
+    affected_rows = 0
+
+    allow(mock_client).to receive(:query).with(query).and_return(double(affected_rows: affected_rows))
+
+    result = adapter.run_raw_query(query)
+    expect(result).to eq(affected_rows)
+  end
+
+  it 'executes a raw ALTER query' do
+    query = 'ALTER TABLE users ADD COLUMN age INT'
+    affected_rows = 0
+
+    allow(mock_client).to receive(:query).with(query).and_return(double(affected_rows: affected_rows))
+
+    result = adapter.run_raw_query(query)
+    expect(result).to eq(affected_rows)
+  end
+end
+
 end
