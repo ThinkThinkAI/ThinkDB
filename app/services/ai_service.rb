@@ -23,7 +23,7 @@ class AIService
     @messages << { role:, content: }
   end
 
-  def system_message(data_source)
+  def query_system_message(data_source)
     <<~TEXT
       You are a smart #{data_source.adapter} database.
       You will be given the schemas for the database.
@@ -38,12 +38,23 @@ class AIService
     TEXT
   end
 
-  def add_system_message(data_source)
-    add_message('system', system_message(data_source))
+  def system_message(data_source)
+    <<~TEXT
+      You are a smart #{data_source.adapter} database.
+      Help out with any questions the user may ask.
+
+      Below are the schemas for the database. Use them to help better define your answer.
+      #{data_source.schema}
+    TEXT
   end
 
   def chat(chat)
-    add_system_message(chat.data_source)
+    if chat.qchat?
+      add_message('system', query_system_message(chat.data_source))
+    else
+      add_message('system', system_message(chat.data_source))
+    end
+
     add_messages(chat)
     parameters = { model: @model, messages: @messages, temperature: 0.7 }
 

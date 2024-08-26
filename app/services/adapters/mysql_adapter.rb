@@ -13,7 +13,7 @@ class MysqlAdapter < SQLAdapter
     connection_params = {
       database: data_source.database,
       username: data_source.username,
-      password: data_source.password,
+      password: data_source.decrypt_password,
       host: data_source.host,
       port: data_source.port
     }

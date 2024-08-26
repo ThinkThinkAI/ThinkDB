@@ -5,21 +5,25 @@
     </center>
   </a>
   <div class="btn-group w-100 p-2" role="group" aria-label="">
-         <a href="/chat" class="btn btn-outline-light">
-        <i class="fs-4 bi-chat-dots-fill <%= text_muted %>"></i><span class="ms-2  <%= text_muted %>">Chat</span> 
-      </a>
-      <a href="/query" class="btn btn-outline-light">
-        <i class="fs-4 bi-question-circle-fill <%= text_muted %>"></i><span class="ms-2  <%= text_muted %>">Query</span>
-      </a>
-      </div>
+    <a href="/qchat" class="btn btn-outline-light">
+      <i class="fs-4 bi-chat-square-text <%= text_muted %>"></i><span class="ms-2  <%= text_muted %>">QChat</span>
+    </a>
+    <a href="/query" class="btn btn-outline-light">
+      <i class="fs-4 bi-question-circle <%= text_muted %>"></i><span class="ms-2  <%= text_muted %>">Query</span>
+    </a>
+    <a href="/chat" class="btn btn-outline-light">
+      <i class="fs-4 bi-chat-dots <%= text_muted %>"></i><span class="ms-2  <%= text_muted %>">Chat</span>
+    </a>
+  </div>
 </div>
 <hr class="p-0 m-0">
 <div class="accordion accordion-flush" id="accordianBar">
   <%= render partial: 'layouts/sidebar/accordion_item', locals: { title: 'Data Sources', text_muted: text_muted, icon_class: 'bi-server' } %>
   <%= render partial: 'layouts/sidebar/accordion_item', locals: { title: 'Tables', text_muted: text_muted, icon_class: 'bi-table' } %>
-  <%= render partial: 'layouts/sidebar/accordion_item', locals: { title: 'Queries', text_muted: text_muted, icon_class: 'bi-folder-symlink-fill' } %>
-  <%= render partial: 'layouts/sidebar/accordion_item', locals: { title: 'Chats', text_muted: text_muted, icon_class: 'bi-chat-square-text-fill' } %>
-</div> 
+  <%= render partial: 'layouts/sidebar/accordion_item', locals: { title: 'Queries', text_muted: text_muted, icon_class: 'bi-question-circle-fill' } %>
+  <%= render partial: 'layouts/sidebar/accordion_item', locals: { title: 'QChats', text_muted: text_muted, icon_class: 'bi-chat-square-text-fill ' } %>
+  <%= render partial: 'layouts/sidebar/accordion_item', locals: { title: 'Chats', text_muted: text_muted, icon_class: 'bi-chat-dots-fill' } %>
+</div>
 <hr class="p-0 m-0">
 <% if user_signed_in? %>
   <div class="dropdown p-2 floatz border">
