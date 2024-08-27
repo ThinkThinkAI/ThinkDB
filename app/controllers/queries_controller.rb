@@ -100,7 +100,7 @@ class QueriesController < ApplicationController
 
   def query_params
     result = params.permit(:id, :sql, :name, :data_source_id, :column, :order, :query)
-    result[:data_source_id] ||= current_user.connected_data_source.id
+    result[:data_source_id] ||= current_user&.connected_data_source&.id
     result
   end
 
