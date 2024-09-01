@@ -58,6 +58,7 @@ class AIService
     add_messages(chat)
     parameters = { model: @model, messages: @messages, temperature: 0.7 }
 
+    puts parameters.inspect
     response = @client.chat(parameters:)
 
     content = response.dig('choices', 0, 'message', 'content')
