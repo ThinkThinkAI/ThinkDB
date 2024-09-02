@@ -10,10 +10,10 @@
 <div class="container-fluid tall ">
   <div class="row">
     <div class="col">
-      <h1 class="mb-4">Chat</h1>
+      <h1 class="mb-4">QChat</h1>
     </div>
     <div class="col text-end">
-      <%= link_to new_chat_path, class: "btn btn-dark btn-plus btn-lg", data: { bs_toggle: "tooltip", bs_placement: "bottom", bs_custom_class: "custom-tooltip", bs_title: "New Chat" }, title: "New Chat" do %>
+      <%= link_to new_qchat_path, class: "btn btn-dark btn-plus btn-lg", data: { bs_toggle: "tooltip", bs_placement: "bottom", bs_custom_class: "custom-tooltip", bs_title: "New Chat" }, title: "New Chat" do %>
         <i class="bi bi-pencil-square"></i>
       <% end %>
     </div>
@@ -22,11 +22,11 @@
     <div class="col-12 ">
       <div id="messages">
         <% if @chat.messages.any? %>
-          <%= render @chat.messages %>
+          <%= render partial: 'messages/qmessage', collection: @chat.messages, as: :message %>
         <% else %>
           <div class="card p-4 m-4 rounded-4 col-6">
-            <h3>Welcome!</h3>
-            <h5>I am here to help you with your data. Ask me anything!<br><br>Need to know the structure of your data? <br>Got missing keys? <br>Optimize your queries, code, or frameworks.<br><br> I can help with that!</h5>
+            <h3>Welcome to Query Chat!!</h3>
+            <h5><br><br> Tell me what you want and i'll do my best to help you out!</h5>
           </div>
         <% end %>
       </div>

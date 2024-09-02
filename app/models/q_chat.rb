@@ -1,0 +1,3 @@
+class QChat < Chat
+
+end

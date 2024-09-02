@@ -7,7 +7,7 @@ document.addEventListener("turbo:load", () => {
     const chatChannel = consumer.subscriptions.create(
       { channel: "ChatChannel", user_id: currentUserId },
       {
-        connected() {},
+        connected() { console.log('connected');},
         disconnected() {},
         received(data) {
           if (data.ai_response) {
@@ -20,7 +20,7 @@ document.addEventListener("turbo:load", () => {
               `message-${data.message_id}`
             );
             if (existingMessageDiv) {
-              return; 
+              return;   
             }
 
             if (loadingMessagesDiv) {

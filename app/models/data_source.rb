@@ -9,8 +9,9 @@ class DataSource < ApplicationRecord
   has_many :tables, dependent: :destroy
   has_many :queries, dependent: :destroy
   has_many :chats, dependent: :destroy
+  has_many :qchats, dependent: :destroy, class_name: 'QChat'
 
-  before_save :encrypt_password
+  before_save :encrypt_password, if: :password_changed?
   before_save :unset_other_connected_sources, if: :connected
 
   after_save :build_tables_if_connected
@@ -26,15 +27,15 @@ class DataSource < ApplicationRecord
   scope :active, -> { where(connected: true) }
   scope :inactive, -> { where(connected: false) }
 
-  def encrypt_password
-    self.password = encrypt(password) if password.present?
-  end
-
   def decrypt_password
-    decrypt(password)
+    decrypt(password) if password.present?
   end
 
   private
+
+  def encrypt_password
+    self.password = encrypt(password) if password.present?
+  end
 
   def encrypt(data)
     encryptor.encrypt_and_sign(data)
@@ -64,5 +65,9 @@ class DataSource < ApplicationRecord
 
     database_service = DatabaseService.build(self)
     database_service&.build_tables
+  end
+
+  def password_changed?
+    saved_change_to_password?
   end
 end

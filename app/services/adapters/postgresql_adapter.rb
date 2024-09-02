@@ -11,7 +11,7 @@ class PostgresqlAdapter < SQLAdapter
     connection_params = {
       dbname: data_source.database,
       user: data_source.username,
-      password: data_source.password,
+      password: data_source.decrypt_password,
       host: data_source.host,
       port: data_source.port
     }

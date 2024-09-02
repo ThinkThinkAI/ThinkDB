@@ -1,29 +1,8 @@
-class SqlRender < Redcarpet::Render::HTML
-  # def initialize(message_id)
-  #   @message_id = message_id
-  #   super()
-  # end
-
-  # def block_code(code, language)
-  #   puts code
-  #   "#{code}.#{language}"
-  # end
-
-  # def codespan(code)
-  #   if code.start_with?("sql\n")
-  #     sql_code = code.sub(/^sql\n/, '').sub(/;$/, '').strip
-  #     puts "SQL CODE: #{sql_code}"
-  #     ApplicationController.render(partial: 'queries/card_output',
-  #                                  locals: {
-  #                                    sql: sql_code,
-  #                                    adjustment: 32,
-  #                                    data_grid_id: "dataGrid-#{@message_id}"
-  #                                  })
-  #   else
-  #     code
-  #     # super(code)
-  #   end
-  # end
+class CustomRender < Redcarpet::Render::HTML
+  def block_code(code, language)
+    height = code.lines.count <= 2 ? '70px' : '200px'
+    "<br><textarea class=\"code-mirror-area\" data-mode=\"#{language}\" style=\"height: #{height};\">#{code}</textarea><br>"
+  end
 end
 
 class Message < ApplicationRecord
@@ -33,6 +12,11 @@ class Message < ApplicationRecord
   validates :content, presence: true
 
   after_create :update_chat_name
+  before_save :compile_content
+
+  def qchat?
+    chat.qchat?
+  end
 
   def sql
     parsed_content['sql']
@@ -51,8 +35,14 @@ class Message < ApplicationRecord
   def compile_content
     return unless content_changed?
 
-    # markdown = Redcarpet::Markdown.new(SqlRender.new, autolink: true, tables: true)
-    self.compiled_content = content # markdown.render(content)
+    if qchat?
+      self.compiled_content = content
+    else
+      renderer = CustomRender.new(prettify: true)
+      markdown = Redcarpet::Markdown.new(renderer, fenced_code_blocks: true, autolink: true, tables: true,
+                                                   disable_indented_code_blocks: true)
+      self.compiled_content = markdown.render(content)
+    end
   end
 
   def compiled
@@ -62,6 +52,6 @@ class Message < ApplicationRecord
   end
 
   def update_chat_name
-    chat.update(name: content) if role == "user"
+    chat.update(name: content) if role == 'user'
   end
 end

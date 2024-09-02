@@ -6,6 +6,9 @@ class SQLAdapter
   def count(query)
     return nil unless supported_query_type?(query)
 
+    limit = extract_limit(query)
+    return limit if limit
+
     count_query = convert_to_count_query(query)
 
     result = run_raw_query(count_query)
@@ -29,7 +32,11 @@ class SQLAdapter
   def add_offset(query, limit, offset)
     return query unless select_query?(query)
 
-    "#{query} LIMIT #{limit} OFFSET #{offset}"
+    existing_limit = extract_limit(query)
+    final_limit = existing_limit && existing_limit < limit ? existing_limit : limit
+
+    query_without_limit = query.sub(/LIMIT\s+\d+/i, '')
+    "#{query_without_limit} LIMIT #{final_limit} OFFSET #{offset}"
   end
 
   def add_sorting(query, sort)
@@ -77,5 +84,10 @@ class SQLAdapter
       row_count = values_clause.split('),').size
       "SELECT #{row_count} AS count"
     end
+  end
+
+  def extract_limit(query)
+    match = query.match(/LIMIT\s+(\d+)/i)
+    match ? match[1].to_i : nil
   end
 end

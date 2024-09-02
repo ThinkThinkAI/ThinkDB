@@ -13,7 +13,7 @@ class MysqlAdapter < SQLAdapter
     connection_params = {
       database: data_source.database,
       username: data_source.username,
-      password: data_source.password,
+      password: data_source.decrypt_password,
       host: data_source.host,
       port: data_source.port
     }
@@ -22,7 +22,7 @@ class MysqlAdapter < SQLAdapter
 
   def schemas
     columns_query = <<-SQL
-      SELECT c.table_name, c.column_name, c.data_type,
+      SELECT DISTINCT c.table_name, c.column_name, c.data_type,
              k.constraint_name, k.ordinal_position, k.position_in_unique_constraint, k.referenced_table_name, k.referenced_column_name,
              t.constraint_type
       FROM information_schema.columns c
