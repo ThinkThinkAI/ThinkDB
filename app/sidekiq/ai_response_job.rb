@@ -15,7 +15,12 @@ class AIResponseJob
 
     message_sql = message.preview || message.sql
     message_id = "id#{message.id}"
-    ai_response = render_message(message)
+
+    ai_response = if chat.qchat?
+                    render_qmessage(message)
+                  else
+                    render_message(message)
+                  end
 
     broadcast_payload = { ai_response:, message_id:, message_sql: }
 
@@ -27,6 +32,13 @@ class AIResponseJob
   def render_message(message)
     ApplicationController.render(
       partial: 'messages/message',
+      locals: { message: }
+    )
+  end
+
+  def render_qmessage(message)
+    ApplicationController.render(
+      partial: 'messages/qmessage',
       locals: { message: }
     )
   end

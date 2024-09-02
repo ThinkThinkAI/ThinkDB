@@ -28,7 +28,7 @@ class DataSource < ApplicationRecord
   scope :inactive, -> { where(connected: false) }
 
   def decrypt_password
-    decrypt(password)
+    decrypt(password) if password.present?
   end
 
   private

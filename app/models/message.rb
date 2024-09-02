@@ -1,13 +1,8 @@
 class CustomRender < Redcarpet::Render::HTML
   def block_code(code, language)
-    puts 'block_code'
-    "<textarea class=\"code-mirror-area\" data-mode=\"#{language}\">#{code}</textarea>"
+    height = code.lines.count <= 2 ? '70px' : '200px'
+    "<br><textarea class=\"code-mirror-area\" data-mode=\"#{language}\" style=\"height: #{height};\">#{code}</textarea><br>"
   end
-
-  # def codespan(code)
-  #   puts 'code span'
-  #   "<textarea class=\"code-mirror-area\" data-mode=\"text\">#{code}</textarea>"
-  # end
 end
 
 class Message < ApplicationRecord

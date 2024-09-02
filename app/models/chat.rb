@@ -14,7 +14,7 @@ class Chat < ApplicationRecord
 
   validates :name, presence: true
 
-  scope :excluding_qchats, -> { where.not(type: 'QChat') }
+  scope :excluding_qchats, -> { where(type: nil) }
 
   def qchat?
     is_a?(QChat)

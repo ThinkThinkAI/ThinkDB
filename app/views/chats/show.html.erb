@@ -1,5 +1,5 @@
 <!-- app/views/chats/show.html.erb -->
-<%= render partial: 'queries/grid' %> 
+<%= render partial: 'queries/grid' %>
 <style>
   .tall {
     height: calc(100% - 50px);
@@ -7,9 +7,8 @@
     flex-direction: column;
   }
 </style>
-
 <div class="container-fluid tall ">
-   <div class="row">
+  <div class="row">
     <div class="col">
       <h1 class="mb-4">Chat</h1>
     </div>
@@ -22,12 +21,18 @@
   <div class="row scrollable-content" id="messages-scrollbox">
     <div class="col-12 ">
       <div id="messages">
-        <%= render @chat.messages %> 
+        <% if @chat.messages.any? %>
+          <%= render @chat.messages %>
+        <% else %>
+          <div class="card p-4 m-4 rounded-4 col-6">
+            <h3>Welcome!</h3>
+            <h5>I am here to help you with your data. Ask me anything!<br><br>Need to know the structure of your data? <br>Got missing keys? <br>Optimize your queries, code, or frameworks.<br><br> I can help with that!</h5>
+          </div>
+        <% end %>
       </div>
     </div>
   </div>
 </div>
-
 <div class="container-fluid">
   <div class="row">
     <div class="col-12">
@@ -43,7 +48,7 @@
 <script>
   document.addEventListener("turbo:load", () => {
     const scrollboxDiv = document.getElementById("messages-scrollbox");
-    
+
     if (scrollboxDiv) {
       scrollboxDiv.scrollTop = scrollboxDiv.scrollHeight;
     } else {
@@ -66,5 +71,5 @@
   if (form.querySelector('input[name="message[content]"]')) {
     form.querySelector('input[name="message[content]"]').value = '';
   }
-});
+  });
 </script>

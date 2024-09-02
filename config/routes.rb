@@ -4,7 +4,10 @@ require 'sidekiq/web'
 
 Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
   resources :messages
+  
   resources :chats
+  resources :qchats, controller: 'q_chats', as: 'qchats'
+
   resources :queries, except: [:index] do
     collection do
       get :metadata
