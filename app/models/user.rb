@@ -11,6 +11,8 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable,
          :omniauthable, omniauth_providers: [:github]
 
+  before_create :set_admin_if_first_user
+
   def self.from_omniauth(auth)
     where(provider: auth.provider, uid: auth.uid).first_or_create do |user|
       user.email = auth.info.email
@@ -22,5 +24,11 @@ class User < ApplicationRecord
 
   def settings_incomplete?
     ai_url.blank? || ai_model.blank? || ai_api_key.blank?
+  end
+
+  private
+
+  def set_admin_if_first_user
+    self.admin = true if User.count.zero?
   end
 end

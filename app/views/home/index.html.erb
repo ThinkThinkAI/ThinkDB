@@ -2,10 +2,12 @@
     <div class="jumbotron">
       <h1 class="display-4">ThinkDB</h1>
       <p class="lead">The DB Client that ThinkThinks</p>
-      <hr class="my-4">
+      <hr class="my-3">
       <% if !user_signed_in? %>
+      <%= link_to 'Login', user_github_omniauth_authorize_path, class: 'btn btn-primary' %><br><br>
         <%= link_to 'Login with GitHub', user_github_omniauth_authorize_path, class: 'btn btn-primary' %><br><br>
       <% end %>
+      <hr class="my-2">
       <p>ThinkThink.ai</p>
     </div>
 </div>

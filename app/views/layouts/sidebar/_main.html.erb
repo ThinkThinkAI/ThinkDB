@@ -28,8 +28,8 @@
 <% if user_signed_in? %>
   <div class="dropdown p-2 floatz border">
     <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
-      <img src="<%= current_user.image %>" width="30" height="30" class="rounded-circle">
-      <span class="d-none d-sm-inline mx-1"><%= current_user.name %></span>
+      <% if current_user.image %><img src="<%= current_user.image %>" width="30" height="30" class="rounded-circle"><% end %>
+      <span class="d-none d-sm-inline mx-1"><%= current_user.name || current_user.email %></span>
     </a>
     <ul class="dropdown-menu  text-small shadow" aria-labelledby="dropdownUser1">
       <li><a class="dropdown-item" href="<%= user_settings_path %>">Settings</a></li>
