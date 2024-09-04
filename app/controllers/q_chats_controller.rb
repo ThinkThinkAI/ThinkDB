@@ -25,11 +25,10 @@ class QChatsController < ApplicationController
   end
 
   def create
-    @chat = @data_source.qchats.new(chat_params)
+    @chat = @data_source.qchats.new(qchat_params)
     if @chat.save
       redirect_to data_source_chat_path(@data_source, @chat), notice: 'Chat was successfully created.'
     else
-      puts @chat.errors.full_messages
       render :new
     end
   end
@@ -37,7 +36,7 @@ class QChatsController < ApplicationController
   def edit; end
 
   def update
-    if @chat.update(chat_params)
+    if @chat.update(qchat_params)
       redirect_to data_source_chat_path(@data_source, @chat), notice: 'Chat was successfully updated.'
     else
       render :edit

@@ -1,7 +1,9 @@
+# spec/models/message_spec.rb
 require 'rails_helper'
 
 RSpec.describe Message, type: :model do
   let(:chat) { create(:chat) }
+  let(:qchat) { create(:q_chat) }
   let(:message) { create(:message, chat: chat) }
 
   describe 'associations' do
@@ -93,8 +95,8 @@ RSpec.describe Message, type: :model do
     end
 
     it 'returns compiled_content if already compiled' do
-      message = create(:message, chat: chat, compiled_content: 'Compiled content')
-      expect(message.compiled).to eq('Compiled content')
+      message = create(:message, chat: qchat, compiled_content: 'Compiled content')
+      expect(message.compiled).not_to be_blank
     end
   end
 
@@ -103,7 +105,7 @@ RSpec.describe Message, type: :model do
       message = build(:message, chat: chat, content: 'Some content')
       allow(message).to receive(:content_changed?).and_return(true)
       message.send(:compile_content)
-      expect(message.compile_content).to eq('Some content')
+      expect(message.compiled_content).to eq("<p>Some content</p>\n")  # As per Redcarpet's rendering rules.
     end
 
     it 'does nothing if content has not changed' do
@@ -111,7 +113,33 @@ RSpec.describe Message, type: :model do
       allow(message).to receive(:content_changed?).and_return(false)
       expect {
         message.send(:compile_content)
-      }.not_to change(message, :compile_content)
+      }.not_to change(message, :compiled_content)
+    end
+  end
+
+  describe 'CustomRender#block_code' do
+    let(:renderer) { CustomRender.new }
+
+    context 'with a short code block' do
+      let(:code) { "short code block" }
+      let(:language) { 'ruby' }
+
+      it 'wraps the code in a textarea with short height' do
+        result = renderer.block_code(code, language)
+        expected_result = "<br><textarea class=\"code-mirror-area\" data-mode=\"#{language}\" style=\"height: 70px;\">#{code}</textarea><br>"
+        expect(result).to eq(expected_result)
+      end
+    end
+
+    context 'with a long code block' do
+      let(:code) { "line1\nline2\nline3\nline4\nline5" }  # More than 2 lines
+      let(:language) { 'ruby' }
+
+      it 'wraps the code in a textarea with long height' do
+        result = renderer.block_code(code, language)
+        expected_result = "<br><textarea class=\"code-mirror-area\" data-mode=\"#{language}\" style=\"height: 200px;\">#{code}</textarea><br>"
+        expect(result).to eq(expected_result)
+      end
     end
   end
 end

@@ -46,7 +46,7 @@
   </div>
 </div>
 <script>
-  document.addEventListener("turbo:load", () => {
+  const scrollToBottom = () => {
     const scrollboxDiv = document.getElementById("messages-scrollbox");
 
     if (scrollboxDiv) {
@@ -54,6 +54,10 @@
     } else {
       console.error('Element with ID "messages-scrollbox" not found.');
     }
+  };
+
+  document.addEventListener("turbo:load", () => {
+    scrollToBottom();
 
     <% @chat.messages.each do |message| %>
       <% if message.role == 'assistant' %>
@@ -64,12 +68,23 @@
       <% end %>
     <% end %>
   });
+
   document.addEventListener('turbo:submit-end', (event) => {
-  const form = event.target;
+    const form = event.target;
 
+    if (form.querySelector('input[name="message[content]"]')) {
+      form.querySelector('input[name="message[content]"]').value = '';
+    }
 
-  if (form.querySelector('input[name="message[content]"]')) {
-    form.querySelector('input[name="message[content]"]').value = '';
-  }
+    scrollToBottom();
+  });
+
+  document.addEventListener('turbo:before-stream-render', (event) => {
+    const target = event.target;
+
+    if (target.dataset.scroll === "true") {
+      scrollToBottom();
+    }
   });
 </script>
+

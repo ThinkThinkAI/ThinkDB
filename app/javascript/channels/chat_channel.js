@@ -32,6 +32,7 @@ document.addEventListener("turbo:load", () => {
               newMessageDiv.id = `message-${data.message_id}`;
               newMessageDiv.innerHTML = data.ai_response;
               messagesDiv.appendChild(newMessageDiv);
+              scrollboxDiv.scrollTop = messagesDiv.scrollHeight;
 
               initializeGrid(
                 data.message_id,

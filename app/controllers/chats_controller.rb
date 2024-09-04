@@ -5,7 +5,7 @@ class ChatsController < ApplicationController
   before_action :set_chat, only: %i[show edit update destroy]
 
   def index
-    @chat = @data_source.chats.order(created_at: :desc).first
+    @chat = @data_source.chats.excluding_qchats.order(created_at: :desc).first
     @chat = @data_source.chats.create(name: 'Chat') if @chat.blank?
 
     render :show
@@ -25,7 +25,6 @@ class ChatsController < ApplicationController
     if @chat.save
       redirect_to data_source_chat_path(@data_source, @chat), notice: 'Chat was successfully created.'
     else
-      puts @chat.errors.full_messages
       render :new
     end
   end
