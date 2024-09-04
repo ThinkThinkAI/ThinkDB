@@ -1,5 +1,5 @@
 FactoryBot.define do
-  factory :chat do
+  factory :q_chat do
     name { 'MyString' }
     association :data_source
     sequence(:slug) { |n| "chat-#{n}" }

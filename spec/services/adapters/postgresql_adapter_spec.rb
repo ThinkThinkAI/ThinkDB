@@ -10,6 +10,7 @@ RSpec.describe PostgresqlAdapter do
       database: 'test_db',
       username: 'test_user',
       password: 'test_pass',
+      decrypt_password: 'test_pass',
       host: 'localhost',
       port: 5432
     )

@@ -31,7 +31,7 @@ RSpec.describe AIService do
     double('DataSource', adapter: 'PostgreSQL', schema: 'CREATE TABLE users (id SERIAL PRIMARY KEY, name TEXT);')
   end
   let(:chat_message) { double('Message', role: 'user', content: 'Show me all users.') }
-  let(:chat) { double('Chat', messages: [chat_message], data_source:) }
+  let(:chat) { double('Chat', messages: [chat_message], data_source:, qchat?: false) }
   let(:ai_service) { AIService.new(url:, model:, api_key:) }
 
   before do
@@ -55,23 +55,47 @@ RSpec.describe AIService do
     end
   end
 
-  describe '#add_system_message' do
-    it 'adds a system message with the data source schema' do
-      ai_service.add_system_message(data_source)
-      expect(ai_service.messages.any? do |msg|
-               msg[:role] == 'system' && msg[:content].include?(data_source.schema)
-             end).to be true
+  describe '#add_messages' do
+    let(:chat) { double('Chat', messages: [chat_message, double('Message', role: 'assistant', content: 'Hi!')]) }
+
+    it 'adds multiple messages to the messages array' do
+      ai_service.add_messages(chat)
+      expected_messages = [
+        { role: 'user', content: 'Show me all users.' },
+        { role: 'assistant', content: 'Hi!' }
+      ]
+      expect(ai_service.messages).to match_array(expected_messages)
     end
   end
 
   describe '#chat' do
-    it 'sends messages to the AI client and receives a valid JSON response' do
+    context 'when chat is qchat' do
+      let(:chat) { double('Chat', qchat?: true, data_source: data_source, messages: [chat_message]) }
+
+      it 'sends the query_system_message to the system' do
+        ai_service.chat(chat)
+        expect(ai_service.messages.first[:role]).to eq('system')
+        expect(ai_service.messages.first[:content]).to include('You are a smart PostgreSQL database')
+      end
+    end
+
+    context 'when chat is not qchat' do
+      let(:chat) { double('Chat', qchat?: false, data_source: data_source, messages: [chat_message]) }
+
+      it 'sends the system_message to the system' do
+        ai_service.chat(chat)
+        expect(ai_service.messages.first[:role]).to eq('system')
+        expect(ai_service.messages.first[:content]).to include('Help out with any questions the user may ask')
+      end
+    end
+
+    it 'sends the messages to OpenAI client and receives a valid JSON response' do
       result = ai_service.chat(chat)
       expect(result).to eq('{"sql": "SELECT * FROM users;", "preview": "SELECT * FROM users WHERE id = 1;"}')
     end
   end
 
-  describe '#extract_json_code_block' do
+describe '#extract_json_code_block' do
     it 'extracts JSON code block from content' do
       content = 'Here is your query: ```json {"sql": "SELECT * FROM users;"}```'
       extracted = ai_service.send(:extract_json_code_block, content)
@@ -88,6 +112,21 @@ RSpec.describe AIService do
       content = 'Here is your query: ```json {"sql": "SELECT * FROM users;"```'
       extracted = ai_service.send(:extract_json_code_block, content)
       expect(extracted).to be_nil
+    end
+  end
+
+  describe '#system_message' do
+    it 'returns the correct system message for a data source' do
+      expect(ai_service.send(:system_message, data_source)).to include('PostgreSQL')
+      expect(ai_service.send(:system_message, data_source)).to include(data_source.schema)
+    end
+  end
+
+  describe '#query_system_message' do
+    it 'returns the correct query system message for a data source' do
+      expect(ai_service.send(:query_system_message, data_source)).to include('PostgreSQL')
+      expect(ai_service.send(:query_system_message, data_source)).to include('You are a smart PostgreSQL database')
+      expect(ai_service.send(:query_system_message, data_source)).to include(data_source.schema)
     end
   end
 end

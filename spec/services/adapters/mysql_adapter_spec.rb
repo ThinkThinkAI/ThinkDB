@@ -10,6 +10,7 @@ RSpec.describe MysqlAdapter, type: :service do
            database: 'test_db',
            username: 'test_user',
            password: 'test_password',
+           decrypt_password: 'test_password',
            host: 'localhost',
            port: 3306)
   end
@@ -48,7 +49,7 @@ RSpec.describe MysqlAdapter, type: :service do
   describe '#schemas' do
     it 'retrieves schema information' do
       schema_query = <<-SQL
-      SELECT c.table_name, c.column_name, c.data_type,
+      SELECT DISTINCT c.table_name, c.column_name, c.data_type,
              k.constraint_name, k.ordinal_position, k.position_in_unique_constraint, k.referenced_table_name, k.referenced_column_name,
              t.constraint_type
       FROM information_schema.columns c
