@@ -18,11 +18,11 @@ ThinkDB empowers you to effortlessly navigate and manage your databases, elimina
 - **AI-Driven SQL Generation:** Generate complex SQL queries from simple natural language inputs, allowing you to articulate your needs without getting bogged down in syntax.
 - **Query Management:** Save and organize your frequently used queries, enabling quick access and reuse for future sessions.
 - **Table Browser:** Explore your database structures with a robust table browser that offers insights into table schemas and relationships.
+- **AI-Powered Database Optimization:** Soon, you will be able to consult our AI for guidance on optimizing your database schema and structure, making your database more efficient and scalable.
 
 ## Upcoming Features
 
 - **Expanded Database Support:** We are actively working to broaden the range of supported databases, ensuring compatibility with more systems.
-- **AI-Powered Database Optimization:** Soon, you will be able to consult our AI for guidance on optimizing your database schema and structure, making your database more efficient and scalable.
 - **User Administration:** Enhanced user management capabilities will be introduced, allowing for more granular control over access and permissions.
 
 ## Security Considerations
