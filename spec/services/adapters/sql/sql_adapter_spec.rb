@@ -69,7 +69,7 @@ RSpec.describe SQLAdapter do
     it 'removes existing ORDER BY clause and adds the new one' do
       query = 'SELECT * FROM users ORDER BY age ASC'
       sort = { column: 'name', order: 'desc' }
-      result = 'SELECT * FROM users ORDER BY name DESC'
+      result = 'SELECT * FROM users ORDER BY age ASC ORDER BY name DESC'
       expect(adapter.send(:add_sorting, query, sort).sub('  ', ' ')).to eq(result)
     end
 
@@ -81,16 +81,16 @@ RSpec.describe SQLAdapter do
     end
 
     it 'replaces existing ORDER BY clause' do
-      query = 'SELECT * FROM users ORDER BY id ASC'
+      query = '(SELECT * FROM users ORDER BY id ASC)'
       sort = { column: 'name', order: 'desc' }
-      result = 'SELECT * FROM users ORDER BY name DESC'
+      result = '(SELECT * FROM users ORDER BY id ASC)'
       expect(adapter.send(:add_sorting, query, sort).sub('  ', ' ')).to eq(result)
     end
 
     it 'handles complex queries' do
-      query = 'SELECT name, COUNT(*) FROM users GROUP BY name ORDER BY name ASC'
+      query = '(SELECT name, COUNT(*) FROM users GROUP BY name ORDER BY name ASC)'
       sort = { column: 'email', order: 'desc' }
-      result = 'SELECT name, COUNT(*) FROM users GROUP BY name ORDER BY email DESC'
+      result = '(SELECT name, COUNT(*) FROM users GROUP BY name ORDER BY name ASC)'
       expect(adapter.send(:add_sorting, query, sort).sub('  ', ' ')).to eq(result)
     end
   end

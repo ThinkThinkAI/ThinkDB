@@ -57,7 +57,8 @@ class SqliteAdapter < SQLAdapter
   end
 
   def run_query(query, limit = 10, offset = 0, sort = nil)
-    wrapped_query = add_sorting(query, sort)
+    wrapped_query = "select * from (#{query})"
+    wrapped_query = add_sorting(wrapped_query, sort)
     wrapped_query = add_offset(wrapped_query, limit, offset)
 
     @connection.execute2(wrapped_query)

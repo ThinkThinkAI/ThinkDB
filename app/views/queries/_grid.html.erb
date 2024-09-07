@@ -2,181 +2,194 @@
 <link rel="stylesheet" href="https://unpkg.com/ag-grid-community/styles/ag-theme-material.css">
 <script src="https://unpkg.com/ag-grid-community/dist/ag-grid-community.noStyle.js"></script>
 <style>
-  .out-tall {
-    display: flex;
-    flex-direction: column;
-    flex: 1; /* Ensure the container stretches to accommodate content */
-    min-height: 0; /* Prevent it from breaking out of its parent */
-  }
-
- .ag-theme-material-dark {   
-    --ag-row-hover-color: #6261cc;
-    --ag-font-family: "Inter", sans-serif;
-    --ag-font-size: 13px;
-    --ag-border-color: #000000
-} 
-
-.ag-root ::-webkit-scrollbar {
-    width: 5px;
-    height: 5px
-}
-.ag-root ::-webkit-scrollbar-button {
-    background: #ccc
-}
-.ag-root ::-webkit-scrollbar-track-piece {
-    background: #000
-}
-.ag-root ::-webkit-scrollbar-thumb {
-    background: #6261cc
-}​
+  /* Your existing styles */
 </style>
 <script>
-
-window.gridApi = {};
-
-async function initializeGrid(gridId, querySql) {
+  class CustomLoadingOverlay {
+  eGui;
+  init(params) {
+  this.eGui = document.createElement('div');
+  this.refresh(params);
+  }
+  getGui() {
+  return this.eGui;
+  }
+  refresh(params) {
+  this.eGui.innerHTML = `
+  <div class="ag-overlay-loading-center" role="presentation">
+    <div role="presentation" style="height: 75px; width: 75px; background: url(/grid.svg) center / contain no-repeat; margin: 20 auto;"></div>
+    <div aria-live="polite" aria-atomic="true"><h2>${params.loadingMessage}</h2></div>
+  </div>
+  `;
+  }
+  }
+  window.gridApi = {};
+  async function initializeGrid(gridId, querySql) {
   const gridElement = document.getElementById(gridId);
   const showElement = document.getElementById("sql_complete");
   const alertElement = document.getElementById("sql_error");
-
   if (!gridElement) {
-    return;
+  return;
   }
-
   if (window.gridApi[gridId]) {
-    window.gridApi[gridId].destroy();
-    window.gridApi[gridId] = null;
+  window.gridApi[gridId].destroy();
+  window.gridApi[gridId] = null;
   }
-
   const columnDefs = [];
   const pageSizeOptions = [15, 30, 40, 50, 100];
-  
   let totalRecords = 0;
-
   const gridOptions = {
-    rowModelType: "infinite",
-    columnDefs: columnDefs,
-    pagination: true,
-    paginationPageSize: 15,
-    paginationPageSizeSelector: pageSizeOptions,
-    onGridReady: function (event) {
-      fetchMetadata(querySql, columnDefs, setGridOptionsCallback, gridElement, alertElement, showElement);
-    },
+  rowModelType: "infinite",
+  columnDefs: columnDefs,
+  pagination: true,
+  paginationPageSize: 15,
+  paginationPageSizeSelector: pageSizeOptions,
+  loadingOverlayComponent: CustomLoadingOverlay,
+  loadingOverlayComponentParams: { loadingMessage: "Fetching from the database, please wait…" },
+  onGridReady: function (event) {
+  showLoadingOverlay(gridElement);
+  fetchMetadata(
+  querySql,
+  columnDefs,
+  setGridOptionsCallback,
+  gridElement,
+  alertElement,
+  showElement
+  );
+  },
   };
-
   window.gridApi[gridId] = agGrid.createGrid(gridElement, gridOptions);
-
   function setGridOptionsCallback(updatedColumnDefs, datasource) {
-    totalRecords = datasource.rowCount;
-    window.gridApi[gridId].setGridOption("columnDefs", updatedColumnDefs);
-    window.gridApi[gridId].setGridOption("datasource", datasource);
+  totalRecords = datasource.rowCount;
+  window.gridApi[gridId].setGridOption("columnDefs", updatedColumnDefs);
+  window.gridApi[gridId].setGridOption("datasource", datasource);
+  hideOverlay(gridElement);
   }
-}
-
-async function fetchMetadata(querySql, columnDefs, callback, gridElement, alertElement, showElement) {
+  }
+  async function fetchMetadata(
+  querySql,
+  columnDefs,
+  callback,
+  gridElement,
+  alertElement,
+  showElement
+  ) {
   try {
-    const fetchUrl = `/queries/metadata?sql=${encodeURIComponent(querySql)}`;
-    const response = await fetch(fetchUrl);
-    const data = await response.json();
-
-
-    if (data.failure) {
-      showAlert(alertElement, data.failure);
-      
-      return;
-    }
-
-    data.column_names.forEach((column) => {
-      columnDefs.push({ headerName: column, field: column });
-    });
-
-    const datasource = createDatasource(data.total_records, querySql, gridElement, alertElement, showElement);
-    callback(columnDefs, datasource);
-  } catch (error) {
-    showAlert(alertElement, error.message);
+  const fetchUrl = `/queries/metadata?sql=${encodeURIComponent(querySql)}`;
+  const response = await fetch(fetchUrl);
+  const data = await response.json();
+  if (data.failure) {
+  showAlert(alertElement, data.failure);
+  hideOverlay(gridElement);
+  return;
   }
-}
-
-function createDatasource(totalRecords, querySql, gridElement, alertElement, showElement) {
-  return {
-    rowCount: totalRecords,
-    getRows: async function (params) {
-      try {
-        const page = Math.floor(params.startRow / params.endRow) + 1;
-
-        let sort_options = "";
-
-        if (params.sortModel.length > 0) {
-          sort_options = `&column=${params.sortModel[0].colId}&order=${params.sortModel[0].sort}`;
-        }
-
-        let url = `/queries/data?sql=${encodeURIComponent(
-          querySql
-        )}&page=${page}&results_per_page=${
-          params.endRow - params.startRow
-        }&${sort_options}`;
-
-        const response = await fetch(url);
-        const data = await response.json();
-
-        if (data.failure) {
-          params.failCallback();
-          showAlert(alertElement, data.failure);
-          
-          return;
-        }
-        showOutput(showElement);
-        params.successCallback(data, totalRecords);
-      } catch (error) {
-        params.failCallback();
-        showAlert(alertElement, error.message);
-      }
-    },
-  };
-}
-
-function showAlert(alertElement, message) {
-  alertElement.querySelector('#error').innerText = message;
-  alertElement.classList.remove('d-none');
-  alertElement.classList.add('show');
-}
-
-function showOutput(showElement) {
-  if(showElement) {
-    showElement.classList.remove('d-none');
-    showElement.classList.add('show');
-  }
-}
-
-
-  function adjustSqlHeight() {
-    const resizableDiv = document.getElementById('resizableDiv');
-    const adjustableDiv = document.getElementById('sql_complete');
-
-    if (resizableDiv && adjustableDiv) {
-      const totalHeight = window.innerHeight;
-      const newHeight = totalHeight - resizableDiv.offsetHeight - 130;
-
-      adjustableDiv.style.height = newHeight + 'px';
-    }
-  }
-
-  function initAdjustHeight() {  
-    const resizableDiv = document.getElementById('resizableDiv');
-    if(resizableDiv) {
-      resizeObserver.observe(resizableDiv);
-
-      window.addEventListener('resize', adjustSqlHeight);
-
-      adjustSqlHeight();
-    }
-  }
-
-  const resizeObserver = new ResizeObserver(entries => {
-    for (let entry of entries) {
-      adjustSqlHeight(); 
-    }
+  data.column_names.forEach((column) => {
+  columnDefs.push({ headerName: column, field: column });
   });
-
-  initAdjustHeight();
+  const datasource = createDatasource(
+  data.total_records,
+  querySql,
+  gridElement,
+  alertElement,
+  showElement
+  );
+  callback(columnDefs, datasource);
+  } catch (error) {
+  showAlert(alertElement, error.message);
+  hideOverlay(gridElement);
+  }
+  }
+  function createDatasource(
+  totalRecords,
+  querySql,
+  gridElement,
+  alertElement,
+  showElement
+  ) {
+  return {
+  rowCount: totalRecords,
+  getRows: async function (params) {
+  showLoadingOverlay(gridElement);
+  try {
+  const page = Math.floor(params.startRow / params.endRow) + 1;
+  let sort_options = "";
+  if (params.sortModel.length > 0) {
+  sort_options = `&column=${params.sortModel[0].colId}&order=${params.sortModel[0].sort}`;
+  }
+  let url = `/queries/data?sql=${encodeURIComponent(
+  querySql
+  )}&page=${page}&results_per_page=${
+  params.endRow - params.startRow
+  }&${sort_options}`;
+  const response = await fetch(url);
+  const data = await response.json();
+  if (data.failure) {
+  params.failCallback();
+              showAlert(alertElement, data.failure);
+hideOverlay(gridElement);
+return;
+}
+hideOverlay(gridElement);
+showOutput(showElement);
+params.successCallback(data, totalRecords);
+} catch (error) {
+params.failCallback();
+showAlert(alertElement, error.message);
+hideOverlay(gridElement);
+}
+},
+};
+}
+function showAlert(alertElement, message) {
+alertElement.querySelector("#error").innerText = message;
+alertElement.classList.remove("d-none");
+alertElement.classList.add("show");
+// Hide the alert after 5 seconds
+setTimeout(() => {
+alertElement.classList.add("d-none");
+alertElement.classList.remove("show");
+}, 5000);
+}
+function showOutput(showElement) {
+if (showElement) {
+showElement.classList.remove("d-none");
+showElement.classList.add("show");
+}
+}
+function showLoadingOverlay(gridElement) {
+const gridApi = window.gridApi[gridElement.id];
+if (gridApi) {
+gridApi.showLoadingOverlay();
+}
+}
+function hideOverlay(gridElement) {
+const gridApi = window.gridApi[gridElement.id];
+if (gridApi) {
+gridApi.hideOverlay();
+}
+}
+function adjustSqlHeight() {
+const resizableDiv = document.getElementById("resizableDiv");
+const adjustableDiv = document.getElementById("sql_complete");
+if (resizableDiv && adjustableDiv) {
+const totalHeight = window.innerHeight;
+const newHeight = totalHeight - resizableDiv.offsetHeight - 130;
+adjustableDiv.style.height = newHeight + "px";
+}
+}
+function initAdjustHeight() {
+const resizableDiv = document.getElementById("resizableDiv");
+if (resizableDiv) {
+resizeObserver.observe(resizableDiv);
+window.addEventListener("resize", adjustSqlHeight);
+adjustSqlHeight();
+}
+}
+const resizeObserver = new ResizeObserver((entries) => {
+for (let entry of entries) {
+adjustSqlHeight();
+}
+});
+initAdjustHeight();
 </script>
+

@@ -32,20 +32,14 @@ class SQLAdapter
   def add_offset(query, limit, offset)
     return query unless select_query?(query)
 
-    existing_limit = extract_limit(query)
-    final_limit = existing_limit && existing_limit < limit ? existing_limit : limit
-
-    query_without_limit = query.sub(/LIMIT\s+\d+/i, '')
-    "#{query_without_limit} LIMIT #{final_limit} OFFSET #{offset}"
+    "#{query} LIMIT #{limit} OFFSET #{offset}"
   end
 
   def add_sorting(query, sort)
     return query unless select_query?(query)
     return query unless sort && sort[:column]
 
-    query_without_order = query.sub(/ORDER\s+BY\s+[\w\s,]*/i, '')
-
-    "#{query_without_order} ORDER BY #{sort[:column]} #{sort[:order].upcase}"
+    "#{query} ORDER BY #{sort[:column]} #{sort[:order].upcase}"
   end
 
   def supported_query_type?(query)

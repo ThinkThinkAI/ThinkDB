@@ -55,7 +55,8 @@ class MysqlAdapter < SQLAdapter
   end
 
   def run_query(query, limit = 10, offset = 0, sort = nil)
-    wrapped_query = add_sorting(query, sort)
+    wrapped_query = "(#{query})"
+    wrapped_query = add_sorting(wrapped_query, sort)
     wrapped_query = add_offset(wrapped_query, limit, offset)
 
     result = @client.query(wrapped_query)

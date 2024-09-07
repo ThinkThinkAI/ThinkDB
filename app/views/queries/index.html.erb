@@ -1,4 +1,5 @@
 <%= render partial: 'queries/grid' %>
+
 <style>
   .tall {
     height: calc(100% - 280px);
@@ -26,6 +27,7 @@
     </div>
   </div>
 </div>
+
 <turbo-frame id="output-content"  data-turbo-action="replace">
   <div class="alert alert-warning alert-dismissible fade show d-none" role="alert">
     <strong>Error!</strong><span id="error"></span>
@@ -44,7 +46,7 @@
       <% end %>
     <% end %>
   <% else %>
-    <div class="container-fluid tall d-none" id="sql_complete">
+    <div class="container-fluid tall " id="sql_complete">
       <% unless @sql.blank? %>
         <div class="row flex-grow-1" id="output-content">
           <div class="col-12 d-flex">
