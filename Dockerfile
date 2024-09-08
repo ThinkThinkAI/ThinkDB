@@ -25,8 +25,11 @@ COPY . .
 # Expose port 3000 to the outside world
 EXPOSE 3000
 
-# Precompile assets for production environment
-RUN bundle exec rake assets:precompile
+ENV RAILS_ENV=development
+ENV REDIS_URL=redis://redis:6379/1
 
-# Command to run the application
-CMD ["bundle", "exec", "rails", "server", "-b", "0.0.0.0"]
+# Precompile assets for production environment (optional for development)
+# RUN bundle exec rake assets:precompile
+
+# Default command
+CMD ["bash", "-c", "rm -f tmp/pids/server.pid && bundle exec rails server -b 0.0.0.0 -p 3000"]
