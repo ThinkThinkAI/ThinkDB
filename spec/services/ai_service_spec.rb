@@ -70,7 +70,7 @@ RSpec.describe AIService do
 
   describe '#chat' do
     context 'when chat is qchat' do
-      let(:chat) { double('Chat', qchat?: true, data_source: data_source, messages: [chat_message]) }
+      let(:chat) { double('Chat', qchat?: true, data_source:, messages: [chat_message]) }
 
       it 'sends the query_system_message to the system' do
         ai_service.chat(chat)
@@ -80,7 +80,7 @@ RSpec.describe AIService do
     end
 
     context 'when chat is not qchat' do
-      let(:chat) { double('Chat', qchat?: false, data_source: data_source, messages: [chat_message]) }
+      let(:chat) { double('Chat', qchat?: false, data_source:, messages: [chat_message]) }
 
       it 'sends the system_message to the system' do
         ai_service.chat(chat)
@@ -95,7 +95,7 @@ RSpec.describe AIService do
     end
   end
 
-describe '#extract_json_code_block' do
+  describe '#extract_json_code_block' do
     it 'extracts JSON code block from content' do
       content = 'Here is your query: ```json {"sql": "SELECT * FROM users;"}```'
       extracted = ai_service.send(:extract_json_code_block, content)

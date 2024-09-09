@@ -9,7 +9,7 @@ RSpec.describe SqliteAdapter, type: :service do
   let(:data_source) { double('DataSource', database: db_file) } # Mocking the data_source
   let(:adapter) { described_class.new(data_source) }
 
-before do
+  before do
     # Creating a test table and inserting sample data for users
     adapter.run_raw_query <<-SQL
       CREATE TABLE users (

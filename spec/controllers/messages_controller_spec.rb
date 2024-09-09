@@ -1,10 +1,12 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe MessagesController, type: :controller do
   let(:user) { create(:user) }
-  let(:data_source) { create(:data_source, user: user) }
-  let(:chat) { create(:chat, data_source: data_source) }
-  let(:message) { create(:message, chat: chat) }
+  let(:data_source) { create(:data_source, user:) }
+  let(:chat) { create(:chat, data_source:) }
+  let(:message) { create(:message, chat:) }
 
   before do
     sign_in(user)
@@ -18,7 +20,7 @@ RSpec.describe MessagesController, type: :controller do
 
       it 'responds to turbo_stream format' do
         post :create, params: { chat_id: chat.friendly_id, message: valid_attributes }, format: :turbo_stream
-        expect(response.content_type).to eq "text/vnd.turbo-stream.html; charset=utf-8"
+        expect(response.content_type).to eq 'text/vnd.turbo-stream.html; charset=utf-8'
       end
 
       it 'responds to html format with a redirect' do
@@ -33,7 +35,7 @@ RSpec.describe MessagesController, type: :controller do
 
       it 'responds with turbo_stream format' do
         post :create, params: { chat_id: chat.friendly_id, message: invalid_attributes }, format: :turbo_stream
-        expect(response.content_type).to eq "text/vnd.turbo-stream.html; charset=utf-8"
+        expect(response.content_type).to eq 'text/vnd.turbo-stream.html; charset=utf-8'
       end
 
       it 'redirects to chat path with an alert in html format' do
@@ -47,9 +49,9 @@ RSpec.describe MessagesController, type: :controller do
   describe 'DELETE #destroy' do
     it 'destroys the requested message' do
       message # Ensure the message is created before the delete action
-      expect {
+      expect do
         delete :destroy, params: { chat_id: chat.friendly_id, id: message.id }
-      }.to change(Message, :count).by(-1)
+      end.to change(Message, :count).by(-1)
     end
 
     it 'redirects to the chat' do

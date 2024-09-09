@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CustomRender < Redcarpet::Render::HTML
   def block_code(code, language)
     height = code.lines.count <= 2 ? '70px' : '200px'

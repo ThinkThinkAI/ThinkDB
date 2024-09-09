@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe ChatsController, type: :controller do
   let(:user) { create(:user) }
-  let(:data_source) { create(:data_source, user: user) }
-  let(:chat) { create(:chat, data_source: data_source) }
+  let(:data_source) { create(:data_source, user:) }
+  let(:chat) { create(:chat, data_source:) }
 
   before do
     sign_in(user)
@@ -22,9 +24,9 @@ RSpec.describe ChatsController, type: :controller do
 
     context 'when no chats exist' do
       it 'creates a new chat and renders the show template' do
-        expect {
+        expect do
           get :index, params: { data_source_id: data_source.id }
-        }.to change(Chat, :count).by(1)
+        end.to change(Chat, :count).by(1)
         expect(assigns(:chat)).to be_a(Chat)
         expect(response).to render_template(:show)
       end
@@ -40,9 +42,9 @@ RSpec.describe ChatsController, type: :controller do
 
   describe 'GET #new' do
     it 'creates a new chat and redirects to /chat' do
-      expect {
+      expect do
         get :new, params: { data_source_id: data_source.id }
-      }.to change(Chat, :count).by(1)
+      end.to change(Chat, :count).by(1)
       expect(response).to redirect_to('/chat')
     end
   end
@@ -52,9 +54,9 @@ RSpec.describe ChatsController, type: :controller do
       let(:valid_attributes) { { name: 'New Chat' } }
 
       it 'creates a new Chat' do
-        expect {
+        expect do
           post :create, params: { data_source_id: data_source.id, chat: valid_attributes }
-        }.to change(Chat, :count).by(1)
+        end.to change(Chat, :count).by(1)
       end
 
       it 'redirects to the created chat' do
@@ -111,9 +113,9 @@ RSpec.describe ChatsController, type: :controller do
   describe 'DELETE #destroy' do
     it 'destroys the requested chat' do
       chat
-      expect {
+      expect do
         delete :destroy, params: { data_source_id: data_source.id, id: chat.id }
-      }.to change(Chat, :count).by(-1)
+      end.to change(Chat, :count).by(-1)
     end
 
     it 'redirects to chats list' do

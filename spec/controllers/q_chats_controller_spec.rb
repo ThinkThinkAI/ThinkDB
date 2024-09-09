@@ -1,10 +1,12 @@
+# frozen_string_literal: true
+
 # spec/controllers/q_chats_controller_spec.rb
 require 'rails_helper'
 
 RSpec.describe QChatsController, type: :controller do
   let(:user) { create(:user) }
   let(:data_source) { create(:data_source) }
-  let!(:qchat) { create(:q_chat, data_source: data_source) }
+  let!(:qchat) { create(:q_chat, data_source:) }
 
   before do
     sign_in user
@@ -83,9 +85,9 @@ RSpec.describe QChatsController, type: :controller do
 
   describe 'DELETE #destroy' do
     it 'destroys the qchat and redirects to the chats index page with a notice' do
-      expect {
+      expect do
         delete :destroy, params: { id: qchat.id, data_source_id: data_source.id }
-      }.to change(QChat, :count).by(-1)
+      end.to change(QChat, :count).by(-1)
 
       expect(flash[:notice]).to eq('Chat was successfully destroyed.')
     end
