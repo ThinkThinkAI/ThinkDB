@@ -4,7 +4,7 @@ require 'sidekiq/web'
 
 Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
   resources :messages
-  
+
   resources :chats
   resources :qchats, controller: 'q_chats', as: 'qchats'
 
@@ -47,6 +47,9 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
   root to: 'home#index'
   get '/swatch', to: 'home#swatch'
 
-  mount Sidekiq::Web => '/sidekiq'
+  authenticate :user, ->(u) { u.admin? } do
+    mount Sidekiq::Web => '/sidekiq'
+  end
+
   mount ActionCable.server => '/cable'
 end

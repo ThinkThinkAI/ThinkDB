@@ -33,6 +33,9 @@
     </a>
     <ul class="dropdown-menu  text-small shadow" aria-labelledby="dropdownUser1">
       <li><a class="dropdown-item" href="<%= user_settings_path %>">Settings</a></li>
+      <% if current_user.admin? %>
+        <li><a class="dropdown-item" href="<%= sidekiq_web_path %>" target="_blank">Sidekiq</a></li>
+      <% end %>
       <li>
         <hr class="dropdown-divider">
       </li>
