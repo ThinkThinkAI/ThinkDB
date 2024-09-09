@@ -2,7 +2,7 @@
 FROM ruby:3.2.2
 
 # Install dependencies
-RUN apt-get update -qq && apt-get install -y nodejs postgresql-client
+RUN apt-get update -qq && apt-get install -y nodejs postgresql-client yarn
 
 # Set the working directory in the container
 WORKDIR /app
@@ -22,6 +22,9 @@ COPY sidekiq-entrypoint.sh ./sidekiq-entrypoint.sh
 
 # Make sure the entrypoint scripts are executable
 RUN chmod +x entrypoint.sh sidekiq-entrypoint.sh
+
+# Precompile assets
+RUN bundle exec rake assets:precompile
 
 # Define the default command to be run in the container
 CMD ["bash"]
