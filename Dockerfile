@@ -1,32 +1,27 @@
-# Use the official Ruby image with the latest version of Ruby 3.2
+# Use the official Ruby image as a base
 FROM ruby:3.2.2
 
-# Set an environment variable to prevent the installation of documentation for Ruby gems
-ENV BUNDLE_WITHOUT="development test docs"
-
 # Install dependencies
-RUN apt-get update -qq && \
-    apt-get install -y build-essential libmariadb-dev-compat libmariadb-dev libpq-dev
+RUN apt-get update -qq && apt-get install -y nodejs postgresql-client
 
-RUN apt-get update -qq && apt-get install -y nodejs yarn
-
-# Set the working directory
+# Set the working directory in the container
 WORKDIR /app
 
-# Copy the Gemfile and Gemfile.lock into the container
-COPY Gemfile Gemfile.lock ./
+# Copy the Gemfile and Gemfile.lock files
+COPY Gemfile* ./
 
-# Install bundle dependencies
+# Install the Ruby and Rails dependencies
 RUN bundle install
 
-# Copy the rest of the application code into the container
-COPY . .
+# Copy the application code
+COPY . ./
 
-# Expose port 3000 to the outside world
-EXPOSE 3000
+# Ensure the entrypoint scripts are included in the image
+COPY entrypoint.sh ./entrypoint.sh
+COPY sidekiq-entrypoint.sh ./sidekiq-entrypoint.sh
 
-# Precompile assets for production environment
-RUN bundle exec rake assets:precompile
+# Make sure the entrypoint scripts are executable
+RUN chmod +x entrypoint.sh sidekiq-entrypoint.sh
 
-# Command to run the application
-CMD ["bundle", "exec", "rails", "server", "-b", "0.0.0.0"]
+# Define the default command to be run in the container
+CMD ["bash"]

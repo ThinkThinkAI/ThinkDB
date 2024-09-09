@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class AddAiDetailsAndDarkmodeToUsers < ActiveRecord::Migration[7.1]
+class AddAIDetailsAndDarkmodeToUsers < ActiveRecord::Migration[7.1]
   def change
     add_column :users, :ai_url, :string
     add_column :users, :ai_model, :string
