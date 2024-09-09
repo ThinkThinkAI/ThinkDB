@@ -8,7 +8,7 @@ class HomeController < ApplicationController
     if current_user.settings_incomplete?
       redirect_to user_settings_path
     else
-      redirect_to data_sources_path
+      current_user.data_sources.count.zero? ? redirect_to(new_data_source_path) : redirect_to('/query')
     end
   end
 
