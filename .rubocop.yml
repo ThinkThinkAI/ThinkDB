@@ -3,5 +3,9 @@ Metrics/BlockLength:
     - call
   Exclude:
     - 'spec/**/*.rb'
-  Style/Documentation:
-    Enabled: false
+
+Style/Documentation:
+  Enabled: false
+
+Metrics/LineLength:
+  Enabled: false

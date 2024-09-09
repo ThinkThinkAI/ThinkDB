@@ -7,7 +7,7 @@ require_relative 'sql/sql_adapter'
 # It connects to the database using provided connection parameters and
 # can retrieve schema information and execute queries.
 class PostgresqlAdapter < SQLAdapter
-  def initialize(data_source)
+  def initialize(data_source) # rubocop:disable Lint/MissingSuper
     connection_params = {
       dbname: data_source.database,
       user: data_source.username,

@@ -8,7 +8,7 @@ require_relative 'sql/sql_adapter'
 # It connects to the database using a file location and
 # can retrieve schema information and execute queries.
 class SqliteAdapter < SQLAdapter
-  def initialize(data_source)
+  def initialize(data_source) # rubocop:disable Lint/MissingSuper
     @db_file = data_source.database
     @connection = SQLite3::Database.new(@db_file)
   end
