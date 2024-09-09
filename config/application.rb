@@ -25,8 +25,8 @@ module ChatDb
     #
     # config.time_zone = "Central Time (US & Canada)"
     #
-    config.eager_load_paths += %W(#{config.root}/app/services/adapters/sql)
-    config.eager_load_paths += %W(#{config.root}/app/services/adapters)
+    config.eager_load_paths += %W[#{config.root}/app/services/adapters/sql]
+    config.eager_load_paths += %W[#{config.root}/app/services/adapters]
     config.generators do |g|
       g.test_framework :rspec,
                        fixtures: true,

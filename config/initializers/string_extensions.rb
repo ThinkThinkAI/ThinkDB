@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # config/initializers/string_extensions.rb
 
 # Adds some sql methods to the String class.

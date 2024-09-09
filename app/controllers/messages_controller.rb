@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # app/controllers/messages_controller.rb
 class MessagesController < ApplicationController
   before_action :authenticate_user!
@@ -13,12 +15,15 @@ class MessagesController < ApplicationController
       AIResponseJob.perform_async(@chat.id)
       respond_to do |format|
         format.turbo_stream
-        format.html { redirect_to data_source_chat_path(@data_source, @chat), notice: "Message sent!" }
+        format.html { redirect_to data_source_chat_path(@data_source, @chat), notice: 'Message sent!' }
       end
     else
       respond_to do |format|
-        format.turbo_stream { render turbo_stream: turbo_stream.replace("new_message", partial: "form", locals: { chat: @chat, data_source: @data_source, message: @message.errors }) }
-        format.html { redirect_to data_source_chat_path(@data_source, @chat), alert: "Message could not be sent!" }
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.replace('new_message', partial: 'form',
+                                                                   locals: { chat: @chat, data_source: @data_source, message: @message.errors })
+        end
+        format.html { redirect_to data_source_chat_path(@data_source, @chat), alert: 'Message could not be sent!' }
       end
     end
   end

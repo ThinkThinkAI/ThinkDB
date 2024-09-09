@@ -41,7 +41,7 @@ class SqliteAdapter < SQLAdapter
 
         if column_info[:primary_key]
           column_info[:constraint_type] = 'PRIMARY KEY'
-        elsif foreign_key = foreign_keys[column[1]]
+        elsif (foreign_key = foreign_keys[column[1]])
           column_info[:constraint_type] = 'FOREIGN KEY'
           column_info[:referenced_table_name] = foreign_key[:table]
           column_info[:referenced_column_name] = foreign_key[:to]

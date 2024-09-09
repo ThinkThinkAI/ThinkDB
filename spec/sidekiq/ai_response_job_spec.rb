@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # spec/sidekiq/ai_response_job_spec.rb
 
 require 'rails_helper'

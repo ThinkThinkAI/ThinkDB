@@ -47,7 +47,7 @@ Rails.application.routes.draw do # rubocop:disable Metrics/BlockLength
   root to: 'home#index'
   get '/swatch', to: 'home#swatch'
 
-  authenticate :user, ->(u) { u.admin? } do
+  authenticate :user, lambda(&:admin?) do
     mount Sidekiq::Web => '/sidekiq'
   end
 

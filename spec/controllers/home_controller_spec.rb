@@ -36,7 +36,7 @@ RSpec.describe HomeController, type: :controller do
 
         it 'redirects to data sources path' do
           get :index
-          expect(response).to redirect_to(data_sources_path)
+          expect(response).to redirect_to(new_data_source_path)
         end
       end
     end

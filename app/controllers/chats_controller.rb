@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # app/controllers/chats_controller.rb
 class ChatsController < ApplicationController
   before_action :authenticate_user!
