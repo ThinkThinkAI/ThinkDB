@@ -4,7 +4,7 @@
 # based on the provided data source configuration.
 class DatabaseService
   ADAPTERS_DIR = File.expand_path('adapters', __dir__)
-  ADAPTER_CLASSES = {}
+  ADAPTER_CLASSES = {} # rubocop:disable Style/MutableConstant
 
   Dir[File.join(ADAPTERS_DIR, '*.rb')].each do |file|
     require_relative file

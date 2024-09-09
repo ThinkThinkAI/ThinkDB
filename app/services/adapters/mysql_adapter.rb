@@ -8,7 +8,7 @@ require_relative 'sql/sql_adapter'
 # It connects to the database using provided connection parameters and
 # can retrieve schema information and execute queries.
 class MysqlAdapter < SQLAdapter
-  def initialize(data_source)
+  def initialize(data_source) # rubocop:disable Lint/MissingSuper
     @data_source = data_source
     connection_params = {
       database: data_source.database,
