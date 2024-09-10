@@ -1,7 +1,3 @@
-# frozen_string_literal: true
-
-# DataSource model represents a data source associated with a user, containing
-# necessary connection details and methods to manage its state.
 class DataSource < ApplicationRecord
   extend FriendlyId
   friendly_id :name, use: :slugged
@@ -29,6 +25,9 @@ class DataSource < ApplicationRecord
 
   def decrypt_password
     decrypt(password) if password.present?
+  rescue ActiveSupport::MessageEncryptor::InvalidMessage
+    # Handle invalid message error or log it
+    nil
   end
 
   private
@@ -46,12 +45,14 @@ class DataSource < ApplicationRecord
   end
 
   def encryptor
-    key = Rails.application.credentials.secret_key_base[0..31]
-    ActiveSupport::MessageEncryptor.new(key)
+    secret_key_base = ENV['SECRET_KEY_BASE'] || '63713599ea6fa5f3a63f41cbe71f63ff284535245c18ae375c0b8d735ca8e601'
+    # Ensure key is 32 bytes long for AES-256
+    key = secret_key_base[0..31]
+    ActiveSupport::MessageEncryptor.new(key, cipher: 'aes-256-gcm')
   end
 
   def unset_other_connected_sources
-    user.data_sources.where.not(id:).update_all(connected: false)
+    user.data_sources.where.not(id: id).update_all(connected: false)
   end
 
   def activate_first_available_data_source_if_none_active

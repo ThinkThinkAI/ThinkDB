@@ -4,11 +4,11 @@
       <p class="lead">The DB Client that ThinkThinks</p>
       <hr class="my-3">
       <% if !user_signed_in? %>
-        <%= link_to 'Login', new_user_session_path, class: 'btn btn-primary' %><br><br>
+        <%= link_to 'Login', new_user_session_path, class: 'btn btn-primary' %>&nbsp;&nbsp;<%= link_to 'Sign Up', new_user_registration_path, class: 'btn btn-primary' %><br><br>
         <% if ENV['GITHUB_CLIENT_ID'].present? && ENV['GITHUB_CLIENT_SECRET'].present? %>
           <%= link_to 'Login with GitHub', user_github_omniauth_authorize_path, class: 'btn btn-primary' %><br><br>
         <% end %>
-        <%= link_to 'Sign Up', new_user_registration_path, class: 'btn btn-primary' %><br><br>
+        
       <% end %>
       <hr class="my-2">
       <p>ThinkThink.ai</p>

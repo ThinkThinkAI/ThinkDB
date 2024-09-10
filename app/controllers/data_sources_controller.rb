@@ -6,10 +6,6 @@ class DataSourcesController < ApplicationController
   before_action :authenticate_user!
   before_action :set_data_source, only: %i[edit update destroy connect]
 
-  def index
-    @data_sources = current_user.data_sources
-  end
-
   def show
     redirect_to data_sources_path
   end
