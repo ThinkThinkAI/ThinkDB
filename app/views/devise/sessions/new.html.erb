@@ -24,7 +24,9 @@
             <div class="float-end">
               <%= form.submit "Log in", class: "btn btn-primary" %>
             </div>
-            <%= link_to 'Login with GitHub', user_github_omniauth_authorize_path, class: 'btn btn-primary' %>
+            <% if ENV['GITHUB_CLIENT_ID'].present? && ENV['GITHUB_CLIENT_SECRET'].present? %>
+              <%= link_to 'Login with GitHub', user_github_omniauth_authorize_path, class: 'btn btn-primary' %>
+            <% end %>
           <% end %>
         </div>
       </div>
