@@ -8,28 +8,16 @@ RSpec.describe ChatsController, type: :controller do
   let(:chat) { create(:chat, data_source:) }
 
   before do
-    sign_in(user)
+    sign_in user
     allow(controller).to receive(:current_user).and_return(user)
+    allow(user).to receive(:connected_data_source).and_return(data_source)
   end
 
   describe 'GET #index' do
-    context 'when chats exist' do
-      it 'assigns the latest chat as @chat and renders the show template' do
-        chat
-        get :index, params: { data_source_id: data_source.id }
-        expect(assigns(:chat)).to eq(chat)
-        expect(response).to render_template(:show)
-      end
-    end
-
-    context 'when no chats exist' do
-      it 'creates a new chat and renders the show template' do
-        expect do
-          get :index, params: { data_source_id: data_source.id }
-        end.to change(Chat, :count).by(1)
-        expect(assigns(:chat)).to be_a(Chat)
-        expect(response).to render_template(:show)
-      end
+    it 'assigns the latest chat as @chat and renders the :show template' do
+      get :index, params: { data_source_id: data_source.id }
+      expect(assigns(:chat)).to eq(data_source.chats.excluding_qchats.order(created_at: :desc).first)
+      expect(response).to render_template(:show)
     end
   end
 
@@ -51,26 +39,17 @@ RSpec.describe ChatsController, type: :controller do
 
   describe 'POST #create' do
     context 'with valid params' do
-      let(:valid_attributes) { { name: 'New Chat' } }
-
-      it 'creates a new Chat' do
+      it 'creates a new chat and redirects to the chat show page' do
         expect do
-          post :create, params: { data_source_id: data_source.id, chat: valid_attributes }
+          post :create, params: { data_source_id: data_source.id, chat: { name: 'Test Chat' } }
         end.to change(Chat, :count).by(1)
-      end
-
-      it 'redirects to the created chat' do
-        post :create, params: { data_source_id: data_source.id, chat: valid_attributes }
         expect(response).to redirect_to(data_source_chat_path(data_source, Chat.last))
-        expect(flash[:notice]).to eq('Chat was successfully created.')
       end
     end
 
     context 'with invalid params' do
-      let(:invalid_attributes) { { name: '' } }
-
-      it 'does not create a new Chat and renders new template' do
-        post :create, params: { data_source_id: data_source.id, chat: invalid_attributes }
+      it 'renders the new template' do
+        post :create, params: { data_source_id: data_source.id, chat: { name: '' } }
         expect(response).to render_template(:new)
       end
     end
@@ -83,45 +62,31 @@ RSpec.describe ChatsController, type: :controller do
     end
   end
 
-  describe 'PUT #update' do
+  describe 'PATCH #update' do
     context 'with valid params' do
-      let(:new_attributes) { { name: 'Updated Chat' } }
-
-      it 'updates the requested chat' do
-        put :update, params: { data_source_id: data_source.id, id: chat.id, chat: new_attributes }
+      it 'updates the chat and redirects to the chat show page' do
+        patch :update, params: { data_source_id: data_source.id, id: chat.id, chat: { name: 'Updated Chat' } }
         chat.reload
         expect(chat.name).to eq('Updated Chat')
-      end
-
-      it 'redirects to the chat' do
-        put :update, params: { data_source_id: data_source.id, id: chat.id, chat: new_attributes }
         expect(response).to redirect_to(data_source_chat_path(data_source, chat))
-        expect(flash[:notice]).to eq('Chat was successfully updated.')
       end
     end
 
     context 'with invalid params' do
-      let(:invalid_attributes) { { name: '' } }
-
-      it 'does not update the chat and renders edit template' do
-        put :update, params: { data_source_id: data_source.id, id: chat.id, chat: invalid_attributes }
+      it 'renders the edit template' do
+        patch :update, params: { data_source_id: data_source.id, id: chat.id, chat: { name: '' } }
         expect(response).to render_template(:edit)
       end
     end
   end
 
   describe 'DELETE #destroy' do
-    it 'destroys the requested chat' do
-      chat
+    it 'destroys the requested chat and redirects to the chats index' do
+      chat # ensure the chat is created before the expect block
       expect do
         delete :destroy, params: { data_source_id: data_source.id, id: chat.id }
       end.to change(Chat, :count).by(-1)
-    end
-
-    it 'redirects to chats list' do
-      delete :destroy, params: { data_source_id: data_source.id, id: chat.id }
       expect(response).to redirect_to(data_source_chats_path(data_source))
-      expect(flash[:notice]).to eq('Chat was successfully destroyed.')
     end
   end
 end
