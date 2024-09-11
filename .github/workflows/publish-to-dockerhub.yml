@@ -1,4 +1,4 @@
-name: Publish Docker Image
+name: Publish Docker Image and Create Release
 
 on:
   push:
@@ -27,10 +27,29 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      - name: Extract version
+        id: vars
+        run: |
+          VERSION=$(cat VERSION) # Assumes you have a VERSION file in your repo
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v3
         with:
           context: .
           push: true
           platforms: linux/amd64,linux/arm/v7,linux/arm64
-          tags: thinkthinkai/think_db:latest
+          tags: thinkthinkai/think_db:latest,thinkthinkai/think_db:${{ env.VERSION }}
+
+      - name: Create GitHub Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ env.VERSION }}
+          release_name: Release ${{ env.VERSION }}
+          body: |
+            New release ${{ env.VERSION }} is out!
+          draft: false
+          prerelease: false
