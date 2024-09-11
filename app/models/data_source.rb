@@ -52,7 +52,7 @@ class DataSource < ApplicationRecord
   end
 
   def unset_other_connected_sources
-    user.data_sources.where.not(id: id).update_all(connected: false)
+    user.data_sources.where.not(id:).update_all(connected: false)
   end
 
   def activate_first_available_data_source_if_none_active

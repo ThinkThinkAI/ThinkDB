@@ -118,7 +118,7 @@ RSpec.describe DataSourcesController, type: :controller do
       it 'returns an error response for JSON format' do
         patch :connect, params: { id: data_source.to_param }, as: :json
         JSON.parse(response.body)
-        expect(response.status).to eq(200)
+        expect(response.status).to eq(422)
       end
     end
   end

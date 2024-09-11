@@ -56,10 +56,16 @@ class MysqlAdapter < SQLAdapter
 
   def run_query(query, limit = 10, offset = 0, sort = nil)
     wrapped_query = "(#{query})"
+    init_wrapped_query = wrapped_query
+
     wrapped_query = add_sorting(wrapped_query, sort)
     wrapped_query = add_offset(wrapped_query, limit, offset)
 
-    result = @client.query(wrapped_query)
+    result = if wrapped_query != init_wrapped_query
+               @client.query(wrapped_query)
+             else
+               @client.query(query)
+             end
 
     keys = result.first.keys
     transformed_result = result.map(&:values)

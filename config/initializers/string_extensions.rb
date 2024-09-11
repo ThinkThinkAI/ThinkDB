@@ -5,7 +5,7 @@
 # Adds some sql methods to the String class.
 class String
   def sql_modification?
-    !!match(/\A\s*(INSERT|UPDATE|DELETE|DROP|CREATE|ALTER)\b/i)
+    sql_dml? || sql_ddl? || sql_pragma_assignment?
   end
 
   def sql_select?
@@ -13,11 +13,15 @@ class String
   end
 
   def sql_ddl?
-    !!match(/\A\s*(CREATE|ALTER|DROP)\b/i)
+    !!match(/\A\s*(CREATE|ALTER|DROP|SET)\b/i)
   end
 
   def sql_dml?
-    !!match(/\A\s*(INSERT|UPDATE|DELETE|SELECT)\b/i)
+    !!match(/\A\s*(INSERT|UPDATE|DELETE)\b/i)
+  end
+
+  def sql_pragma_assignment?
+    !!match(/\A\s*PRAGMA\s+\w+\s*=\s*\S+/i)
   end
 
   def sql_statement_count
