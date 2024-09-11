@@ -85,7 +85,7 @@ RSpec.describe MysqlAdapter, type: :service do
         { 'id' => 2, 'name' => 'Test User 2', 'email' => 'user2@example.com' }
       ]
 
-      allow(mock_client).to receive(:query).with('(SELECT * FROM users)').and_return(mock_result)
+      allow(mock_client).to receive(:query).with('SELECT * FROM users').and_return(mock_result)
 
       result = adapter.run_query(query, 1, 1)
       expect(result).to eq([['id', 'name', 'email'], [2, 'Test User 2', 'user2@example.com']])
@@ -98,7 +98,7 @@ RSpec.describe MysqlAdapter, type: :service do
         { 'id' => 1, 'name' => 'Test User 1', 'email' => 'user1@example.com' }
       ]
 
-      allow(mock_client).to receive(:query).with('(SELECT * FROM users)').and_return(mock_result)
+      allow(mock_client).to receive(:query).with('SELECT * FROM users').and_return(mock_result)
 
       result = adapter.run_query(query, 10, 0, { column: 'name', order: 'desc' })
       expect(result).to eq([['id', 'name', 'email'], [2, 'Test User 2', 'user2@example.com'],

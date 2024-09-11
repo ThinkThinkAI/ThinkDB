@@ -17,17 +17,10 @@ class ApplicationController < ActionController::Base
     end
 
     # Check data sources next and redirect if necessary
-    if current_user.data_sources.blank? && !on_new_data_source_path?
-      redirect_to new_data_source_path, alert: 'Please create a data source.'
-      return
-    end
+    return unless current_user.data_sources.blank? && !on_new_data_source_path?
 
-    # Ensure connected data source
-    ensure_connected_data_source
-  end
-
-  def ensure_connected_data_source
-    @data_source = current_user.connected_data_source || connect_first_data_source
+    redirect_to new_data_source_path, alert: 'Please create a data source.'
+    nil
   end
 
   def connect_first_data_source
@@ -37,7 +30,7 @@ class ApplicationController < ActionController::Base
       first_data_source
     else
       redirect_to new_data_source_path, alert: 'Please create a data source.'
-      nil # Ensure nothing further is processed in the original request
+      nil
     end
   end
 
@@ -51,6 +44,6 @@ class ApplicationController < ActionController::Base
 
   def excluded_paths?
     request.path == user_settings_path ||
-    (controller_name == 'data_sources' && %w[new create].include?(action_name))
+      (controller_name == 'data_sources' && %w[new create].include?(action_name))
   end
 end

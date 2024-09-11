@@ -51,7 +51,8 @@ class DataSourcesController < ApplicationController
   def connect
     updated_status = !@data_source.connected
 
-    @data_source.update!(connected: updated_status)
+    puts @data_source.inspect
+    @data_source.update(connected: updated_status)
 
     @data_source.reload
 
@@ -62,6 +63,9 @@ class DataSourcesController < ApplicationController
       format.json { render json: { data_source: @data_source, message: }, status: :ok }
     end
   rescue StandardError => e
+    puts e.inspect
+    puts e.message
+
     respond_to do |format|
       format.html { redirect_to data_sources_path, alert: "Failed to update DataSource connection: #{e.message}" }
       format.json do
