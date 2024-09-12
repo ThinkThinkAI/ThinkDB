@@ -7,7 +7,7 @@ class DataSourcesController < ApplicationController
   before_action :set_data_source, only: %i[edit update destroy connect]
 
   def show
-    redirect_to data_sources_path
+    #redirect_to data_sources_path
   end
 
   def new

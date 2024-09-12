@@ -10,6 +10,8 @@ class ApplicationController < ActionController::Base
   def check_requirements
     return unless user_signed_in?
 
+    connect_first_data_source if current_user.data_sources.any? && current_user.data_sources.active.none?
+
     # Check user settings first and redirect if necessary
     if current_user.settings_incomplete? && !on_user_settings_path?
       redirect_to user_settings_path, alert: 'Please complete your settings.'
