@@ -2,7 +2,7 @@
 FROM ruby:3.2.2
 
 # Install dependencies
-RUN apt-get update -qq && apt-get install -y build-essential libpq-dev nodejs yarn
+RUN apt-get update -qq && apt-get install -y build-essential libpq-dev nodejs yarn libsqlite3-dev
 
 # Set the working directory in the container
 WORKDIR /app
@@ -17,9 +17,5 @@ RUN bundle install
 COPY . ./
 
 
-
 # Set a dummy SECRET_KEY_BASE for precompilation
 RUN SECRET_KEY_BASE=dummy_key RAILS_ENV=production bundle exec rake assets:precompile
-
-# Define the default command
-CMD ["bash"]

@@ -10,6 +10,7 @@ services:
         bundle exec rails server -b 0.0.0.0 -p 3000"
     volumes:
       - .:/app
+      - ./storage:/app/storage
     ports:
       - "3000:3000"
     environment:
@@ -28,6 +29,7 @@ services:
         bundle exec sidekiq"
     volumes:
       - .:/app
+      - ./storage:/app/storage
     environment:
       RAILS_ENV: production
       REDIS_URL: redis://redis:6379/1
