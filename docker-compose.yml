@@ -16,7 +16,7 @@ services:
 
   worker:
     build: .
-    command: bundle exec sidekiq
+    command: ["bundle", "exec", "sidekiq"]
     entrypoint: ["./sidekiq-entrypoint.sh"]
     volumes:
       - .:/app

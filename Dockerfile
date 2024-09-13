@@ -23,5 +23,15 @@ COPY sidekiq-entrypoint.sh ./sidekiq-entrypoint.sh
 # Make sure the entrypoint scripts are executable
 RUN chmod +x entrypoint.sh sidekiq-entrypoint.sh
 
+EXPOSE 3000
 # Define the default command to be run in the container
 RUN SECRET_KEY_BASE=dummy_key RAILS_ENV=production bundle exec rake assets:precompile
+
+
+# Copy both entrypoint scripts and make them executable
+COPY entrypoint.sh /usr/bin/
+COPY sidekiq-entrypoint.sh /usr/bin/
+RUN chmod +x /usr/bin/entrypoint.sh
+RUN chmod +x /usr/bin/sidekiq-entrypoint.sh
+
+CMD ["bundle", "exec", "rails", "server", "-b", "0.0.0.0", "-p", "3000"]
