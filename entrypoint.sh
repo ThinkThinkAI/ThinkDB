@@ -14,7 +14,7 @@ rm -f /app/tmp/pids/server.pid
 echo "Running bundle exec rake assets:precompile"
 bundle exec rake assets:precompile RAILS_ENV=production
 
-echo "Running bundle exec rails db:migrate"
+echo "Running bundle exec rails db:migrate RAILS_ENV=production"
 bundle exec rails db:migrate RAILS_ENV=production
 
 echo "Executing final command: $@"

@@ -4,6 +4,10 @@ FROM ruby:3.2.2
 # Install dependencies
 RUN apt-get update -qq && apt-get install -y nodejs postgresql-client libsqlite3-dev build-essential
 
+# Set environment variables
+ENV RAILS_ENV=production
+ENV REDIS_URL=redis://redis:6379/1
+
 # Set the working directory in the container
 WORKDIR /app
 
@@ -30,4 +34,4 @@ RUN SECRET_KEY_BASE=dummy_key RAILS_ENV=production bundle exec rake assets:preco
 EXPOSE 3000
 
 # Default command to run the Rails server
-CMD ["bundle", "exec", "rails", "server", "-b", "0.0.0.0", "-p", "3000"]
+CMD bundle exec rails db:migrate && bundle exec rails server -b 0.0.0.0 -p 3000
