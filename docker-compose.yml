@@ -10,8 +10,8 @@ services:
     environment:
       RAILS_ENV: production
       REDIS_URL: redis://redis:6379/1
+    command: ["bundle", "exec", "rails", "server", "-b", "0.0.0.0", "-p", "3000"]
     depends_on:
-      - db
       - redis
 
   worker:
@@ -25,22 +25,9 @@ services:
       RAILS_ENV: production
       REDIS_URL: redis://redis:6379/1
     depends_on:
-      - db
       - redis
 
   redis:
     image: redis:6.2.5
     ports:
       - "6379:6379"
-
-  db:
-    image: postgres:13
-    environment:
-      POSTGRES_USER: username
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: mydatabase
-    volumes:
-      - db-data:/var/lib/postgresql/data
-
-volumes:
-  db-data:
