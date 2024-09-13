@@ -2,8 +2,7 @@
 FROM ruby:3.2.2
 
 # Install dependencies
-RUN apt-get update -qq && \
-    apt-get install -y nodejs postgresql-client libsqlite3-dev build-essential libmysqlclient-dev libmariadb-dev
+RUN apt-get update -qq && apt-get install -y nodejs postgresql-client libsqlite3-dev build-essential libmysqlclient-dev libmariadb-dev
 
 # Set environment variables
 ENV RAILS_ENV=production
