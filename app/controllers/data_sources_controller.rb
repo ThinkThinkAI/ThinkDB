@@ -7,7 +7,7 @@ class DataSourcesController < ApplicationController
   before_action :set_data_source, only: %i[edit update destroy connect]
 
   def show
-    #redirect_to data_sources_path
+    # redirect_to data_sources_path
   end
 
   def new
@@ -17,9 +17,14 @@ class DataSourcesController < ApplicationController
   def create
     @data_source = current_user.data_sources.build(data_source_params)
 
-    if @data_source.save
-      redirect_to '/query', notice: 'DataSource was successfully created.'
+    if DatabaseService.test_connection(@data_source)
+      if @data_source.save
+        redirect_to '/query', notice: 'DataSource was successfully created.'
+      else
+        render :new, status: :unprocessable_entity
+      end
     else
+      flash[:alert] = 'Failed to connect to the DataSource. Please check your configuration.'
       render :new, status: :unprocessable_entity
     end
   end
@@ -29,10 +34,17 @@ class DataSourcesController < ApplicationController
   end
 
   def update
-    if @data_source.update(data_source_params)
-      redirect_to '/query', notice: 'DataSource was successfully updated.'
+    @data_source.assign_attributes(data_source_params)
+
+    if DatabaseService.test_connection(@data_source)
+      if @data_source.save
+        redirect_to '/query', notice: 'DataSource was successfully updated.'
+      else
+        render :edit, status: :unprocessable_entity
+      end
     else
-      render :edit
+      flash[:alert] = 'Failed to connect to the DataSource. Please check your configuration.'
+      render :edit, status: :unprocessable_entity
     end
   end
 
@@ -49,28 +61,35 @@ class DataSourcesController < ApplicationController
   end
 
   def connect
-    updated_status = !@data_source.connected
+    @data_source.assign_attributes(connected: !@data_source.connected)
 
-    puts @data_source.inspect
-    @data_source.update(connected: updated_status)
+    if DatabaseService.test_connection(@data_source)
+      @data_source.save
+      message = 'DataSource connection status was successfully updated.'
 
-    @data_source.reload
-
-    message = 'DataSource connection status was successfully updated.'
-
-    respond_to do |format|
-      format.html { redirect_to '/query', notice: message }
-      format.json { render json: { data_source: @data_source, message: }, status: :ok }
+      respond_to do |format|
+        format.html { redirect_to '/query', notice: message }
+        format.json { render json: { data_source: @data_source, message: }, status: :ok }
+      end
+    else
+      respond_to do |format|
+        format.html do
+          redirect_to request.referer || edit_data_source_path(@data_source),
+                      alert: 'Failed to connect to the DataSource. Please check your configuration.'
+        end
+        format.json do
+          render json: { message: 'Failed to update DataSource connection: Invalid configuration.' },
+                 status: :unprocessable_entity
+        end
+      end
     end
   rescue StandardError => e
-    puts e.inspect
-    puts e.message
-
     respond_to do |format|
-      format.html { redirect_to data_sources_path, alert: "Failed to update DataSource connection: #{e.message}" }
-      format.json do
-        render json: { message: e.message }, status: :unprocessable_entity
+      format.html do
+        redirect_to request.referer || edit_data_source_path(@data_source),
+                    alert: "Failed to update DataSource connection: #{e.message}"
       end
+      format.json { render json: { message: e.message }, status: :unprocessable_entity }
     end
   end
 

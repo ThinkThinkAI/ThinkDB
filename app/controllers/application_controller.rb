@@ -27,9 +27,15 @@ class ApplicationController < ActionController::Base
 
   def connect_first_data_source
     first_data_source = current_user.data_sources.first
+
     if first_data_source
-      first_data_source.update(connected: true)
-      first_data_source
+      if DatabaseService.test_connection(first_data_source)
+        first_data_source.update(connected: true)
+        first_data_source
+      else
+        redirect_to edit_data_source_path(first_data_source), alert: 'Failed to connect to the DataSource. Please check your configuration.'
+        nil
+      end
     else
       redirect_to new_data_source_path, alert: 'Please create a data source.'
       nil

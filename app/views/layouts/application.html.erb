@@ -28,6 +28,19 @@
           </div>
         </div>
         <div class="col m-0 p-4 scrollable-content bg-body-tertiary">
+          <% flash.each do |key, value| %>
+            <% alert_class = case key.to_sym
+              when :notice then 'alert alert-info'
+              when :alert  then 'alert alert-danger'
+              when :success then 'alert alert-success'
+              when :warning then 'alert alert-warning'
+              else 'alert alert-primary'
+              end %>
+            <div class="<%= alert_class %> alert-dismissible fade show" role="alert">
+              <%= value %>
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          <% end %>
           <%= yield %>
         </div>
       </div>

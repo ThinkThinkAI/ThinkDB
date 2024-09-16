@@ -1,10 +1,13 @@
 # frozen_string_literal: true
 
+require 'timeout'
+
 # DatabaseService is responsible for creating the appropriate database adapter
 # based on the provided data source configuration.
 class DatabaseService
   ADAPTERS_DIR = File.expand_path('adapters', __dir__)
   ADAPTER_CLASSES = {} # rubocop:disable Style/MutableConstant
+  TIMEOUT_SECONDS = 2
 
   Dir[File.join(ADAPTERS_DIR, '*.rb')].each do |file|
     require_relative file
@@ -19,6 +22,23 @@ class DatabaseService
     raise "Adapter not supported: #{data_source.adapter}" unless adapter_class
 
     new(adapter_class.new(data_source), data_source)
+  end
+
+  def self.test_connection(data_source)
+    adapter_class = ADAPTER_CLASSES[data_source.adapter]
+    raise "Adapter not supported: #{data_source.adapter}" unless adapter_class
+
+    begin
+      Timeout.timeout(TIMEOUT_SECONDS) do
+        adapter = adapter_class.new(data_source)
+        adapter.run_raw_query('SELECT 1')
+      end
+      true
+    rescue Timeout::Error
+      false
+    rescue StandardError
+      false
+    end
   end
 
   def initialize(adapter, data_source)
