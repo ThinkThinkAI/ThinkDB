@@ -1,7 +1,7 @@
 services:
   web:
     build: .
-    entrypoint: ["./entrypoint.sh"]
+    entrypoint: ["./rails-entrypoint.sh"]
     volumes:
       - .:/app
       - ./storage:/app/storage
