@@ -5,11 +5,6 @@ ThinkDB empowers you to effortlessly navigate and manage your databases, elimina
 **In essence, ThinkDB is a sophisticated web-based database client designed for both simplicity and power.**
 
 ---
-## ⚠️ Alpha Software Warning ⚠️
-
-**Important Notice:** ThinkDB is currently in the alpha stage of development. This means that the software is still undergoing changes and may contain bugs or incomplete features. We recommend using ThinkDB in a test environment and not in a production setting until a stable release is available. Your feedback is valuable to us and can help shape the final product.
----
-
 
 ## Current Features
 
@@ -32,27 +27,56 @@ ThinkDB empowers you to effortlessly navigate and manage your databases, elimina
 - **Encrypted Communication:** All connection information is securely encrypted, safeguarding your credentials and ensuring that your data remains protected at all times.
 - **Database Security:** We believe database security should be managed on the database itself, reinforcing access controls and preventing unauthorized access.
 
-
 ## Getting Started
 
 ### Using Docker (The Simplest Method)
 
-To get ThinkDB up and running quickly, you can utilize Docker:
+To get ThinkDB up and running quickly using DockerHub:
 
-```bash
-git clone git@github.com:ThinkThinkAI/ThinkDB.git
-cd ThinkDB
-docker-compose up --build
-```
+### Running the Application
 
-### Running on Ruby on Rails
+1. Pull the latest Docker image:
+    ```sh
+    docker pull thinkthinkai/think_db:latest
+    ```
 
-If you prefer to run ThinkDB locally within the Ruby on Rails environment.
+2. Run the container while ensuring SQLite database persistence and setting the `SECRET_KEY_BASE` environment variable. Remember to replace `directory_on_your_machine_for_think_db_storage` and `your_secret_key_base_here` with your actual directory path and secret key base:
+    ```sh
+    # change directory_on_your_machine_for_think_db_storage & your_secret_key_base_here
+    docker run -d -p 3000:3000 -v directory_on_your_machine_for_think_db_storage:/app/storage -e SECRET_KEY_BASE=your_secret_key_base_here thinkthinkai/think_db:latest
+    ```
 
-```bash
-git clone git@github.com:ThinkThinkAI/ThinkDB.git
-cd ThinkDB
-bundle install
-rails db:migrate
-rails s
-```
+
+### Using Rails Outside a Container (The Harder Method)
+
+To run ThinkDB locally using Rails:
+
+### Prerequisites
+Before you start, ensure you have the following installed:
+- Ruby (version 3.2.2 or higher)
+- Rails (version 7.1 or higher)
+- Bundler
+
+
+### Steps to Run ThinkDB Outside a Container
+
+1. Clone the repository:
+    ```bash
+    git clone https://github.com/ThinkThinkAI/ThinkDB.git
+    cd ThinkDB
+    ```
+
+2. Install the necessary gems:
+    ```bash
+    bundle install
+    ```
+
+3. Set up the database:
+    ```bash
+    bin/rails db:setup
+    ```
+
+4. Start the application with the `SECRET_KEY_BASE` environment variable set:
+    ```bash
+    SECRET_KEY_BASE=$(bundle exec rake secret) foreman start
+    ```
