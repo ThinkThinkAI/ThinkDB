@@ -59,6 +59,9 @@ GEM
       activemodel (= 7.1.4)
       activesupport (= 7.1.4)
       timeout (>= 0.4.0)
+    activerecord-enhancedsqlite3-adapter (0.8.0)
+      activerecord (>= 7.1)
+      sqlite3 (>= 1.6)
     activestorage (7.1.4)
       actionpack (= 7.1.4)
       activejob (= 7.1.4)
@@ -435,7 +438,7 @@ PLATFORMS
   arm-linux
   arm-linux-gnu
   arm-linux-musl
-  arm64-darwin
+  arm64-darwin-23
   x86-linux
   x86-linux-gnu
   x86-linux-musl
@@ -445,6 +448,7 @@ PLATFORMS
   x86_64-linux-musl
 
 DEPENDENCIES
+  activerecord-enhancedsqlite3-adapter (~> 0.8.0)
   bootsnap
   bootstrap (~> 5.3.3)
   capybara

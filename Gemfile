@@ -64,3 +64,5 @@ end
 
 gem 'ruby-handlebars'
 gem 'ruby-openai'
+
+gem 'activerecord-enhancedsqlite3-adapter', '~> 0.8.0'

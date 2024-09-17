@@ -68,7 +68,7 @@ class DataSourcesController < ApplicationController
       message = 'DataSource connection status was successfully updated.'
 
       respond_to do |format|
-        format.html { redirect_to '/query', notice: message }
+        format.html { redirect_to '/query' }
         format.json { render json: { data_source: @data_source, message: }, status: :ok }
       end
     else
