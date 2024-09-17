@@ -39,4 +39,4 @@ EXPOSE 3000
 ENTRYPOINT ["./entrypoint.sh"]
 
 # Default command to run the Rails server
-CMD bundle exec rails db:migrate && bundle exec rails server -b 0.0.0.0 -p 3000
+CMD bundle exec rails server -b 0.0.0.0 -p 3000
