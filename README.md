@@ -1,4 +1,8 @@
-# ThinkDB 🤔 <a href="https://discord.com/invite/your-discord-server-id" style="float: right;"><img src="https://img.shields.io/discord/1245952504341200957?style=flat&label=Discord"></a>
+<a href="https://discord.com/invite/your-discord-server-id" style="float: right;"><img src="https://img.shields.io/discord/1245952504341200957?style=flat&label=Discord"></a>
+
+<h1 align="center">
+ThinkDB 🤔 
+</h1>
 
 
 ThinkDB is a powerful SQL client that transforms the way you interact with your databases.
