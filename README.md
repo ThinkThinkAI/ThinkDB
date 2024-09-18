@@ -2,7 +2,7 @@
 <a href="https://discord.com/invite/your-discord-server-id" style="float: right;"><img src="https://img.shields.io/discord/1245952504341200957?style=flat&label=Discord"></a>
 </div>
 <h1 align="center">
-ThinkDB 🤔 
+ThinkDB 🤔
 </h1>
 
 <h3 align="center">
@@ -25,7 +25,6 @@ ThinkDB is a powerful SQL client that transforms the way you interact with your 
 
 Whether you’re an experienced database professional or just starting out, ThinkDB provides an intuitive and natural interface to explore, query, and manage your data with unparalleled ease.
 
-**In essence, ThinkDB is a sophisticated web-based database client designed for both simplicity and power.**
 
 ---
 Looking for CLI version? Checkout our powerful range of AI powered CLI Tools 👉 [CommandAI](https://github.com/ThinkThinkAI/CommandAI)
@@ -39,7 +38,7 @@ Looking for CLI version? Checkout our powerful range of AI powered CLI Tools �
 - **AI-Driven SQL Generation:** Generate complex SQL queries from simple natural language inputs, allowing you to articulate your needs without getting bogged down in syntax.
 - **Query Management:** Save and organize your frequently used queries, enabling quick access and reuse for future sessions.
 - **Table Browser:** Explore your database structures with a robust table browser that offers insights into table schemas and relationships.
-- **AI-Powered Database Optimization:** Soon, you will be able to consult our AI for guidance on optimizing your database schema and structure, making your database more efficient and scalable.
+- **AI-Powered Database Optimization:** You are able to consult our AI for guidance on optimizing your database schema and structure, making your database more efficient and scalable.
 
 ## Upcoming Features
 
