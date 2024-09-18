@@ -13,6 +13,11 @@ ThinkDB is a powerful SQL client that transforms the way you interact with your 
 
 **Smart Query Interface:** Write SQL queries effortlessly with our normal query interface enhanced by smart code completion, helping you code faster and with fewer errors.
 
+<div align="center">
+<img src="docs/query_complete.gif" alt="ThinkDB Interface" style="width:100%;">
+</div>
+
+
 ---
 
 **QChat:** Engage in a conversational dialogue with our AI assistant. Simply ask questions in natural language, and QChat responds with precise SQL queries and real-time data results.
