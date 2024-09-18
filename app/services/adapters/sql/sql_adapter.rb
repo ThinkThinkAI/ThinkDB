@@ -26,7 +26,7 @@ class SQLAdapter
   private
 
   def select_query?(query)
-    query.strip.match?(/^SELECT/i)
+    query.strip.match?(/^\(?SELECT/i)
   end
 
   def add_offset(query, limit, offset)

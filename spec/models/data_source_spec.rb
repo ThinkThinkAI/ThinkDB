@@ -72,4 +72,13 @@ RSpec.describe DataSource, type: :model do
       expect(DataSource.inactive.count).to eq(1)
     end
   end
+
+  describe '#decrypt_password' do
+    let!(:data_source) { create(:data_source, user:, password: 'encrypted_password') }
+
+    it 'returns nil and does not raise an exception for invalid encrypted password' do
+      allow(data_source).to receive(:decrypt).and_raise(ActiveSupport::MessageEncryptor::InvalidMessage)
+      expect(data_source.decrypt_password).to be_nil
+    end
+  end
 end

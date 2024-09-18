@@ -2,14 +2,14 @@
 
 FactoryBot.define do
   factory :data_source do
-    adapter { 'postgresql' }
+    adapter { 'test' }
     host { 'localhost' }
     port { 5432 }
     database { 'your_database_name' }
     username { 'your_username' }
     password { 'your_password' }
     user
-    connected { false }
+    connected { true }
     sequence(:name) { |n| "name#{n}" }
     sequence(:slug) { |n| "slug#{n}" }
   end

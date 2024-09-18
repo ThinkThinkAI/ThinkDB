@@ -39,6 +39,20 @@ RSpec.describe QChatsController, type: :controller do
   end
 
   describe 'POST #create' do
+    context 'with valid params' do
+      let(:valid_chat_params) { { name: 'Valid Chat Name' } }
+
+      it 'saves the new chat and redirects to the show page' do
+        expect do
+          post :create, params: { data_source_id: data_source.id, name: 'Valid Chat Name' }
+        end.to change(QChat, :count).by(1)
+
+        new_chat = QChat.last
+        expect(response).to redirect_to(data_source_chat_path(data_source, new_chat))
+        expect(flash[:notice]).to eq('Chat was successfully created.')
+      end
+    end
+
     context 'with invalid params' do
       it 'renders the new template' do
         post :create, params: { data_source_id: data_source.id, chat: { name: '' } }
@@ -60,6 +74,15 @@ RSpec.describe QChatsController, type: :controller do
         patch :update, params: { data_source_id: data_source.id, id: chat.id, chat: { name: 'Updated Chat' } }
         chat.reload
         expect(response).to redirect_to(data_source_chat_path(data_source, chat))
+      end
+    end
+
+    context 'with invalid params' do
+      it 'updates the chat and redirects to the chat show page' do
+        allow_any_instance_of(QChat).to receive(:update).and_return(false)
+        patch :update, params: { data_source_id: data_source.id, id: chat.id, chat: { name: nil } }
+        chat.reload
+        expect(response.status).to eq(200)
       end
     end
   end
