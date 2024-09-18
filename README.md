@@ -1,14 +1,32 @@
-# ThinkDB
+# ThinkDB 🤔
 
-ThinkDB is a powerful SQL client that transforms the way you interact with your databases by offering three intuitive methods:
+---
+![Discord](https://img.shields.io/discord/1245952504341200957?style=flat&label=Discord)
 
-1. **Smart Query Interface:** Write SQL queries effortlessly with our normal query interface enhanced by smart code completion, helping you code faster and with fewer errors.
-2. **QChat:** Engage in a conversational dialogue with our AI assistant. Simply ask questions in natural language, and QChat responds with precise SQL queries and real-time data results.
-3. **Virtual DBA Chat:** Consult with an AI-powered virtual Database Administrator capable of performing tasks that a seasoned DBA would handle. Need to optimize queries, set up database backups, configure security settings, or get performance tuning advice? The virtual DBA is here to assist you.
+---
+
+ThinkDB is a powerful SQL client that transforms the way you interact with your databases.
+
+---
+
+**Smart Query Interface:** Write SQL queries effortlessly with our normal query interface enhanced by smart code completion, helping you code faster and with fewer errors.
+
+---
+
+**QChat:** Engage in a conversational dialogue with our AI assistant. Simply ask questions in natural language, and QChat responds with precise SQL queries and real-time data results.
+
+---
+
+**Virtual DBA Chat:** Consult with an AI-powered virtual Database Administrator capable of performing tasks that a seasoned DBA would handle. Need to optimize queries, set up database backups, configure security settings, or get performance tuning advice? The virtual DBA is here to assist you.
+
+---
 
 Whether you’re an experienced database professional or just starting out, ThinkDB provides an intuitive and natural interface to explore, query, and manage your data with unparalleled ease.
 
 **In essence, ThinkDB is a sophisticated web-based database client designed for both simplicity and power.**
+
+---
+Looking for CLI version? Checkout our powerful range of AI powered CLI Tools 👉 [CommandAI](https://github.com/ThinkThinkAI/CommandAI)
 
 ---
 
