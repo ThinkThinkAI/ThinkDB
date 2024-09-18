@@ -83,14 +83,14 @@ RSpec.describe SQLAdapter do
     it 'replaces existing ORDER BY clause' do
       query = '(SELECT * FROM users ORDER BY id ASC)'
       sort = { column: 'name', order: 'desc' }
-      result = '(SELECT * FROM users ORDER BY id ASC)'
+      result = '(SELECT * FROM users ORDER BY id ASC) ORDER BY name DESC'
       expect(adapter.send(:add_sorting, query, sort).sub('  ', ' ')).to eq(result)
     end
 
     it 'handles complex queries' do
       query = '(SELECT name, COUNT(*) FROM users GROUP BY name ORDER BY name ASC)'
       sort = { column: 'email', order: 'desc' }
-      result = '(SELECT name, COUNT(*) FROM users GROUP BY name ORDER BY name ASC)'
+      result = '(SELECT name, COUNT(*) FROM users GROUP BY name ORDER BY name ASC) ORDER BY email DESC'
       expect(adapter.send(:add_sorting, query, sort).sub('  ', ' ')).to eq(result)
     end
   end

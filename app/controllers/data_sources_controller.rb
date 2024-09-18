@@ -4,11 +4,9 @@
 # and deleting DataSource records associated with the current user.
 class DataSourcesController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_data_source, only: %i[edit update destroy connect]
+  before_action :set_data_source, only: %i[show edit update destroy connect]
 
-  def show
-    # redirect_to data_sources_path
-  end
+  def show; end
 
   def new
     @data_source = current_user.data_sources.build
@@ -74,7 +72,7 @@ class DataSourcesController < ApplicationController
     else
       respond_to do |format|
         format.html do
-          redirect_to request.referer || edit_data_source_path(@data_source),
+          redirect_to determine_redirect_path,
                       alert: 'Failed to connect to the DataSource. Please check your configuration.'
         end
         format.json do
@@ -86,7 +84,7 @@ class DataSourcesController < ApplicationController
   rescue StandardError => e
     respond_to do |format|
       format.html do
-        redirect_to request.referer || edit_data_source_path(@data_source),
+        redirect_to determine_redirect_path,
                     alert: "Failed to update DataSource connection: #{e.message}"
       end
       format.json { render json: { message: e.message }, status: :unprocessable_entity }
@@ -94,6 +92,12 @@ class DataSourcesController < ApplicationController
   end
 
   private
+
+  def determine_redirect_path
+    return edit_data_source_path(@data_source) if @data_source
+
+    request.referer || root_path
+  end
 
   def set_data_source
     @data_source = current_user.data_sources.friendly.find(params[:id])

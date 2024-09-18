@@ -9,13 +9,14 @@ RSpec.describe DataSourcesController, type: :controller do
 
   before do
     sign_in(user)
+    allow(controller).to receive(:check_requirements)
     allow(DatabaseService).to receive(:build).and_return(database_service_mock)
   end
 
   describe 'GET #show' do
     it 'redirects to data sources index' do
       get :show, params: { id: data_source.to_param }
-      expect(response).to redirect_to(data_sources_path)
+      expect(response).to have_http_status(:ok)
     end
   end
 
@@ -39,6 +40,16 @@ RSpec.describe DataSourcesController, type: :controller do
 
     context 'with invalid params' do
       it 're-renders the new template' do
+        allow(DatabaseService).to receive(:test_connection).and_return(true)
+        allow_any_instance_of(DataSource).to receive(:save).and_return(false)
+        post :create, params: { data_source: { name: nil } }
+        expect(response).to render_template(:new)
+      end
+    end
+
+    context 'test connection fails' do
+      it 're-renders the new template' do
+        allow(DatabaseService).to receive(:test_connection).and_return(false)
         allow_any_instance_of(DataSource).to receive(:save).and_return(false)
         post :create, params: { data_source: { name: nil } }
         expect(response).to render_template(:new)
@@ -66,6 +77,15 @@ RSpec.describe DataSourcesController, type: :controller do
 
     context 'with invalid params' do
       it 're-renders the edit template' do
+        allow_any_instance_of(DataSource).to receive(:update).and_return(false)
+        patch :update, params: { id: data_source.to_param, data_source: { name: '' } }
+        expect(response).to render_template(:edit)
+      end
+    end
+
+    context 'with fail test connection' do
+      it 're-renders the edit template' do
+        allow(DatabaseService).to receive(:test_connection).and_return(false)
         allow_any_instance_of(DataSource).to receive(:update).and_return(false)
         patch :update, params: { id: data_source.to_param, data_source: { name: '' } }
         expect(response).to render_template(:edit)
@@ -109,7 +129,25 @@ RSpec.describe DataSourcesController, type: :controller do
       end
     end
 
-    context 'failure to update' do
+    context 'failure to update bad connection' do
+      before do
+        allow(DatabaseService).to receive(:test_connection).and_return(false)
+      end
+
+      it 'returns an error response for JSON format' do
+        patch :connect, params: { id: data_source.to_param }, as: :json
+        JSON.parse(response.body)
+        expect(response.status).to eq(422)
+      end
+
+      it 'returns an error response for html format' do
+        patch :connect, params: { id: data_source.id }
+
+        expect(response).to redirect_to(edit_data_source_path(data_source))
+      end
+    end
+
+    context 'failure to update exception' do
       before do
         allow(data_source).to receive(:update!).and_raise(StandardError.new('Connection error'))
         allow_any_instance_of(DataSourcesController).to receive(:set_data_source).and_return(data_source)
@@ -119,6 +157,12 @@ RSpec.describe DataSourcesController, type: :controller do
         patch :connect, params: { id: data_source.to_param }, as: :json
         JSON.parse(response.body)
         expect(response.status).to eq(422)
+      end
+
+      it 'returns an error response for html format' do
+        patch :connect, params: { id: data_source.id }
+
+        expect(response).to redirect_to(root_path)
       end
     end
   end

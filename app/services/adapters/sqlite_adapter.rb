@@ -62,7 +62,7 @@ class SqliteAdapter < SQLAdapter
       query = add_sorting(query, sort)
       query = add_offset(query, limit, offset)
     end
-
+    
     @connection.execute2(query)
   end
 

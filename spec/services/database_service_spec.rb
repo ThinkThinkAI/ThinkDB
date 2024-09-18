@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# spec/services/database_service_spec.rb
 require 'rails_helper'
 require 'json'
 # require_relative '../../app/services/database_service'
@@ -19,6 +18,39 @@ RSpec.describe DatabaseService do
     allow(PostgresqlAdapter).to receive(:new).with(data_source).and_return(adapter)
     allow(MysqlAdapter).to receive(:new).with(data_source).and_return(adapter)
     allow(SqliteAdapter).to receive(:new).with(data_source).and_return(adapter)
+  end
+
+  describe '.test_connection' do
+    context 'when adapter is not supported' do
+      it 'raises an error' do
+        stub_const('TIMEOUT_SECONDS', 1)
+        stub_const('ADAPTER_CLASSES', { 'postgresql' => PostgresqlAdapter, 'mysql' => MysqlAdapter, 'sqlite' => SqliteAdapter })
+        allow(adapter).to receive(:run_raw_query).with('SELECT 1')
+        allow(data_source).to receive(:adapter).and_return('unsupported')
+        expect { described_class.test_connection(data_source) }.to raise_error('Adapter not supported: unsupported')
+      end
+    end
+
+    context 'when connection times out' do
+      it 'returns false' do
+        stub_const('TIMEOUT_SECONDS', 1)
+        stub_const('ADAPTER_CLASSES', { 'postgresql' => PostgresqlAdapter, 'mysql' => MysqlAdapter, 'sqlite' => SqliteAdapter })
+
+        allow(adapter).to receive(:run_raw_query).with('SELECT 1') do
+          sleep 3 
+        end
+        expect(described_class.test_connection(data_source)).to be false
+      end
+    end
+
+    context 'when a StandardError is raised' do
+      it 'returns false' do
+        stub_const('TIMEOUT_SECONDS', 1)
+        stub_const('ADAPTER_CLASSES', { 'postgresql' => PostgresqlAdapter, 'mysql' => MysqlAdapter, 'sqlite' => SqliteAdapter })
+        allow(adapter).to receive(:run_raw_query).with('SELECT 1').and_raise(StandardError)
+        expect(described_class.test_connection(data_source)).to be false
+      end
+    end
   end
 
   describe '.build' do

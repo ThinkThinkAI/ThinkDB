@@ -17,7 +17,7 @@ class DataSource < ApplicationRecord
   belongs_to :user
 
   validates :name, presence: true
-  validates :adapter, presence: true, inclusion: { in: %w[postgresql mysql sqlite] }
+  validates :adapter, presence: true, inclusion: { in: %w[postgresql mysql sqlite test] }
   validates :port, numericality: { only_integer: true }, allow_blank: true
 
   scope :active, -> { where(connected: true) }
@@ -26,7 +26,6 @@ class DataSource < ApplicationRecord
   def decrypt_password
     decrypt(password) if password.present?
   rescue ActiveSupport::MessageEncryptor::InvalidMessage
-    # Handle invalid message error or log it
     nil
   end
 
