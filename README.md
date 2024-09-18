@@ -8,6 +8,7 @@ ThinkDB 🤔
 <h3 align="center">
 ThinkDB is a powerful SQL client that transforms the way you interact with your databases.
 </h3>
+
 ---
 
 **Smart Query Interface:** Write SQL queries effortlessly with our normal query interface enhanced by smart code completion, helping you code faster and with fewer errors.
