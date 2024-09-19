@@ -29,6 +29,10 @@ ThinkDB is a powerful SQL client that transforms the way you interact with your 
 
 **Virtual DBA Chat:** Consult with an AI-powered virtual Database Administrator capable of performing tasks that a seasoned DBA would handle. Need to optimize queries, set up database backups, configure security settings, or get performance tuning advice? The virtual DBA is here to assist you.
 
+<div align="center">
+<img src="docs/chat.gif" alt="ThinkDB Interface" style="width:100%;">
+</div>
+
 ---
 
 Whether you’re an experienced database professional or just starting out, ThinkDB provides an intuitive and natural interface to explore, query, and manage your data with unparalleled ease.
