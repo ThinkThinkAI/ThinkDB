@@ -43,8 +43,6 @@ Looking for CLI version? Checkout our powerful range of AI powered CLI Tools ðŸ‘
 
 ---
 
----
-
 ## Current Features
 
 - **Multi-Database Support:** Seamlessly interact with SQLite, MySQL, and PostgreSQL databases, all from a single unified interface.
