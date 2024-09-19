@@ -71,8 +71,6 @@ Looking for CLI version? Checkout our powerful range of AI powered CLI Tools ðŸ‘
 
 Please note that ThinkDB is currently in its alpha stage. While we are continuously working to improve and stabilize the application, you may encounter bugs. We appreciate your understanding and welcome any feedback to help us enhance the product.
 
----
-
 ## Getting Started
 
 ### Using Docker (The Simplest Method)
