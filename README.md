@@ -22,7 +22,7 @@ ThinkDB is a powerful SQL client that transforms the way you interact with your 
 **QChat:** Engage in a conversational dialogue with our AI assistant. Simply ask questions in natural language, and QChat responds with precise SQL queries and real-time data results.
 
 <div align="center">
-<img src="docs/qchat.gif" alt="ThinkDB Interface" style="width:100%;">
+<img src="docs/qchat.gif" alt="QChat Interface" style="width:100%;">
 </div>
 
 ---
@@ -30,7 +30,7 @@ ThinkDB is a powerful SQL client that transforms the way you interact with your 
 **Virtual DBA Chat:** Consult with an AI-powered virtual Database Administrator capable of performing tasks that a seasoned DBA would handle. Need to optimize queries, set up database backups, configure security settings, or get performance tuning advice? The virtual DBA is here to assist you.
 
 <div align="center">
-<img src="docs/chat.gif" alt="ThinkDB Interface" style="width:100%;">
+<img src="docs/chat.gif" alt="Chat Interface" style="width:100%;">
 </div>
 
 ---
@@ -133,3 +133,65 @@ Before you start, ensure you have the following installed:
     ```bash
     SECRET_KEY_BASE=$(bundle exec rake secret) foreman start
     ```
+
+## Configuration
+
+ThinkDB is highly configurable to suit your needs. Below are the steps to configure it properly:
+
+### AI Configuration
+
+You can configure the AI services ThinkDB uses to generate and optimize SQL by setting the AI URL, model, and API key. This can be done via the Settings interface in the application.
+
+#### Steps:
+1. **Navigate to the Settings Page**
+
+2. **Fill in AI Service Information**:
+   - **AI URL**: URL to connect to the AI service.
+   - **AI Model**: Specify the model name.
+   - **AI API Key**: Enter your API key for the AI service.
+
+<div align="center">
+<img src="docs/settings.gif" alt="Settings Interface" style="width:100%;">
+</div>
+
+Here's an example of how you can configure for various AI services:
+
+- **ChatGPT**:
+  - **URL**: `https://api.openai.com/v1`
+  - **Model**: [OpenAI Models](https://beta.openai.com/docs/models)
+  - **API Key**: [Generate API Key](https://beta.openai.com/account/api-keys)
+
+- **Mistral**:
+  - **URL**: `https://api.mistral.ai/v1/completions`
+  - **Model**: [Mistral Models](https://mnt9s.ai/models)
+  - **API Key**: [Generate API Key](https://mistral.ai/account/api-keys)
+
+- **Ollama**:
+  - **URL**: `http://127.0.0.1:11434` (if running locally)
+  - **Model**: Depends on installed models.
+  - **API Key**: Any valid key.
+
+- **OpenAI Compatible**:
+  - ThinkDB can connect to any AI service that implements OpenAI's API, including Azure OpenAI, Anthropic, Cohere, and others. Check their documentation for proper URL, model, and API key.
+
+### Database Source Configuration
+
+Proper configuration ensures that ThinkDB can interact with your databases efficiently:
+
+#### Steps:
+1. **Navigate to New Data Source**: 
+
+2. **Fill in Data Source Information**:
+   - **Data Source Name**: Provide a friendly name for the data source.
+   - **Database Type**: Select from SQLite, MySQL, PostgreSQL, etc.
+   - **Connection Details**: Provide necessary credentials and connection string.
+
+<div align="center">
+<img src="docs/datasource.gif" alt="Datasource Interface" style="width:100%;">
+</div>
+
+   - You can create multiple data sources.
+   - Only one data source can be active at a time.
+   - Change active data source at any time from the left navigation bar.
+
+
