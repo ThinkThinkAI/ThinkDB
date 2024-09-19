@@ -43,6 +43,8 @@ Looking for CLI version? Checkout our powerful range of AI powered CLI Tools üë
 
 ---
 
+---
+
 ## Current Features
 
 - **Multi-Database Support:** Seamlessly interact with SQLite, MySQL, and PostgreSQL databases, all from a single unified interface.
@@ -64,6 +66,12 @@ Looking for CLI version? Checkout our powerful range of AI powered CLI Tools üë
 - **Encrypted Communication:** All connection information is securely encrypted, safeguarding your credentials and ensuring that your data remains protected at all times.
 - **Database Security:** We believe database security should be managed on the database itself, reinforcing access controls and preventing unauthorized access.
 - **Custom AI Provider:** Select the AI provider that best suits your needs or host your own AI system, giving you complete control over the AI integration and ensuring it complies with your security policies.
+
+## ‚ö†Ô∏è Alpha Version Warning
+
+Please note that ThinkDB is currently in its alpha stage. While we are continuously working to improve and stabilize the application, you may encounter bugs. We appreciate your understanding and welcome any feedback to help us enhance the product.
+
+---
 
 ## Getting Started
 
@@ -174,7 +182,7 @@ Here's an example of how you can configure for various AI services:
 - **OpenAI Compatible**:
   - ThinkDB can connect to any AI service that implements OpenAI's API, including Azure OpenAI, Anthropic, Cohere, and others. Check their documentation for proper URL, model, and API key.
 
-### Database Source Configuration
+### Data Source Configuration
 
 Proper configuration ensures that ThinkDB can interact with your databases efficiently:
 
@@ -194,4 +202,41 @@ Proper configuration ensures that ThinkDB can interact with your databases effic
    - Only one data source can be active at a time.
    - Change active data source at any time from the left navigation bar.
 
+### Reporting Issues
 
+If you encounter any bugs or have suggestions for improvements, please open an issue on the GitHub repository. To help us understand and address the issue, please include the following information:
+
+1. **Description**: Provide a clear and concise description of the bug or feature request.
+
+2. **Steps to Reproduce**: List the steps needed to reproduce the bug. This is crucial for us to identify and fix the problem.
+
+3. **Expected Behavior**: Explain what you expected to happen.
+
+4. **Actual Behavior**: Describe what actually happened. Include any error messages or logs if applicable.
+
+5. **Environment**: Provide details about your environment, such as the operating system, browser, and versions of any relevant libraries and tools.
+
+Example:
+
+```markdown
+**Description**:
+The application crashes when I try to add a new data source.
+
+**Steps to Reproduce**:
+1. Navigate to the 'New Data Source' page.
+2. Fill in the details and click 'Save'.
+3. Application crashes.
+
+**Expected Behavior**:
+The new data source should be saved without any issues.
+
+**Actual Behavior**:
+The application crashes with an 'Internal Server Error'.
+
+**Environment**:
+- OS: Windows 10
+- Browser: Google Chrome Version 93.0.4577.63
+- ThinkDB Version: 1.2.3
+```
+
+Including these details will help us resolve issues more quickly. Thank you for helping us improve ThinkDB!
