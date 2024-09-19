@@ -7,7 +7,9 @@ document.addEventListener("turbo:load", () => {
     const chatChannel = consumer.subscriptions.create(
       { channel: "ChatChannel", user_id: currentUserId },
       {
-        connected() { console.log('connected');},
+        connected() {
+          console.log("connected");
+        },
         disconnected() {},
         received(data) {
           if (data.ai_response) {
@@ -20,7 +22,7 @@ document.addEventListener("turbo:load", () => {
               `message-${data.message_id}`
             );
             if (existingMessageDiv) {
-              return;   
+              return;
             }
 
             if (loadingMessagesDiv) {
@@ -32,14 +34,15 @@ document.addEventListener("turbo:load", () => {
               newMessageDiv.id = `message-${data.message_id}`;
               newMessageDiv.innerHTML = data.ai_response;
               messagesDiv.appendChild(newMessageDiv);
-              scrollboxDiv.scrollTop = messagesDiv.scrollHeight;
+
+              scrollboxDiv.scrollTop = newMessageDiv.offsetTop;
 
               initializeGrid(
                 data.message_id,
                 data.message_sql.replace(/;/g, "")
               );
 
-              scrollboxDiv.scrollTop = messagesDiv.scrollHeight;
+              scrollboxDiv.scrollTop = newMessageDiv.offsetTop;
             } else {
               console.error(
                 'Element with ID "messages" not found on the page.'

@@ -83,10 +83,17 @@ class PostgresqlAdapter < SQLAdapter
 
   def run_query(query, limit = 10, offset = 0, sort = nil)
     wrapped_query = "(#{query})"
+    init_wrapped_query = wrapped_query
+
     wrapped_query = add_sorting(wrapped_query, sort)
     wrapped_query = add_offset(wrapped_query, limit, offset)
 
-    result = @connection.exec(wrapped_query)
+    result = if wrapped_query != init_wrapped_query
+               @connection.exec(wrapped_query)
+             else
+               @connection.exec(query)
+             end
+
     fields = result.fields
     values = result.values
     [fields] + values
