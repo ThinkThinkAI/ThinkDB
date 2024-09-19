@@ -17,10 +17,13 @@ ThinkDB is a powerful SQL client that transforms the way you interact with your 
 <img src="docs/query_complete.gif" alt="ThinkDB Interface" style="width:100%;">
 </div>
 
-
 ---
 
 **QChat:** Engage in a conversational dialogue with our AI assistant. Simply ask questions in natural language, and QChat responds with precise SQL queries and real-time data results.
+
+<div align="center">
+<img src="docs/qchat.gif" alt="ThinkDB Interface" style="width:100%;">
+</div>
 
 ---
 
@@ -56,6 +59,7 @@ Looking for CLI version? Checkout our powerful range of AI powered CLI Tools �
 - **Principled Approach:** We believe that offering database clients as a service poses significant security risks; therefore, ThinkDB is designed to operate securely on your own infrastructure.
 - **Encrypted Communication:** All connection information is securely encrypted, safeguarding your credentials and ensuring that your data remains protected at all times.
 - **Database Security:** We believe database security should be managed on the database itself, reinforcing access controls and preventing unauthorized access.
+- **Custom AI Provider:** Select the AI provider that best suits your needs or host your own AI system, giving you complete control over the AI integration and ensuring it complies with your security policies.
 
 ## Getting Started
 
@@ -77,6 +81,14 @@ To get ThinkDB up and running quickly using DockerHub:
     # change directory_on_your_machine_for_think_db_storage & your_secret_key_base_here
     docker run -d -p 3000:3000 -v directory_on_your_machine_for_think_db_storage:/app/storage -e SECRET_KEY_BASE=your_secret_key_base_here thinkthinkai/think_db:latest
     ```
+    
+### Security Note
+
+It's outside the scope of this README to walk you through securing your Docker container and any web application you host within it. However, we strongly recommend that:
+
+1. **SECRET_KEY_BASE**: This should be managed securely—preferably through Docker secrets if using Docker Swarm or Kubernetes, or via a trusted secret management solution—to ensure it’s not exposed in plaintext within your environment variables.
+2. **TLS/SSL**: Always serve your web application over HTTPS using a valid TLS certificate to encrypt data transmitted over the network.
+
 
 ### Using Rails Outside a Container (The Harder Method)
 
