@@ -1,10 +1,16 @@
 #!/bin/bash
 
-# Call the first entrypoint script
-./rails-entrypoint.sh
+# Start Redis server on a different port in the background
+redis-server --port 6380 --daemonize yes
 
-# Call the second entrypoint script
-./sidekiq-entrypoint.sh
+if [ -z "$SECRET_KEY_BASE" ]; then
+  export SECRET_KEY_BASE=$(bin/rails secret)
+fi
 
-# Finally, execute the command passed to the Docker container
+# Start Sidekiq worker in the background
+./sidekiq-entrypoint.sh &
+bundle exec sidekiq &
+
+
+# Exit with the status of the last process to exit
 exec "$@"

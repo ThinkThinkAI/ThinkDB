@@ -135,7 +135,7 @@ Before you start, ensure you have the following installed:
 4. Start the application with the `SECRET_KEY_BASE` environment variable set:
 
     ```bash
-    SECRET_KEY_BASE=$(bundle exec rake secret) foreman start
+    foreman start
     ```
 
 ## Configuration

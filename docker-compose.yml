@@ -1,42 +1,15 @@
 services:
-  web:
+  app:
     build: .
-    entrypoint: ["./rails-entrypoint.sh"]
     volumes:
-      - .:/app
       - ./storage:/app/storage
     ports:
       - "3000:3000"
     environment:
       RAILS_ENV: production
-      REDIS_URL: redis://redis:6379/1
+      REDIS_URL: redis://localhost:6380/1
+    entrypoint: ["./entrypoint.sh"]
     command: ["bundle", "exec", "rails", "server", "-b", "0.0.0.0", "-p", "3000"]
-    depends_on:
-      - redis
-    networks:
-      - thinknet
-
-  worker:
-    build: .
-    entrypoint: ["./sidekiq-entrypoint.sh"]
-    command: ["bundle", "exec", "sidekiq"]
-    volumes:
-      - .:/app
-      - ./storage:/app/storage
-    environment:
-      RAILS_ENV: production
-      REDIS_URL: redis://redis:6379/1
-    depends_on:
-      - redis
-    networks:
-      - thinknet
-
-  redis:
-    container_name: redis
-    image: redis:latest
-    command: ["redis-server", "--bind", "redis", "--port", "6379"]
-    ports:
-      - "6379:6379"
     networks:
       - thinknet
 
