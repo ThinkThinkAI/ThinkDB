@@ -87,7 +87,7 @@ To get ThinkDB up and running quickly using DockerHub:
 
     ```sh
     # change directory_on_your_machine_for_think_db_storage 
-    docker run -d -p 3000:3000 -v directory_on_your_machine_for_think_db_storage:/app/storage  thinkthinkai/think_db:latest
+    docker run -d --name thinkdb -p 3000:3000 -v directory_on_your_machine_for_think_db_storage:/app/storage thinkthinkai/think_db:latest
     ```
     
 ### Security Note
