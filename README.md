@@ -86,16 +86,15 @@ To get ThinkDB up and running quickly using DockerHub:
 2. Run the container while ensuring SQLite database persistence and setting the `SECRET_KEY_BASE` environment variable. Remember to replace `directory_on_your_machine_for_think_db_storage` and `your_secret_key_base_here` with your actual directory path and secret key base:
 
     ```sh
-    # change directory_on_your_machine_for_think_db_storage & your_secret_key_base_here
-    docker run -d -p 3000:3000 -v directory_on_your_machine_for_think_db_storage:/app/storage -e SECRET_KEY_BASE=your_secret_key_base_here thinkthinkai/think_db:latest
+    # change directory_on_your_machine_for_think_db_storage 
+    docker run -d -p 3000:3000 -v directory_on_your_machine_for_think_db_storage:/app/storage  thinkthinkai/think_db:latest
     ```
     
 ### Security Note
 
 It's outside the scope of this README to walk you through securing your Docker container and any web application you host within it. However, we strongly recommend that:
 
-1. **SECRET_KEY_BASE**: This should be managed securely—preferably through Docker secrets if using Docker Swarm or Kubernetes, or via a trusted secret management solution—to ensure it’s not exposed in plaintext within your environment variables.
-2. **TLS/SSL**: Always serve your web application over HTTPS using a valid TLS certificate to encrypt data transmitted over the network.
+**TLS/SSL**: Always serve your web application over HTTPS using a valid TLS certificate to encrypt data transmitted over the network.
 
 
 ### Using Rails Outside a Container (The Harder Method)

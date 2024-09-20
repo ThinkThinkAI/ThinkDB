@@ -21,6 +21,7 @@
               <%= form.check_box :remember_me, class: "form-check-input" %>
               <%= form.label :remember_me, class: "form-check-label" %>
             </div>
+            <%= link_to 'Sign Up', new_user_registration_path, class: 'btn btn-primary' %>
             <div class="float-end">
               <%= form.submit "Log in", class: "btn btn-primary" %>
             </div>
