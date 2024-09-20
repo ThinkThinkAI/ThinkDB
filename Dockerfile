@@ -24,11 +24,9 @@ COPY . ./
 
 # Copy the entrypoint scripts
 COPY entrypoint.sh ./entrypoint.sh
-COPY sidekiq-entrypoint.sh ./sidekiq-entrypoint.sh
-COPY rails-entrypoint.sh ./rails-entrypoint.sh
 
 # Make sure the entrypoint scripts are executable
-RUN chmod +x entrypoint.sh sidekiq-entrypoint.sh rails-entrypoint.sh
+RUN chmod +x entrypoint.sh
 
 # Precompile assets for production
 RUN SECRET_KEY_BASE=dummy_key RAILS_ENV=production bundle exec rake assets:precompile
@@ -38,3 +36,6 @@ EXPOSE 3000
 EXPOSE 6380
 
 ENTRYPOINT ["./entrypoint.sh"]
+
+# Default command to run the Rails server
+CMD bundle exec rails server -b 0.0.0.0 -p 3000

@@ -1,14 +1,15 @@
 services:
-  app:
+  web:
     build: .
+    entrypoint: ["./entrypoint.sh"]
     volumes:
+      - .:/app
       - ./storage:/app/storage
     ports:
       - "3000:3000"
     environment:
       RAILS_ENV: production
       REDIS_URL: redis://localhost:6380/1
-    entrypoint: ["./entrypoint.sh"]
     command: ["bundle", "exec", "rails", "server", "-b", "0.0.0.0", "-p", "3000"]
     networks:
       - thinknet
