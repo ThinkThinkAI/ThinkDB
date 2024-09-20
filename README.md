@@ -1,5 +1,5 @@
 <div align="right">
-<a href="https://discord.com/invite/your-discord-server-id" style="float: right;"><img src="https://img.shields.io/discord/1245952504341200957?style=flat&label=Discord"></a>
+<a href="https://discord.gg/bUE6hzdmrh" style="float: right;"><img src="https://img.shields.io/discord/1245952504341200957?style=flat&label=Discord"></a>
 </div>
 <h1 align="center">
 ThinkDB 🤔
