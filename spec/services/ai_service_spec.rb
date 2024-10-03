@@ -85,7 +85,7 @@ RSpec.describe AIService do
       it 'sends the system_message to the system' do
         ai_service.chat(chat)
         expect(ai_service.messages.first[:role]).to eq('system')
-        expect(ai_service.messages.first[:content]).to include('Help out with any questions the user may ask')
+        expect(ai_service.messages.first[:content]).to include('You are a highly skilled and experienced Database Administrator')
       end
     end
 
