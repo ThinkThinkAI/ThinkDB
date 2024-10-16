@@ -23,7 +23,7 @@ class User < ApplicationRecord
   end
 
   def settings_incomplete?
-    ai_url.blank? || ai_model.blank? || ai_api_key.blank?
+    ai_url.blank? || ai_model.blank?
   end
 
   private

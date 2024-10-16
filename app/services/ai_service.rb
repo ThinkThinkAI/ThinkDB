@@ -30,7 +30,7 @@ class AIService
       You will be asked by the user for information or to perform a task on the database.
       Your response will only be in JSON which will include up too 2 things.
       1. the query to do what was requested by the user.
-      2. if the query is a delete or update then a select query to preview which records would be affected.
+      2. if the query is not a select query we will need to preview which records would be affected. examples are drop, update, delete.
       The JSON will look like this. { sql: "query needed", preview: "preview query" }
       Do not include the preview if it is not necesary.
       Below is the schema for the database.
