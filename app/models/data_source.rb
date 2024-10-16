@@ -10,6 +10,9 @@ class DataSource < ApplicationRecord
   before_save :encrypt_password, if: :password_changed?
   before_save :unset_other_connected_sources, if: :connected
 
+  # has_many :data_source_users
+  # has_many :users, through: :data_source_users
+
   after_save :build_tables_if_connected
 
   after_destroy :activate_first_available_data_source_if_none_active

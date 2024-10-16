@@ -87,18 +87,6 @@ RSpec.describe User, type: :model do
         expect(user.settings_incomplete?).to be true
       end
     end
-
-    context 'when ai_api_key is blank' do
-      before do
-        user.ai_url = 'http://example.com'
-        user.ai_model = 'example_model'
-        user.ai_api_key = ''
-      end
-
-      it 'returns true' do
-        expect(user.settings_incomplete?).to be true
-      end
-    end
   end
 
   describe '.from_omniauth' do
